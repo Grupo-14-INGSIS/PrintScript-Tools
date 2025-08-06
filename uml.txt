@@ -1,0 +1,42 @@
+@startuml
+class Lexer {
+Token[] process(String text)
+}
+
+class Token {
+KeyWord type
+String content
+Token[] children
+Position position
+Token[] getChildren()
+}
+
+class Position {
+int line
+int position
+}
+
+enum KeyWord {
+
+}
+
+class ASTBuilder {
+AST build(Token[] tokens)
+}
+
+class AST {
+Token root
+
+}
+
+class Interpreter {
+void execute(AST tree)
+}
+
+Lexer -> Token
+Token <-up- KeyWord
+Token <-down- Position
+Token <- ASTBuilder
+ASTBuilder -> AST
+AST <- Interpreter
+@enduml
