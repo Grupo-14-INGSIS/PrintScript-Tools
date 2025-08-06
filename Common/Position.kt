@@ -1,6 +1,6 @@
 package Common
 
 data class Position(
-    val from: Int,
-    val to: Int,
+    val line: Int,
+    val column: Int,
 )

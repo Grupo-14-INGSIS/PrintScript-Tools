@@ -3,9 +3,30 @@ package Common
 enum class DataType {
     PUBLIC_KEY_WORD,
     FINAL_KEY_WORD,
-    STRING_TYPE,
+
+    LET_KEY_WORD,
+
     IDENTIFIER,
-    ASSIGNATION,
+
+    // Types
+    STRING_TYPE,
+    NUMBER_TYPE,
+
+    // Literals
     STRING,
-    SEMICOLON
+    NUMBER,
+
+    // Operations
+    ASSIGNATION,
+    ADDITION,
+    SUBTRACTION,
+    MULTIPLICATION,
+    DIVISION,
+    PRINTLN,
+
+    // Punctuation -> May be useful for Formatter
+    SPACE,
+    COLON,
+    SEMICOLON,
+    LINE_BREAK
 }

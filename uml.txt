@@ -8,12 +8,11 @@ KeyWord type
 String content
 Token[] children
 Position position
-Token[] getChildren()
 }
 
 class Position {
 int line
-int position
+int column
 }
 
 enum KeyWord {
