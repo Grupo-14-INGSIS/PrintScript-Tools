@@ -1,10 +1,10 @@
-package Common
+package model.structure
 
 enum class DataType {
-    PUBLIC_KEY_WORD,
-    FINAL_KEY_WORD,
+    PUBLIC_KEYWORD,
+    FINAL_KEYWORD,
 
-    LET_KEY_WORD,
+    LET_KEYWORD,
 
     IDENTIFIER,
 
@@ -13,8 +13,8 @@ enum class DataType {
     NUMBER_TYPE,
 
     // Literals
-    STRING,
-    NUMBER,
+    STRING_LITERAL,
+    NUMBER_LITERAL,
 
     // Operations
     ASSIGNATION,

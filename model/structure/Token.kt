@@ -1,8 +1,7 @@
-package Common
+package model.structure
 
 data class Token (
     val type: DataType,
     val content: String,
-    val children: List<Token>,
     val position: Position
 )

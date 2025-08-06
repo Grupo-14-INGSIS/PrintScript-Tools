@@ -1,4 +1,4 @@
-package Common
+package model.structure
 
 data class Position(
     val line: Int,
