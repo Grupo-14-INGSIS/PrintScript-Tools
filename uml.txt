@@ -7,7 +7,7 @@ Token[] process(String text)
 }
 
 class Token {
-KeyWord type
+Keyword type
 String content
 Position position
 }
@@ -17,14 +17,34 @@ int line
 int column
 }
 
-enum KeyWord {}
+enum Keyword {}
 
 class Parser {
 ' Toma la lista de Tokens y verifica si forman una estructura válida. De ser así, devuelve un AST
-ASTNode build(Token[] tokens)
+Command parse(Token[] tokens)
 }
 
-class ASTNode {
+class VariableStorage {
+Map<String, Any> variables
+' Almacena el nombre de la variable y su valor
+VariableStorage getInstance()
+' Singleton
+Any get(String variable)
+Any storage(String variable, Any value)
+' Agrega o actualiza una variable
+Any delete(String vaiable)
+}
+
+class CommandFactory {
+Map<Keyword, Command> commands
+Command getCommand(ParseNode node)
+}
+
+interface Command {
+void execute()
+}
+
+class ParseNode {
 Token token
 Token[] children
 }
@@ -46,10 +66,16 @@ class StaticCodeAnalyzer {
 ' Busca errores y malas prácticas
 }
 
-Lexer -> Token
-Token -up-> KeyWord
-Token -down-> Position
-Token <- Parser
-Parser -> ASTNode
-ASTNode <- Interpreter
+Lexer -right-> Token
+Token -down-> Keyword
+Token -up-> Position
+Token <--right-- Parser
+Parser -right> Command
+Parser <-down-> CommandFactory
+Parser -down-> ParseNode
+ParseNode -right-> CommandFactory
+Keyword <-right- CommandFactory
+CommandFactory -up-> Command
+CommandFactory -right-> VariableStorage
+Command <-right- Interpreter
 @enduml

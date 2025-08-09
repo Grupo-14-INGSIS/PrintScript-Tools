@@ -1,0 +1,10 @@
+1. El Parser recibe un array de Tokens
+2. El Parser convierte el array de Tokens en un árbol de ParseNodes
+3. El Parser envía el árbol al CommandFactory (CommandFactory.getCommand(parseNode))
+4. El CommandFactory lee el Token.keyword de cada ParseNode y crea los Commands recursivamente
+	a. Antes de crear un Command, crea primero los Command hijos, por lo que los Commands deberían recibir (en su mayoría) otros Commands
+	   como parámetros en sus constructores según cada implementación, creando así primero las variables, luego operaciones lógicas y
+	   aritméticas, y luego asignaciones y prints
+	b. Durante la creación de algunos Commands, CommandFactory podría llamar a VariableStorage
+5. El CommandFactory envía el Command raíz al Parser
+6. El Parser envía el Command raíz al Interpreter
