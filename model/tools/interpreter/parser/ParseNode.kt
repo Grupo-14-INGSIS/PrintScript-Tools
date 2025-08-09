@@ -1,4 +1,8 @@
 package model.tools.interpreter.parser
 
-class ParseNode {
-}
+import model.structure.Token
+
+class ParseNode (
+    val token: Token,
+    val children: List<Token>
+)
