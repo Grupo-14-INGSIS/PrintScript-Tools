@@ -5,14 +5,10 @@ import Lexer.CharacterHandlerFactory
 import Lexer.LexerState
 import Lexer.TokenFactory
 import model.structure.Container
-import model.structure.Token
-import model.structure.TokenMap
-import model.structure.TokenPattern
 
 class Lexer(val input: String) { //conviene que no se pueda reasignar el input, es lo que recibo y no va a variar
 
     val list = mutableListOf<String>();
-    private val tokenFactory = TokenFactory()
 
     fun splitString() {
         val state = LexerState()
@@ -31,12 +27,12 @@ class Lexer(val input: String) { //conviene que no se pueda reasignar el input, 
 
     fun createToken(list: List<String>) : Container {
 
-        return tokenFactory.createTokens(list)
+        return TokenFactory.createTokens(list)
     }
 }
 
 
 
-
+//hace lo MISMO que la version anterior, pero ahora prgormao en el mismo dominio, oculto codigo y es extensible
 //generar lista de palabras separando por espacios
 //tomar cada elemento y clasificarlo generanodo un token y guardarlo en container

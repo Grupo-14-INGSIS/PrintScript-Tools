@@ -5,7 +5,7 @@ import model.structure.Token
 import model.structure.TokenMap
 import model.structure.TokenPattern
 
-class TokenFactory {
+object TokenFactory {
     fun createTokens(pieces: List<String>): Container {
         val container = Container()
         var position = 0

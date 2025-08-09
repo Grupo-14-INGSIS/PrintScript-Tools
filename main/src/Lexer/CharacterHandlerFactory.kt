@@ -8,7 +8,7 @@ object CharacterHandlerFactory {
     private val regularHandler = RegularHandler()
 
     fun getHandler(type: CharacterType) : CharacterHandler{
-        return when (type){
+        return when (type){ //trade off extensibilidad
             CharacterType.QUOTE -> quoteHandler
             CharacterType.SEPARATOR -> separatorHandler
             CharacterType.WHITESPACE -> whiteSpaceHandler
