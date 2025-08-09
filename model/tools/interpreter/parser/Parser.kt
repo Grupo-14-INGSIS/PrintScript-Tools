@@ -1,4 +1,4 @@
-package model.tools.interpreter
+package model.tools.interpreter.parser
 
 class Parser {
 }
