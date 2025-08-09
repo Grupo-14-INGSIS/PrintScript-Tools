@@ -1,4 +1,4 @@
 package model.tools.interpreter.common
 
-class CommandFActory {
+class CommandFactory {
 }
