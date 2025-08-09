@@ -1,0 +1,60 @@
+@startuml
+' ### INTERPRETER ###
+
+class Lexer {
+' Toma la String y la convierte en una lista de Tokens. Se encarga de identificar las palabras claves
+Token[] process(String text)
+}
+
+class Token {
+KeyWord type
+String content
+Position position
+}
+
+class Position {
+int line
+int column
+}
+
+enum KeyWord {}
+
+class Parser {
+' Toma la lista de Tokens y verifica si forman una estructura válida. De ser así, devuelve un AST
+ASTNode build(Token[] tokens)
+}
+
+class ASTNode {
+Token token
+Token[] children
+}
+
+class Interpreter {
+' Ejecuta el AST
+void execute(ASTNode tree)
+}
+
+' ### FORMATTER ###
+
+class Formatter {
+' Aplica formato y convenciones al código, sin cambiar su funcionalidad
+}
+
+' ### STATIC CODE ANALYZER ###
+
+class StaticCodeAnalyzer {
+' Busca errores y malas prácticas
+}
+
+class Container{
+Token[] list
+}
+
+Lexer -> Token
+Token -up-> KeyWord
+Token -down-> Position
+Token <- Parser
+Parser -> ASTNode
+ASTNode <- Interpreter
+Container -up-> Lexer
+@enduml
