@@ -7,7 +7,7 @@ import model.structure.TokenPattern
 
 object TokenFactory {
     fun createTokens(pieces: List<String>): Container {
-        val container = Container()
+        val container = Container() //se ejecuta cada vez  que lo llamo, no es un container para siempre
         var position = 0
 
         pieces.filter { it.isNotEmpty() }
