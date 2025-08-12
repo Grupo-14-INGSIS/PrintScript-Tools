@@ -28,5 +28,7 @@ enum class DataType {
     SPACE,
     COLON,
     SEMICOLON,
-    LINE_BREAK
+    LINE_BREAK,
+
+    INVALID
 }

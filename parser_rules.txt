@@ -1,0 +1,92 @@
+### PrintScript ###
+
+<program> ::= <statement>+
+
+<statement> ::= "let" <var> ":" <type> "=" <exp> ";"
+            ::= <exp> ";"
+
+<function_call> ::= <fun> "(" ")"
+                ::= <fun> "(" <exp> ("," <exp>)* ")"
+
+<fun> ::= IDENTIFIER
+
+<var>  ::= IDENTIFIER
+
+<type> ::= "string"
+       ::= "numerical"
+
+<exp> ::= <var>
+      ::= <function_call>
+      ::= <literal>
+      ::= "(" <exp> ")"
+      ::= <arith>
+
+<literal> ::= valor literal
+
+<arith> -> Se evalúa por Pratt-Parsing Algorithm
+	Incluye toda expresión que contenga +, -, *, / o = (incluyendo +=, -=, *=, /*, ++, --) a menos que inicie con "let"
+	TypeScript permite expresiones como print(x = 5); y PrintScript es superset de TypeScript
+
+### Bloques ###
+
+<program>
+<statement>, <stmt>
+<var>
+<type>
+<exp>
+<function_call>, <funcall>
+<fun>
+<literal>, <lit>
+<arith>
+
+### Modelo ###
+
+@startuml
+class Parser {
+parse(Tokens: Container): ASTNode
+}
+
+class Grammar {
+stmtParse(Tokens: Container): ASTNode
+varParse(Tokens: Container): ASTNode
+typeParse(Tokens: Container): ASTNode
+expParse(Tokens: Container): ASTNode
+funcallParse(Tokens: Container): ASTNode
+funParse(Tokens: Container): ASTNode
+litParse(Tokens: Container): ASTNode
+...()
+xParse(): ASTNode
+}
+
+class PrattParser {
+bindingPowers: Map<String, Int>
+arithParse(Tokens: Container): ASTNode
+getBindingPower(operation: String): Int
+}
+
+class VariableStorage
+class FunctionRegistry
+
+Parser -down-> Grammar: Calls stmtParse()
+Grammar -left-> PrattParser: Calls arithParse()
+Grammar <-left- PrattParser: Calls xParse()
+Grammar --> Grammar: Calls xParse()
+Grammar --> VariableStorage
+Grammar --> FunctionRegistry
+@enduml
+
+### Algoritmo general ###
+
+1. Iterar los tokens del programa hasta encontrar un token ";", agregando los tokens procesados en un array auxiliar
+2. Procesar el array auxiliar
+	a. Si el array comienza con "let" -> letParse(Token[])
+	b. expParse(Token[])
+
+expParse():
+1. Verificar el tipo del próximo token
+a. Si es variable -> varParse(Token[])
+b. Si es función -> funParse(Token[])
+c. Si es literal -> litParse(Token[])
+d. Si comienza con "(" -> parParse(Token[])
+e. Si contiene algún símbolo aritmético -> arithParse(Token[])
+
