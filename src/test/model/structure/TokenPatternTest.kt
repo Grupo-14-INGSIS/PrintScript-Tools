@@ -1,5 +1,7 @@
-import model.structure.DataType
-import model.structure.TokenPattern
+package src.test.model.structure
+
+import src.main.model.structure.DataType
+import src.main.model.structure.TokenPattern
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test

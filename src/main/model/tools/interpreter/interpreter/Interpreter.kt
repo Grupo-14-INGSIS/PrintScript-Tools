@@ -1,6 +1,6 @@
-package src.main.tools.interpreter.interpreter
+package src.main.model.tools.interpreter.interpreter
 
-import src.main.structure.ASTNode
+import src.main.model.structure.ASTNode
 
 class Interpreter {
     private val actionHandlers = mapOf(
@@ -12,7 +12,7 @@ class Interpreter {
         Actions.DIVIDE to Divide,
         Actions.PRINT to Print,
         Actions.VAR_DECLARATION to VarDeclaration,
-        Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
+        Actions.VAR_DECLARATION_AND_ASSIGNMENT to src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment,
     )
 
     fun interpret(node: ASTNode, action: Actions): Any? {

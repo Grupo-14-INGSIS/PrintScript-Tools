@@ -1,4 +1,4 @@
-package src.main.tools.interpreter.interpreter
+package src.main.model.tools.interpreter.interpreter
 
 enum class Actions {
     ADD,

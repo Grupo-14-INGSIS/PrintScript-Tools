@@ -1,9 +1,9 @@
-package src.main.tools.interpreter.parser
+package src.main.model.tools.interpreter.parser
 
-import src.main.structure.ASTNode
-import src.main.structure.Container
-import src.main.structure.DataType
-import src.main.structure.Token
+import src.main.model.structure.ASTNode
+import src.main.model.structure.Container
+import src.main.model.structure.DataType
+import src.main.model.structure.Token
 
 class Grammar {
 
@@ -60,8 +60,15 @@ class Grammar {
         if (isArith(tokens)) {
             return pratt.arithParse(tokens)
         }
+        /*
         if (isFunCall(tokens)) {
             return funcallParse(tokens)
+        }
+        */
+        if (tokens.first()!!.type == DataType.PRINTLN) {
+            return ASTNode(tokens.first()!!, listOf(
+                expParse(tokens.slice(1))
+            ))
         }
         if (tokens.first()!!.type == DataType.IDENTIFIER) {
             return varParse(tokens)
@@ -73,7 +80,7 @@ class Grammar {
             tokens.first()!!.type == DataType.OPEN_PARENTHESIS &&
             tokens.last()!!.type == DataType.CLOSE_PARENTHESIS
         ) {
-            return expParse(tokens.slice(1, tokens.size() - 2))
+            return expParse(tokens.slice(1, tokens.size() - 1))
         }
 
         return invalid

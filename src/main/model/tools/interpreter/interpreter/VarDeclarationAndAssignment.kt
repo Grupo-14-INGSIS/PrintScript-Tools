@@ -1,11 +1,11 @@
-package src.main.tools.interpreter.interpreter
+package src.main.model.tools.interpreter.interpreter
 
-import src.main.structure.ASTNode
+import src.main.model.structure.ASTNode
 
-object VarDeclarationAndAssignment : ActionType {
+object VarDeclarationAndAssignment : src.main.model.tools.interpreter.interpreter.ActionType {
     private val variables = mutableMapOf<String, Any?>()
 
-    override fun interpret(node: ASTNode, actions: Actions): Any {
+    override fun interpret(node: ASTNode, actions: src.main.model.tools.interpreter.interpreter.Actions): Any {
 
         require(node.children.size >= 3) { "Declaración con asignación inválida: faltan argumentos" }
 
@@ -14,17 +14,23 @@ object VarDeclarationAndAssignment : ActionType {
         val assignedValue = node.children[2].token.content // "5"
 
         // evitar redeclaracion
-        if (variables.containsKey(variableName)) {
+        if (src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables.containsKey(variableName)) {
             throw IllegalStateException("La variable '$variableName' ya fue declarada")
         }
 
         // convertir el valor asignado al tipo correcto
-        val valueToStore = convertValueToType(assignedValue, variableType)
+        val valueToStore = src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.convertValueToType(
+            assignedValue,
+            variableType
+        )
 
         // validar que el valor sea compatible con el tipo
-        validateTypeCompatibility(valueToStore, variableType)
+        src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.validateTypeCompatibility(
+            valueToStore,
+            variableType
+        )
 
-        variables[variableName] = valueToStore
+        src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables[variableName] = valueToStore
 
         return Unit
     }

@@ -1,4 +1,4 @@
-package src.main.tools.common
+package src.main.model.tools.common
 
 class ReservedKeywords {
     companion object {

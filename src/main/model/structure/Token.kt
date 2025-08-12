@@ -1,4 +1,4 @@
-package src.main.structure
+package src.main.model.structure
 
 data class Token (
     val type: DataType?,

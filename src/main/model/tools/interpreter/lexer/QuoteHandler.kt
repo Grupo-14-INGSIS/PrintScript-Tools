@@ -1,4 +1,4 @@
-package src.main.tools.interpreter.lexer
+package src.main.model.tools.interpreter.lexer
 
 class QuoteHandler : CharacterHandler {
     override fun handle(char: Char, state: LexerState) {

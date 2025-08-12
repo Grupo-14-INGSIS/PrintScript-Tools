@@ -1,7 +1,7 @@
-
+package src.test.model.tools.interpreter.lexer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import model.tools.interpreter.Lexer
+import src.main.model.tools.interpreter.lexer.Lexer
 
 class LexerUnitTest {
 
@@ -79,7 +79,7 @@ class LexerUnitTest {
 
     @Test
     fun `test splitString with numbers and decimals`() {
-        val lexer = model.tools.interpreter.Lexer("123 45.67")
+        val lexer = src.main.model.tools.interpreter.lexer.Lexer("123 45.67")
         lexer.splitString()
 
         assertEquals(listOf("123", " ", "45.67"), lexer.list)

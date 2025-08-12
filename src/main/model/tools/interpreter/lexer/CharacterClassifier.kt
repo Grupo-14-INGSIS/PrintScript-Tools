@@ -1,4 +1,4 @@
-package src.main.tools.interpreter.lexer
+package src.main.model.tools.interpreter.lexer
 
 object CharacterClassifier {
     private val separators = setOf(';', ':', '\n', '+', '-', '*', '/', '=', '(', ')')

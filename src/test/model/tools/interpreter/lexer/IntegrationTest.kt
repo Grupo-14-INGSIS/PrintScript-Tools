@@ -1,7 +1,9 @@
+package src.test.model.tools.interpreter.lexer
+
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import model.tools.interpreter.Lexer
-import model.structure.*
+import src.main.model.tools.interpreter.lexer.Lexer
+import src.main.model.structure.*
 
 class IntegrationTest {
 

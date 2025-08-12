@@ -1,6 +1,8 @@
-import model.structure.Container
-import model.structure.DataType
-import model.structure.Token
+package src.test.model.structure
+
+import src.main.model.structure.Container
+import src.main.model.structure.DataType
+import src.main.model.structure.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

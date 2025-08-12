@@ -1,9 +1,9 @@
-package src.main.tools.interpreter.parser
+package src.main.model.tools.interpreter.parser
 
-import src.main.structure.ASTNode
-import src.main.structure.Container;
-import src.main.structure.DataType
-import src.main.structure.Token
+import src.main.model.structure.ASTNode
+import src.main.model.structure.Container;
+import src.main.model.structure.DataType
+import src.main.model.structure.Token
 
 class PrattParser {
 

@@ -1,6 +1,6 @@
-package src.main.tools.interpreter.lexer
+package src.main.model.tools.interpreter.lexer
 
-import src.main.structure.Container
+import src.main.model.structure.Container
 
 class Lexer(val input: String) { //conviene que no se pueda reasignar el input, es lo que recibo y no va a variar
 
