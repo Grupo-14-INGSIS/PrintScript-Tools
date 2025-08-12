@@ -14,17 +14,27 @@ enum class DataType {
     STRING_LITERAL,
     NUMBER_LITERAL,
 
-    // Operations
+    // Asignation
     ASSIGNATION,
+    DECLARATION,
+
+    // Operations
     ADDITION,
     SUBTRACTION,
     MULTIPLICATION,
     DIVISION,
     PRINTLN,
 
+    // Functions
+    FUNCTION_CALL,
+
     // Punctuation -> May be useful for Formatter
     SPACE,
     COLON,
     SEMICOLON,
-    LINE_BREAK
+    LINE_BREAK,
+    OPEN_PARENTHESIS,
+    CLOSE_PARENTHESIS,
+
+    INVALID
 }

@@ -14,7 +14,7 @@ import model.structure.ASTNode
 class Interpreter {
     private val actionHandlers = mapOf(
         Actions.ADD to Add, //sin parentesis pq soo object, no class
-        Actions.SUBSTRACT to Subtract,
+        Actions.SUBTRACT to Subtract,
         Actions.MULTIPLY to Multiply,
         Actions.DIVIDE to Divide,
         Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,

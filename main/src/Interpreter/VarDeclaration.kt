@@ -9,8 +9,8 @@ object VarDeclaration : ActionType {
 
         require(node.children.size >= 2) { "Declaración inválida: faltan argumentos" }
 
-        val variableName = node.children[0].content
-        val variableType = node.children[1].content
+        val variableName = node.children[0].token.content
+        val variableType = node.children[1].token.content
 
         // evitar redeclaracion
         if (variables.containsKey(variableName)) {
