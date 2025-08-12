@@ -31,3 +31,5 @@ class Interpreter {
         return true
     }
 }
+
+// elimino el retorno de exception para que no "explote" cuando el codigo corre
