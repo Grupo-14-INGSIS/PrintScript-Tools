@@ -2,7 +2,6 @@
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import model.tools.interpreter.Lexer
-import model.structure.*
 
 class LexerUnitTest {
 
@@ -32,10 +31,10 @@ class LexerUnitTest {
 
     @Test
     fun `test splitString with arithmetic operators`() {
-        val lexer = Lexer("x + y - z")
+        val lexer = Lexer("(x + y) - z")
         lexer.splitString()
 
-        assertEquals(listOf("x", " ", "+", " ", "y", " ", "-", " ", "z"), lexer.list)
+        assertEquals(listOf("(","x", " ", "+", " ", "y",")", " ", "-", " ", "z"), lexer.list)
     }
 
     @Test

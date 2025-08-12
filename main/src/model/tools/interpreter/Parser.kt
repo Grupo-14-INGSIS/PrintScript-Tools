@@ -90,10 +90,11 @@ class Parser(private val container: Container) {
     private fun getCurrentToken(tokens: List<Token>): Token = tokens[currentPosition]
     private fun advance() { currentPosition++ }
 
-    private fun consume(expected: String, tokens: List<Token>) {
+    private fun consume(expected: String, tokens: List<Token>): Any? {
         if (getCurrentToken(tokens).content != expected) {
-            throw Exception("Expected '$expected', found '${getCurrentToken(tokens).content}'")
+            return false
         }
         advance()
+        return true
     }
 }

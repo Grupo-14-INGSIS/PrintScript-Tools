@@ -24,9 +24,10 @@ class Interpreter {
         Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
     )
 
-    fun interpret(node: ASTNode, action: Actions) {
+    fun interpret(node: ASTNode, action: Actions): Any? {
         val handler = actionHandlers[action]
-            ?: throw Exception("Action $action not supported")
+            ?: return false
         handler.interpret(node, action)
+        return true
     }
 }

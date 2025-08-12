@@ -3,7 +3,7 @@ package Lexer
 object CharacterClassifier {
     private val separators = setOf(';', ':', '\n', '+', '-', '*', '/', '=', '(', ')')
     private val quotes = setOf('"', '\'')
-    private val whitespaces = setOf(' ', '\t', '\r')
+    private val whitespaces = setOf('\t', '\r')
 
     fun classify(char: Char): CharacterType {
         return when {
