@@ -1,8 +1,6 @@
 package model.structure
 
 enum class DataType {
-    PUBLIC_KEYWORD,
-    FINAL_KEYWORD,
 
     LET_KEYWORD,
 

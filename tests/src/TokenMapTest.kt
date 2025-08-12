@@ -9,8 +9,6 @@ class TokenMapTest {
     @Test
     fun `test classify keywords`() {
         assertEquals(DataType.LET_KEYWORD, TokenMap.classifyTokenMap("let"))
-        assertEquals(DataType.PUBLIC_KEYWORD, TokenMap.classifyTokenMap("public"))
-        assertEquals(DataType.FINAL_KEYWORD, TokenMap.classifyTokenMap("final"))
     }
 
     @Test

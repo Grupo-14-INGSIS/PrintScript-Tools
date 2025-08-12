@@ -2,8 +2,6 @@ package model.structure
 
 object TokenMap {
     private val tokenMap = mapOf(
-        "public" to DataType.PUBLIC_KEYWORD,
-        "final" to DataType.FINAL_KEYWORD,
         "let" to DataType.LET_KEYWORD,
         "string" to DataType.STRING_TYPE,
         "number" to DataType.NUMBER_TYPE,
