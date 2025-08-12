@@ -9,8 +9,8 @@ object Add : ActionType {
         val right = node.children[1] // Es Token directamente
 
         // Obtener el valor del Token
-        val leftValue = left.content   // o left.piece, según tu Token
-        val rightValue = right.content // o right.piece, según tu Token
+        val leftValue = left.token.content   // o left.piece, según tu Token
+        val rightValue = right.token.content // o right.piece, según tu Token
 
         // Convertir a números
         val leftNum = leftValue.toDoubleOrNull()

@@ -6,7 +6,7 @@ enum class Actions {
     DIVIDE,
     MULTIPLY,
     PRINT,
-    SUBSTRACT,
+    SUBTRACT,
     VAR_DECLARATION,
     VAR_DECLARATION_AND_ASSIGNMENT
 }

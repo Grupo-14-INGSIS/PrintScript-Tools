@@ -7,8 +7,8 @@ object Divide : ActionType{
         val left = node.children[0]
         val right = node.children[1]
 
-        val leftValue = left.content
-        val rightValue = right.content
+        val leftValue = left.token.content
+        val rightValue = right.token.content
 
         val leftNum = leftValue.toIntOrNull()
         val rightNum = rightValue.toIntOrNull()
