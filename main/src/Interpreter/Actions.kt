@@ -1,0 +1,12 @@
+package Interpreter
+
+enum class Actions {
+    ADD,
+    ASSIGNMENT_TO_EXISTING_VAR,
+    DIVIDE,
+    MULTIPLY,
+    PRINT,
+    SUBSTRACT,
+    VAR_DECLARATION,
+    VAR_DECLARATION_AND_ASSIGNMENT
+}
