@@ -1,0 +1,16 @@
+package src.main.tools.interpreter.lexer
+
+class SeparatorHandler : CharacterHandler {
+    override fun handle(char: Char, state: LexerState) {
+        if(state.isInLiteral){
+            state.currentPiece.append(char)
+        }
+        else{
+            if(state.currentPiece.isNotEmpty()){
+                state.pieces.add(state.currentPiece.toString())
+                state.currentPiece.clear()
+            }
+            state.pieces.add(char.toString())
+        }
+    }
+}
