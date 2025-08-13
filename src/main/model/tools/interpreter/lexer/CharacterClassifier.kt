@@ -2,7 +2,7 @@ package src.main.model.tools.interpreter.lexer
 
 object CharacterClassifier {
     private val separators = setOf(';', ':', '\n', '+', '-', '*', '/', '=', '(', ')')
-    private val quotes = setOf('"', '\'')
+    private val quotes = setOf('"', '\'', '`')
     private val whitespaces = setOf(' ', '\t', '\r')
 
     fun classify(char: Char): CharacterType {
@@ -15,3 +15,4 @@ object CharacterClassifier {
     }
 }
 // factory para clasificar caracteres
+//agrego ` par multiline

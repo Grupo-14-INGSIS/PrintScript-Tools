@@ -14,7 +14,9 @@ object TokenMap {
         " " to DataType.SPACE,
         ":" to DataType.COLON,
         ";" to DataType.SEMICOLON,
-        "\n" to DataType.LINE_BREAK
+        "\n" to DataType.LINE_BREAK,
+        "(" to DataType.OPEN_PARENTHESIS,
+        ")" to DataType.CLOSE_PARENTHESIS
     )
 
     fun classifyTokenMap(piece: String): DataType? {
