@@ -1,5 +1,5 @@
 plugins {
-    id 'buildlogic.kotlin-myPlugin-convnetions'
+    id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
 

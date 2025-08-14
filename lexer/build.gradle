@@ -1,5 +1,5 @@
 plugins {
-    id 'buildlogic.kotlin-myPLugin-conventions' //sin la extension .gradle
+    id 'buildlogic.kotlin-myPlugin-conventions' //sin la extension .gradle
 }
 
 
