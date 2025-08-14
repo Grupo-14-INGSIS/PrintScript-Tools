@@ -2,11 +2,13 @@ package src.test.model.tools.interpreter.parser
 
 import src.main.model.tools.interpreter.parser.Parser
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import src.main.model.structure.ASTNode
 import src.main.model.structure.Container
 import src.main.model.structure.DataType
 import src.main.model.structure.Token
+import src.main.model.tools.interpreter.parser.PrattParser
 
 class ParserTest {
 
@@ -60,5 +62,19 @@ class ParserTest {
 
         assertEquals(DataType.PRINTLN, root.token.type)
         assertEquals(DataType.STRING_LITERAL, root.children[0].token.type)
+    }
+
+    @Test
+    fun `arithmetic parser should return INVALID ASTNode`(){
+        val container = Container()
+        val pratt = PrattParser()
+
+        val result = pratt.arithParse(container)
+
+        assertEquals(DataType.INVALID, result.token.type)
+        assertEquals("", result.token.content)
+        assertEquals(0, result.token.position)
+        assertTrue(result.children.isEmpty())
+
     }
 }
