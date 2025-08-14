@@ -27,4 +27,5 @@ include 'parser'
 include 'interpreter'
 include 'lexer'
 include 'common'
+include 'formatter'
 
