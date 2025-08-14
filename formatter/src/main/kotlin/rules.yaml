@@ -1,0 +1,24 @@
+formatter_rules:
+  spaces:
+
+    spaceBeforeColon: optional
+    spaceAfterColon: optional
+
+    spaceBeforeEquals: optional
+    spaceAfterEquals: optional
+
+    spaceBetweenTokens: true
+
+    spaceBeforeOperator: true
+    spaceAfterOperator: true
+
+  lineBreak:
+
+    lineBreakBeforePrint: { 0,1,2 }
+    lineBreakAfterSemicolon: true
+
+
+
+
+
+
