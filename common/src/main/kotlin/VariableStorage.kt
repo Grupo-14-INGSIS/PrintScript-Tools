@@ -1,4 +1,4 @@
-package src.main.model.tools.common
+package common.src.main.kotlin
 
 class VariableStorage {
 }

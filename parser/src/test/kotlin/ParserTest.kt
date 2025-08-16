@@ -1,12 +1,12 @@
-package src.test.model.tools.interpreter.parser
+package parser.src.test.kotlin
 
-import src.main.model.tools.interpreter.parser.Parser
+import parser.src.main.kotlin.Parser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import src.main.model.structure.ASTNode
-import src.main.model.structure.Container
-import src.main.model.structure.DataType
-import src.main.model.structure.Token
+import common.src.main.kotlin.ASTNode
+import common.src.main.kotlin.Container
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Token
 
 class ParserTest {
 

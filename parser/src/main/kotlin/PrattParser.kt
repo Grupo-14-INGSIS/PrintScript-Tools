@@ -1,14 +1,14 @@
-package src.main.model.tools.interpreter.parser
+package parser.src.main.kotlin
 
-import src.main.model.structure.ASTNode
-import src.main.model.structure.Container;
-import src.main.model.structure.DataType
-import src.main.model.structure.Token
+import common.src.main.kotlin.ASTNode
+import common.src.main.kotlin.Container
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Token
 
 class PrattParser {
 
     fun arithParse(tokens: Container): ASTNode {
-        return ASTNode(Token(DataType.INVALID, "", 0), listOf())
+        val 
     }
 
 }
