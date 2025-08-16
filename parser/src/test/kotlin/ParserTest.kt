@@ -2,6 +2,7 @@ package parser.src.test.kotlin
 
 import parser.src.main.kotlin.Parser
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import common.src.main.kotlin.ASTNode
 import common.src.main.kotlin.Container

@@ -1,18 +1,4 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' // sin versión
+    id 'buildlogic.kotlin-myPlugin-conventions' // sin versión
 }
 
-group = 'org.example'
-version = 'unspecified'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-}
-
-test {
-    useJUnitPlatform()
-}
