@@ -30,7 +30,7 @@ class PrattToken (
     private val token: Token,
     private val precedence: Int = getPrecedence(token),
     private val associativity: Association = getAssociativity(token),
-    private val children: MutableList<Token> = mutableListOf()
+    private val children: MutableList<PrattToken> = mutableListOf()
 ) {
 
     fun token(): Token {
@@ -39,8 +39,8 @@ class PrattToken (
 
     fun associate(child1: PrattToken, child2: PrattToken?): PrattToken {
         val output: PrattToken = PrattToken(token, 0)
-        output.children.add(child1.token())
-        if (child2 != null) output.children.add(child2.token())
+        output.children.add(child1)
+        if (child2 != null) output.children.add(child2)
         return output
     }
 
@@ -50,6 +50,11 @@ class PrattToken (
 
     fun associativity(): Association {
         return associativity
+    }
+
+    fun children(index: Int): PrattToken? {
+        if (index < 0 || index >= children.size) return null
+        return children[index]
     }
 
 }
