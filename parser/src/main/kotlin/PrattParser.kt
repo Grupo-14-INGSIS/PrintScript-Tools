@@ -13,7 +13,7 @@ class PrattParser {
         val symbols: MutableList<PrattToken> = prattify(tokens)
         var nextOperator: Int
         var result: Boolean
-        while (tokens.size() > 1) {
+        while (symbols.size > 1) {
             nextOperator = highestPrecedIndex(symbols)
             if (nextOperator == -1) return invalid
             result = associate(symbols, nextOperator)
@@ -25,7 +25,6 @@ class PrattParser {
     // Turns a Container into a list of PrattToken objects
     private fun prattify(tokens: Container): MutableList<PrattToken> {
         val output: MutableList<PrattToken> = mutableListOf()
-        var token: Token
         for (i in 0 until tokens.size()) {
             output.add(PrattToken(tokens.get(i)!!))
         }
@@ -34,13 +33,14 @@ class PrattParser {
 
     // Searches for symbol with the highest precedence
     private fun highestPrecedIndex(symbols: List<PrattToken>): Int {
-        var output: Int = -1
-        var highestPrecedence: Int = symbols[0].precedence()
+        var output: Int = -1 // Index of highest precedence
+        var highestPrecedence: Int = symbols[0].precedence() // Highest precedence value
         var token: PrattToken
         for (i in symbols.indices) {
             token = symbols[i]
             if (token.precedence() > highestPrecedence) {
                 highestPrecedence = token.precedence()
+                output = i
             } else if (token.precedence() == highestPrecedence) {
                 if (token.associativity() == Association.RIGHT) {
                     output = i
@@ -55,7 +55,7 @@ class PrattParser {
         if (operator - 1 < 0 || operator + 1 >= symbols.size) return false
         val left = symbols[operator - 1]
         val right = symbols[operator + 1]
-        symbols[operator].associate(left, right)
+        symbols[operator].associate(listOf(left, right))
         symbols.removeAt(operator + 1)
         symbols.removeAt(operator - 1)
         return true

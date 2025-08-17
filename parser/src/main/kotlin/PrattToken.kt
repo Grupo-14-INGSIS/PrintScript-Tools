@@ -19,17 +19,19 @@ private val associations: Map<String, Association> = mapOf(
 )
 
 fun getPrecedence(token: Token): Int {
-    return precedences[token.content]!!
+    return if (token.content in precedences) precedences[token.content]!!
+    else 0
 }
 
 fun getAssociativity(token: Token): Association {
-    return associations[token.content]!!
+    return if (token.content in associations) associations[token.content]!!
+    else Association.ANY
 }
 
 class PrattToken (
     private val token: Token,
-    private val precedence: Int = getPrecedence(token),
-    private val associativity: Association = getAssociativity(token),
+    private var precedence: Int = getPrecedence(token),
+    private var associativity: Association = getAssociativity(token),
     private val children: MutableList<PrattToken> = mutableListOf()
 ) {
 
@@ -37,11 +39,10 @@ class PrattToken (
         return token
     }
 
-    fun associate(child1: PrattToken, child2: PrattToken?): PrattToken {
-        val output: PrattToken = PrattToken(token, 0)
-        output.children.add(child1)
-        if (child2 != null) output.children.add(child2)
-        return output
+    fun associate(children: List<PrattToken>) {
+        this.precedence = 0
+        this.associativity = Association.ANY
+        this.children.addAll(children)
     }
 
     fun precedence(): Int {
