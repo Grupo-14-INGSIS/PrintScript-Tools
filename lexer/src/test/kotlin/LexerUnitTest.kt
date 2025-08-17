@@ -10,7 +10,7 @@ class LexerUnitTest {
         val lexer = Lexer("let x")
         lexer.splitString()
 
-        assertEquals(listOf("let", " ", "x"), lexer.pieces)
+        assertEquals(listOf("let", " ", "x"), lexer.list)
     }
 
     @Test
@@ -18,7 +18,7 @@ class LexerUnitTest {
         val lexer = Lexer("\"hello world\"")
         lexer.splitString()
 
-        assertEquals(listOf("\"hello world\""), lexer.pieces)
+        assertEquals(listOf("\"hello world\""), lexer.list)
     }
 
     @Test
@@ -26,7 +26,7 @@ class LexerUnitTest {
         val lexer = Lexer("'hello world'")
         lexer.splitString()
 
-        assertEquals(listOf("'hello world'"), lexer.pieces)
+        assertEquals(listOf("'hello world'"), lexer.list)
     }
 
     @Test
@@ -34,7 +34,7 @@ class LexerUnitTest {
         val lexer = Lexer("x + y - z")
         lexer.splitString()
 
-        assertEquals(listOf("x", " ", "+", " ", "y", " ", "-", " ", "z"), lexer.pieces)
+        assertEquals(listOf("x", " ", "+", " ", "y", " ", "-", " ", "z"), lexer.list)
     }
 
     @Test
@@ -42,7 +42,7 @@ class LexerUnitTest {
         val lexer = Lexer("x = 5;")
         lexer.splitString()
 
-        assertEquals(listOf("x", " ", "=", " ", "5", ";"), lexer.pieces)
+        assertEquals(listOf("x", " ", "=", " ", "5", ";"), lexer.list)
     }
 
     @Test
@@ -50,7 +50,7 @@ class LexerUnitTest {
         val lexer = Lexer("x: number")
         lexer.splitString()
 
-        assertEquals(listOf("x", ":", " ", "number"), lexer.pieces)
+        assertEquals(listOf("x", ":", " ", "number"), lexer.list)
     }
 
     @Test
@@ -58,7 +58,7 @@ class LexerUnitTest {
         val lexer = Lexer("let x;\nlet y;")
         lexer.splitString()
 
-        assertEquals(listOf("let", " ", "x", ";", "\n", "let", " ", "y", ";"), lexer.pieces)
+        assertEquals(listOf("let", " ", "x", ";", "\n", "let", " ", "y", ";"), lexer.list)
     }
 
     @Test
@@ -66,7 +66,7 @@ class LexerUnitTest {
         val lexer = Lexer("\"hello world with spaces\"")
         lexer.splitString()
 
-        assertEquals(listOf("\"hello world with spaces\""), lexer.pieces)
+        assertEquals(listOf("\"hello world with spaces\""), lexer.list)
     }
 
     @Test
@@ -74,7 +74,7 @@ class LexerUnitTest {
         val lexer = Lexer("\"double\" 'single'")
         lexer.splitString()
 
-        assertEquals(listOf("\"double\"", " ", "'single'"), lexer.pieces)
+        assertEquals(listOf("\"double\"", " ", "'single'"), lexer.list)
     }
 
     @Test
@@ -82,7 +82,7 @@ class LexerUnitTest {
         val lexer = Lexer("123 45.67")
         lexer.splitString()
 
-        assertEquals(listOf("123", " ", "45.67"), lexer.pieces)
+        assertEquals(listOf("123", " ", "45.67"), lexer.list)
     }
 }
 

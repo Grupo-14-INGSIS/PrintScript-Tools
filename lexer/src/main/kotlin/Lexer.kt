@@ -1,31 +1,28 @@
 package src.main.model.tools.interpreter.lexer
-
 import common.src.main.kotlin.Container
 
-class Lexer(val input: String) {
+class Lexer(val input: String) { //conviene que no se pueda reasignar el input, es lo que recibo y no va a variar
 
-    private var finalState: LexerState = LexerState()
-        private set
-
-    val pieces: List<String>
-        get() = finalState.pieces
+    val list = mutableListOf<String>();
 
     fun splitString() {
-        finalState = input.fold(LexerState()) { state, char ->
+        var state = LexerState()
+        input.forEach { char ->
             val characterType = CharacterClassifier.classify(char)
-            val handler = CharacterHandlerFactory.getHandler(characterType)
-            handler.handle(char, state)
-        }.let { state ->
-            if (state.currentPiece.isNotEmpty()) {
-                state.copy(pieces = state.pieces + state.currentPiece)
-            } else {
-                state
-            }
+            val handler = CharacterHandlerFactory.getHandler(characterType) //puedo operar sobre la clase porque es un object (singleton)
+            state = handler.handle(char, state) // cambio: asignar el nuevo estado retornado
+        }
+
+        if(state.currentPiece.isNotEmpty()){
+            list.addAll(state.pieces + state.currentPiece) // cambio: agregar directamente la concatenación
+        } else {
+            list.addAll(state.pieces) // cambio: solo agregar pieces si currentPiece está vacío
         }
     }
 
-    fun createToken(): Container {
-        return TokenFactory.createTokens(finalState.pieces)
+    fun createToken(list: List<String>) : Container {
+
+        return TokenFactory.createTokens(list)
     }
 }
 
