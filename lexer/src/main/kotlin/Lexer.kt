@@ -1,5 +1,6 @@
 package src.main.model.tools.interpreter.lexer
-import src.main.model.structure.Container
+
+import common.src.main.kotlin.Container
 
 class Lexer(val input: String) {
 

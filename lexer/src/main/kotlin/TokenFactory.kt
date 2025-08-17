@@ -1,9 +1,10 @@
 package src.main.model.tools.interpreter.lexer
 
-import src.main.model.structure.Container
-import src.main.model.structure.Token
-import src.main.model.structure.TokenMap
-import src.main.model.structure.TokenPattern
+import common.src.main.kotlin.Container
+import common.src.main.kotlin.Token
+import common.src.main.kotlin.TokenMap
+import common.src.main.kotlin.TokenPattern
+
 
 object TokenFactory {
     fun createTokens(pieces: List<String>): Container {
