@@ -11,7 +11,7 @@ class IntegrationTest {
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Debug: imprimir tokens generados
         println("Tokens generados: ${container.container.size}")
@@ -49,7 +49,7 @@ class IntegrationTest {
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         assertEquals(11, container.container.size)
 
@@ -71,7 +71,7 @@ class IntegrationTest {
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         assertEquals(11, container.container.size)
 
@@ -92,7 +92,7 @@ class IntegrationTest {
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         assertEquals(11, container.container.size)
 
@@ -108,7 +108,7 @@ class IntegrationTest {
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Debug
         println("Arithmetic tokens: ${container.container.size}")
@@ -134,7 +134,7 @@ class IntegrationTest {
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Debug
         println("Println tokens:")
@@ -159,7 +159,7 @@ println(x + 1);"""
 
         val lexer = Lexer(input)
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Debug
         println("Multi-line tokens:")
@@ -184,7 +184,7 @@ println(x + 1);"""
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         with(container.container) {
             val piToken = find { it.content == "3.14" }
@@ -207,7 +207,7 @@ println(x + 1);"""
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Verificar que hay múltiples operadores de suma
         val additionTokens = container.container.filter { it.type == DataType.ADDITION }
@@ -225,7 +225,7 @@ println(x + 1);"""
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Debug
         println("Complex expression tokens:")
@@ -253,7 +253,7 @@ println(x + 1);"""
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Verificar que las posiciones se asignan correctamente
         container.container.forEachIndexed { index, token ->
@@ -267,7 +267,7 @@ println(x + 1);"""
         val lexer = Lexer(input)
 
         lexer.splitString()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.createToken()
 
         // Verificar que no hay tokens vacíos
         assertTrue(container.container.none { it.content.isEmpty() })

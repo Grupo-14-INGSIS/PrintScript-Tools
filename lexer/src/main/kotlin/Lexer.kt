@@ -1,28 +1,30 @@
 package src.main.model.tools.interpreter.lexer
 import src.main.model.structure.Container
 
-class Lexer(val input: String) { //conviene que no se pueda reasignar el input, es lo que recibo y no va a variar
+class Lexer(val input: String) {
 
-    val list = mutableListOf<String>();
+    private var finalState: LexerState = LexerState()
+        private set
+
+    val pieces: List<String>
+        get() = finalState.pieces
 
     fun splitString() {
-        val state = LexerState()
-        input.forEach { char ->
+        finalState = input.fold(LexerState()) { state, char ->
             val characterType = CharacterClassifier.classify(char)
-            val handler = CharacterHandlerFactory.getHandler(characterType) //puedo operar sobre la clase porque es un object (singleton)
+            val handler = CharacterHandlerFactory.getHandler(characterType)
             handler.handle(char, state)
+        }.let { state ->
+            if (state.currentPiece.isNotEmpty()) {
+                state.copy(pieces = state.pieces + state.currentPiece)
+            } else {
+                state
+            }
         }
-
-        if(state.currentPiece.isNotEmpty()){
-            state.pieces.add(state.currentPiece.toString())
-        }
-
-        list.addAll(state.pieces)
     }
 
-    fun createToken(list: List<String>) : Container {
-
-        return TokenFactory.createTokens(list)
+    fun createToken(): Container {
+        return TokenFactory.createTokens(finalState.pieces)
     }
 }
 
