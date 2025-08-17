@@ -1,14 +1,12 @@
-package src.test.model.tools.interpreter.parser
+package parser.src.test.kotlin
 
-import src.main.model.tools.interpreter.parser.Parser
+import parser.src.main.kotlin.Parser
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import src.main.model.structure.ASTNode
-import src.main.model.structure.Container
-import src.main.model.structure.DataType
-import src.main.model.structure.Token
-import src.main.model.tools.interpreter.parser.PrattParser
+import common.src.main.kotlin.ASTNode
+import common.src.main.kotlin.Container
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Token
 
 class ParserTest {
 
@@ -29,7 +27,7 @@ class ParserTest {
             DataType.NUMBER_LITERAL,
             DataType.SEMICOLON
         )
-        for (i in 0 until sentence.size) {
+        for (i in sentence.indices) {
             container.addContainer(Token(dataTypes[i], sentence[i], 0))
         }
         val parser = Parser(container)
@@ -54,7 +52,7 @@ class ParserTest {
             DataType.CLOSE_PARENTHESIS,
             DataType.SEMICOLON
         )
-        for (i in 0 until sentence.size) {
+        for (i in sentence.indices) {
             container.addContainer(Token(dataTypes[i], sentence[i], 0))
         }
         val parser = Parser(container)
@@ -65,16 +63,77 @@ class ParserTest {
     }
 
     @Test
-    fun `arithmetic parser should return INVALID ASTNode`(){
+    fun basicArithmeticTest() {
         val container = Container()
-        val pratt = PrattParser()
+        val sentence = listOf("8", "+", "2", "*", "3", ";")
+        val dataTypes = listOf(
+            DataType.NUMBER_LITERAL,
+            DataType.ADDITION,
+            DataType.NUMBER_LITERAL,
+            DataType.MULTIPLICATION,
+            DataType.NUMBER_LITERAL,
+            DataType.SEMICOLON
+        )
+        for (i in sentence.indices) {
+            container.addContainer(Token(dataTypes[i], sentence[i], 0))
+        }
+        val parser = Parser(container)
+        val root: ASTNode = parser.parse()
+        val mult = root.children[1]
 
-        val result = pratt.arithParse(container)
+        assertEquals(DataType.ADDITION, root.token.type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[0].token.type)
+        assertEquals(DataType.MULTIPLICATION, mult.token.type)
+        assertEquals(DataType.NUMBER_LITERAL, mult.children[0].token.type)
+        assertEquals(DataType.NUMBER_LITERAL, mult.children[1].token.type)
+    }
 
-        assertEquals(DataType.INVALID, result.token.type)
-        assertEquals("", result.token.content)
-        assertEquals(0, result.token.position)
-        assertTrue(result.children.isEmpty())
+    @Test
+    fun basicArithmeticTest2() {
+        val container = Container()
+        val sentence = listOf("10", "-", "8", "+", "4", "*", "3", "/", "2", "+", "4", ";")
+        val dataTypes = listOf(
+            DataType.NUMBER_LITERAL,
+            DataType.SUBTRACTION,
+            DataType.NUMBER_LITERAL,
+            DataType.ADDITION,
+            DataType.NUMBER_LITERAL,
+            DataType.MULTIPLICATION,
+            DataType.NUMBER_LITERAL,
+            DataType.DIVISION,
+            DataType.NUMBER_LITERAL,
+            DataType.ADDITION,
+            DataType.NUMBER_LITERAL,
+            DataType.SEMICOLON
+        )
+        for (i in sentence.indices) {
+            container.addContainer(Token(dataTypes[i], sentence[i], 0))
+        }
+        val parser = Parser(container)
+        val root: ASTNode = parser.parse()
+        /*
+                          +
+                 +                 4
+            -         /
+        10     8   *     2
+                  4 3
+         */
 
+        val sum = root.children[0]
+        val sub = sum.children[0]
+        val div = sum.children[1]
+        val mul = div.children[0]
+
+        assertEquals(DataType.ADDITION, root.token.type)
+        assertEquals(DataType.ADDITION, sum.token.type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[1].token.type)
+        assertEquals(DataType.SUBTRACTION, sub.token.type)
+        assertEquals(DataType.DIVISION, div.token.type)
+        assertEquals(DataType.NUMBER_LITERAL, sub.children[0].token.type)
+        assertEquals(DataType.NUMBER_LITERAL, sub.children[1].token.type)
+        assertEquals(DataType.MULTIPLICATION, mul.token.type)
+        assertEquals(DataType.NUMBER_LITERAL, div.children[1].token.type)
+        assertEquals(DataType.NUMBER_LITERAL, mul.children[0].token.type)
+        assertEquals(DataType.NUMBER_LITERAL, mul.children[1].token.type)
     }
 }

@@ -1,4 +1,4 @@
-package src.main.model.structure
+package common.src.main.kotlin
 
 data class Token (
     val type: DataType?,

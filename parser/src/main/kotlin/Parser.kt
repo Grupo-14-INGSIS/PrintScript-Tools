@@ -1,8 +1,8 @@
-package src.main.model.tools.interpreter.parser
+package parser.src.main.kotlin
 
-import src.main.model.structure.ASTNode
-import src.main.model.structure.Container
-import src.main.model.structure.DataType
+import common.src.main.kotlin.ASTNode
+import common.src.main.kotlin.Container
+import common.src.main.kotlin.DataType
 
 class Parser (
     private var tokens: Container
