@@ -1,6 +1,6 @@
 package src.main.model.tools.interpreter.interpreter
 
-import src.main.model.structure.ASTNode
+import common.src.main.kotlin.ASTNode
 
 object VarDeclarationAndAssignment : ActionType {
     private val variables = mutableMapOf<String, Any?>()

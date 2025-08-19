@@ -21,7 +21,6 @@ plugins {
 }
 
 rootProject.name = 'IngsisTP'
-include('app', 'list', 'utilities')
 include 'parser'
 include 'parser'
 include 'interpreter'

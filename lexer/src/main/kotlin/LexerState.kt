@@ -1,7 +1,7 @@
 package src.main.model.tools.interpreter.lexer
 
 data class LexerState(
-    var isInLiteral: Boolean = false,
-    var currentPiece: StringBuilder = StringBuilder(),
-    val pieces: MutableList<String> = mutableListOf()
+    val isInLiteral: Boolean = false,
+    val currentPiece: String = "", //contribuye a la implementacion de inmutabilidad
+    val pieces: List<String> = emptyList()
 )

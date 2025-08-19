@@ -1,8 +1,8 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import src.main.model.structure.DataType
-import src.main.model.structure.TokenMap
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.TokenMap
 
 class TokenMapTest {
 

@@ -1,15 +1,21 @@
 package src.main.model.tools.interpreter.lexer
 
 class WhiteSpaceHandler : CharacterHandler {
-    override fun handle(char: Char, state: LexerState) {
-        if (state.isInLiteral) {
-            state.currentPiece.append(char)
+    override fun handle(char: Char, state: LexerState) : LexerState{
+        return if (state.isInLiteral) {
+            return state.copy(currentPiece = state.currentPiece + char)
         } else {
-            if (state.currentPiece.isNotEmpty()) {
-                state.pieces.add(state.currentPiece.toString())
-                state.currentPiece.clear()
+            val flushedPieces = buildList {
+                if (state.currentPiece.isNotEmpty()) {
+                    add(state.currentPiece)
+                }
+                add(char.toString())
             }
-            state.pieces.add(char.toString()) //el espacio solo tambien lo tokenizo. MUY IMPORTANTE!!
+
+            state.copy(
+                currentPiece = "",
+                pieces = state.pieces + flushedPieces
+            )
         }
     }
 }

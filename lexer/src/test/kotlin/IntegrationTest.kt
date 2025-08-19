@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import src.main.model.structure.DataType
+import common.src.main.kotlin.DataType
 import src.main.model.tools.interpreter.lexer.Lexer
 
 class IntegrationTest {
