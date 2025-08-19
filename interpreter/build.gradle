@@ -2,3 +2,9 @@ plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
+dependencies {
+    implementation project(":parser")
+    implementation project(":lexer")
+    implementation project(":common")
+}
+
