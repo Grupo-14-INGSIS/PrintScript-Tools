@@ -6,11 +6,10 @@ object VarDeclarationAndAssignment : ActionType {
     private val variables = mutableMapOf<String, Any?>()
 
     override fun interpret(node: ASTNode, actions: src.main.model.tools.interpreter.interpreter.Actions): Any {
-
         require(node.children.size >= 3) { "Declaración con asignación inválida: faltan argumentos" }
 
-        val variableName = node.children[0].token.content  // "x"
-        val variableType = node.children[1].token.content  // "number"
+        val variableName = node.children[0].token.content // "x"
+        val variableType = node.children[1].token.content // "number"
         val assignedValue = node.children[2].token.content // "5"
 
         // evitar redeclaracion

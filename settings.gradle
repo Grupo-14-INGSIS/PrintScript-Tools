@@ -27,4 +27,5 @@ include 'interpreter'
 include 'lexer'
 include 'common'
 include 'formatter'
+include 'CLI'
 

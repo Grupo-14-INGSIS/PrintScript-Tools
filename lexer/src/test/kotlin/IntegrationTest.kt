@@ -1,6 +1,8 @@
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import common.src.main.kotlin.DataType
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import src.main.model.tools.interpreter.lexer.Lexer
 
 class IntegrationTest {

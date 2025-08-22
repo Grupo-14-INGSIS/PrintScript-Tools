@@ -7,10 +7,10 @@ object TokenPattern {
         Regex("^[a-zA-Z_][a-zA-Z0-9_]*$") to DataType.IDENTIFIER
     )
 
-    fun classifyTokenPattern(piece: String): DataType?{
+    fun classifyTokenPattern(piece: String): DataType? {
         for ((regex, type) in tokenPatterns) {
             if (piece.matches(regex)) return type
         }
-        return null;
+        return null
     }
 }

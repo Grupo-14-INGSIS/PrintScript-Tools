@@ -1,7 +1,9 @@
 package src.main.model.tools.interpreter.lexer
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
@@ -106,11 +108,15 @@ class LexerFileTest {
         // Then
         assertTrue(lexer.list.contains("name"))
         assertTrue(lexer.list.contains("="))
-        assertTrue(lexer.list.contains("\"José María\"") ||
-                (lexer.list.contains("José") && lexer.list.contains("María")))
+        assertTrue(
+            lexer.list.contains("\"José María\"") ||
+                (lexer.list.contains("José") && lexer.list.contains("María"))
+        )
         assertTrue(lexer.list.contains("age"))
-        assertTrue(lexer.list.contains(">=") ||
-                (lexer.list.contains(">") && lexer.list.contains("=")))
+        assertTrue(
+            lexer.list.contains(">=") ||
+                (lexer.list.contains(">") && lexer.list.contains("="))
+        )
         assertTrue(lexer.list.contains("25"))
     }
 

@@ -1,6 +1,6 @@
 package common.src.main.kotlin
 
-class ASTNode (
+class ASTNode(
     val token: Token,
     val children: List<ASTNode>
 )

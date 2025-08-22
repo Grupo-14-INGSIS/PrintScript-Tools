@@ -2,10 +2,10 @@ package common.src.main.kotlin
 
 class Container {
 
-    val container = mutableListOf<Token>() //la puedo hacer immutable? -> Si le haces .add(), creo que no puede ser inmutable
-    private var size: Int = 0;
+    val container = mutableListOf<Token>() // la puedo hacer immutable? -> Si le haces .add(), creo que no puede ser inmutable
+    private var size: Int = 0
 
-    fun addContainer(token: Token){
+    fun addContainer(token: Token) {
         container.add(token)
         size++
     }
@@ -52,7 +52,7 @@ class Container {
 
     fun checkIs(tokens: List<DataType>): Boolean {
         if (size != tokens.size) return false
-        for (i in 0 .. size) {
+        for (i in 0..size) {
             if (get(i)!!.type == tokens[i]) return false
         }
         return true

@@ -1,6 +1,6 @@
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import src.main.model.tools.interpreter.lexer.Lexer
 
 class LexerUnitTest {
@@ -85,8 +85,3 @@ class LexerUnitTest {
         assertEquals(listOf("123", " ", "45.67"), lexer.list)
     }
 }
-
-
-
-
-

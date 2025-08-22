@@ -4,7 +4,7 @@ import common.src.main.kotlin.ASTNode
 import common.src.main.kotlin.Container
 import common.src.main.kotlin.DataType
 
-class Parser (
+class Parser(
     private var tokens: Container
 ) {
 

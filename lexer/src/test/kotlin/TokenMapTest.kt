@@ -1,8 +1,8 @@
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.TokenMap
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.TokenMap
 
 class TokenMapTest {
 
@@ -14,7 +14,7 @@ class TokenMapTest {
     @Test
     fun `test classify types`() {
         assertEquals(DataType.STRING_TYPE, TokenMap.classifyTokenMap("string"))
-        assertEquals(DataType.NUMBER_TYPE, TokenMap.classifyTokenMap("number")) //segun la consigna los nombres son en minuscula
+        assertEquals(DataType.NUMBER_TYPE, TokenMap.classifyTokenMap("number")) // segun la consigna los nombres son en minuscula
     }
 
     @Test

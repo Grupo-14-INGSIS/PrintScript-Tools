@@ -1,8 +1,8 @@
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.TokenPattern
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.TokenPattern
 
 class TokenPatternTest {
 

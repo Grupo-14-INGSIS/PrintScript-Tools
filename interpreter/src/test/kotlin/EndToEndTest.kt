@@ -1,13 +1,14 @@
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import common.src.main.kotlin.DataType
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.Parser
 import src.main.model.tools.interpreter.interpreter.Actions
 import src.main.model.tools.interpreter.interpreter.Interpreter
 import src.main.model.tools.interpreter.lexer.Lexer
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-
+import kotlin.test.assertTrue
 
 class EndToEndTest {
 
@@ -72,7 +73,6 @@ class EndToEndTest {
             // Assert
             val output = outputStream.toString().trim()
             assertEquals("\"Hello World\"", output)
-
         } finally {
             System.setOut(originalOut)
         }
@@ -82,17 +82,15 @@ class EndToEndTest {
     fun `test complex expression with parentheses`() {
         // Arrange
         val input = "5 * 4"
-        //val input = "(2 + 3) * 4"
+        // val input = "(2 + 3) * 4"
 
         // Act
         val lexer = Lexer(input)
         lexer.splitString()
         val tokens = lexer.createToken(lexer.list)
 
-
         val parser = Parser(tokens)
         val ast = parser.parse()
-
 
         // Assert - Should parse as multiplication with parentheses resolved
         assertEquals(DataType.MULTIPLICATION, ast.token.type)
@@ -134,18 +132,18 @@ class EndToEndTest {
 
         // Assert - Check token types
         val expectedTypes = listOf(
-            DataType.LET_KEYWORD,      // "let"
-            DataType.SPACE,            // " "
-            DataType.IDENTIFIER,       // "x"
-            DataType.SPACE,            // " "
-            DataType.COLON,            // ":"
-            DataType.SPACE,            // " "
-            DataType.NUMBER_TYPE,      // "number"
-            DataType.SPACE,            // " "
-            DataType.ASSIGNATION,      // "="
-            DataType.SPACE,            // " "
-            DataType.NUMBER_LITERAL,   // "42"
-            DataType.SEMICOLON         // ";"
+            DataType.LET_KEYWORD, // "let"
+            DataType.SPACE, // " "
+            DataType.IDENTIFIER, // "x"
+            DataType.SPACE, // " "
+            DataType.COLON, // ":"
+            DataType.SPACE, // " "
+            DataType.NUMBER_TYPE, // "number"
+            DataType.SPACE, // " "
+            DataType.ASSIGNATION, // "="
+            DataType.SPACE, // " "
+            DataType.NUMBER_LITERAL, // "42"
+            DataType.SEMICOLON // ";"
         )
 
         assertEquals(expectedTypes.size, tokens.size())
@@ -197,12 +195,14 @@ class EndToEndTest {
             // For this test, we'd need to extend the interpreter to handle
             // arithmetic evaluation and return results
             assertNotNull(ast)
-            assertTrue(ast.token.type in listOf(
-                DataType.ADDITION,
-                DataType.SUBTRACTION,
-                DataType.MULTIPLICATION,
-                DataType.DIVISION
-            ))
+            assertTrue(
+                ast.token.type in listOf(
+                    DataType.ADDITION,
+                    DataType.SUBTRACTION,
+                    DataType.MULTIPLICATION,
+                    DataType.DIVISION
+                )
+            )
         }
     }
 
@@ -242,7 +242,6 @@ class EndToEndTest {
 
             // Check if parsing was successful
             ast.token.type != DataType.INVALID
-
         } catch (e: Exception) {
             println("Pipeline failed with exception: ${e.message}")
             false

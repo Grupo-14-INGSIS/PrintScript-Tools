@@ -2,10 +2,3 @@ plugins {
     id 'buildlogic.kotlin-myPlugin-conventions' //sin la extension .gradle
     id 'org.jlleitschuh.gradle.ktlint' version '11.6.0'
 }
-
-
-dependencies {
-    implementation(project(":common"))
-}
-
-//el resto de la logica permanece en el plugin

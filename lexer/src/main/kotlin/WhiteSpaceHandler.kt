@@ -1,7 +1,7 @@
 package src.main.model.tools.interpreter.lexer
 
 class WhiteSpaceHandler : CharacterHandler {
-    override fun handle(char: Char, state: LexerState) : LexerState{
+    override fun handle(char: Char, state: LexerState): LexerState {
         return if (state.isInLiteral) {
             return state.copy(currentPiece = state.currentPiece + char)
         } else {

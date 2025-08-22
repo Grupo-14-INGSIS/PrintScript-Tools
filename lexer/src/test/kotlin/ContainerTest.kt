@@ -1,9 +1,9 @@
 package model.structure
+import common.src.main.kotlin.Container
+import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.Token
-import common.src.main.kotlin.DataType
 
 class ContainerTest {
 

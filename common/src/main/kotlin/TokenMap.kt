@@ -22,5 +22,4 @@ object TokenMap {
     fun classifyTokenMap(piece: String): DataType? {
         return tokenMap[piece]
     }
-
 }

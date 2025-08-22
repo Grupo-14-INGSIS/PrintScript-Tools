@@ -19,16 +19,22 @@ private val associations: Map<String, Association> = mapOf(
 )
 
 fun getPrecedence(token: Token): Int {
-    return if (token.content in precedences) precedences[token.content]!!
-    else 0
+    return if (token.content in precedences) {
+        precedences[token.content]!!
+    } else {
+        0
+    }
 }
 
 fun getAssociativity(token: Token): Association {
-    return if (token.content in associations) associations[token.content]!!
-    else Association.ANY
+    return if (token.content in associations) {
+        associations[token.content]!!
+    } else {
+        Association.ANY
+    }
 }
 
-class PrattToken (
+class PrattToken(
     private val token: Token,
     private var precedence: Int = getPrecedence(token),
     private var associativity: Association = getAssociativity(token),
@@ -57,5 +63,4 @@ class PrattToken (
         if (index < 0 || index >= children.size) return null
         return children[index]
     }
-
 }

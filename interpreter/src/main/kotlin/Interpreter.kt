@@ -4,7 +4,7 @@ import common.src.main.kotlin.ASTNode
 
 class Interpreter {
     private val actionHandlers = mapOf(
-        Actions.ADD to Add, //sin parentesis pq soo object, no class
+        Actions.ADD to Add, // sin parentesis pq soo object, no class
         Actions.SUBTRACT to Subtract,
         Actions.MULTIPLY to Multiply,
         Actions.DIVIDE to Divide,
@@ -12,7 +12,7 @@ class Interpreter {
         Actions.DIVIDE to Divide,
         Actions.PRINT to Print,
         Actions.VAR_DECLARATION to VarDeclaration,
-        Actions.VAR_DECLARATION_AND_ASSIGNMENT to src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment,
+        Actions.VAR_DECLARATION_AND_ASSIGNMENT to src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment
     )
 
     fun interpret(node: ASTNode, action: Actions): Any? {
@@ -22,4 +22,3 @@ class Interpreter {
         return true
     }
 }
-

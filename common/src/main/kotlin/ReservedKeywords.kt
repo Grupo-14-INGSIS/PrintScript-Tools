@@ -5,7 +5,12 @@ class ReservedKeywords {
 
         // Strings que no pueden ser utilizadas para nombrar variables
         private val reservedWords: List<String> = listOf(
-            "public", "final", "let", "string", "number", "println"
+            "public",
+            "final",
+            "let",
+            "string",
+            "number",
+            "println"
         )
 
         // Caracteres que no pueden estar en ninguna posición del nombre de una variable
