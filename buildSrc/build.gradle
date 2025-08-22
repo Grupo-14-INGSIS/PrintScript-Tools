@@ -16,3 +16,7 @@ repositories {
 dependencies {
     implementation libs.kotlin.gradle.plugin
 }
+
+tasks.named("build") {
+    dependsOn "ktlintCheck", "test" //no pongo el de formatt pq cambiaria el archivo y no quier que lo haga aca.  Lo corro automatico, pero desde la terminal.
+}
