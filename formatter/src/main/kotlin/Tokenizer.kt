@@ -6,5 +6,7 @@ class Tokenizer {
 
     fun tokenize(code: String): List<Token> {
         // Lexer
+
+        return emptyList()
     }
 }

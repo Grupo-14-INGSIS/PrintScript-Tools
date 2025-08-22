@@ -23,6 +23,7 @@ class Formatter(var configFile: String) {
     }
 
     private fun readFile(file: String): String? {
+        return ""
     }
 
     private fun writeFile(file: String, tokens: List<Token>) {

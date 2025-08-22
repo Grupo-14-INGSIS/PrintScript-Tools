@@ -7,5 +7,6 @@ class ConfigLoader {
     fun loadConfig(configFile: String): List<FormatRule> {
         // Read file
         // Generate each rule
+        return emptyList()
     }
 }

@@ -5,7 +5,10 @@ import common.src.main.kotlin.ASTNode
 object VarDeclarationAndAssignment : ActionType {
     private val variables = mutableMapOf<String, Any?>()
 
-    override fun interpret(node: ASTNode, actions: src.main.model.tools.interpreter.interpreter.Actions): Any {
+    override fun interpret(
+        node: ASTNode,
+        actions: src.main.model.tools.interpreter.interpreter.Actions
+    ): Any {
         require(node.children.size >= 3) { "Declaración con asignación inválida: faltan argumentos" }
 
         val variableName = node.children[0].token.content // "x"
@@ -13,7 +16,10 @@ object VarDeclarationAndAssignment : ActionType {
         val assignedValue = node.children[2].token.content // "5"
 
         // evitar redeclaracion
-        if (src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables.containsKey(variableName)) {
+        if (src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables.containsKey(
+                variableName
+            )
+        ) {
             throw IllegalStateException("La variable '$variableName' ya fue declarada")
         }
 
@@ -52,7 +58,9 @@ object VarDeclarationAndAssignment : ActionType {
         }
 
         if (!isValid) {
-            throw IllegalArgumentException("Valor '$value' no es compatible con tipo '$expectedType'")
+            throw IllegalArgumentException(
+                "Valor '$value' no es compatible con tipo '$expectedType'"
+            )
         }
     }
 }
