@@ -1,0 +1,10 @@
+Clases:
+- Token (Common)
+- Tokenizer
+- Formatter
+- ConfigLoader
+Interfaces:
+- FormatRule
+
+Formatter toma el código fuente y llama a Tokenizer. Recibe la lista de tokens. Luego llama a COnfigLoader y recibe la lista de FormatRule.
+Pasa la lista de tokens a cada FormatRule a modo de pipeline. Por último reescribe el archivo

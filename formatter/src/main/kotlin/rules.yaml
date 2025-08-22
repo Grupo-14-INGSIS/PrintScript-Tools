@@ -1,24 +1,14 @@
-formatter_rules:
-  spaces:
+rules:
+  - mandatory:
+    - spaceBetweenTokens
+    - lineBreakAfterSemicolon
+    - spaceBeforeOperator
+    - spaceAfterOperator
 
-    spaceBeforeColon: optional
-    spaceAfterColon: optional
+  - optional:
+    - spaceBeforeColon: true
+    - spaceAfterColon: true
 
-    spaceBeforeEquals: optional
-    spaceAfterEquals: optional
-
-    spaceBetweenTokens: true
-
-    spaceBeforeOperator: true
-    spaceAfterOperator: true
-
-  lineBreak:
-
-    lineBreakBeforePrint: { 0,1,2 }
-    lineBreakAfterSemicolon: true
-
-
-
-
-
-
+    - spaceBeforeEquals: true
+    - spaceAfterEquals: true
+    - lineBreakBeforePrint: { 0,1,2 }
