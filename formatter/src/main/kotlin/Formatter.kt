@@ -3,7 +3,7 @@ package formatter.src.main.kotlin
 import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class Formatter (var configFile: String) {
+class Formatter(var configFile: String) {
 
     private val tokenizer: Tokenizer = Tokenizer()
     private val config: ConfigLoader = ConfigLoader()
@@ -23,11 +23,8 @@ class Formatter (var configFile: String) {
     }
 
     private fun readFile(file: String): String? {
-
     }
 
     private fun writeFile(file: String, tokens: List<Token>) {
-
     }
-
 }

@@ -8,5 +8,4 @@ class ConfigLoader {
         // Read file
         // Generate each rule
     }
-
 }
