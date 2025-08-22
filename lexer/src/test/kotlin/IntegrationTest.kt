@@ -1,6 +1,5 @@
 import common.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -27,7 +26,7 @@ class IntegrationTest {
             assertEquals("let", get(0).content)
 
             assertEquals(DataType.SPACE, get(1).type)
-            assertNotEquals(" ", get(1).content)
+            assertEquals(" ", get(1).content)
 
             assertEquals(DataType.IDENTIFIER, get(2).type)
             assertEquals("x", get(2).content)
