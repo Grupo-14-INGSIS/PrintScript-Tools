@@ -1,5 +1,4 @@
 [*.{kt,kts}]
-disabled_rules = no-wildcard-imports #L el resto son de formatter
 indent_style = space
 indent_size = 4
 continuation_indent_size = 4
@@ -8,4 +7,16 @@ trim_trailing_whitespace = true
 max_line_length = 140
 
 # Reglas que ktlintFormat no puede corregir bien o que causan conflictos
-disabled_rules = experimental:argument-list-wrapping,import-ordering #L
+disabled_rules = no-wildcard-imports,no-consecutive-blank-lines,experimental:argument-list-wrapping,import-ordering
+
+# lo uso en build.gradle (:buildSrc)
+#disabled_rules = no-wildcard-imports #regla del linter
+#no-consecutive-blank-lines # regla de linter tmb
+#las dos anteriores van en la linea 11
+
+#formatter, cada niveld e indentacion tiene 4 espacios
+#formatter, 4 espacios en lineas que continuan luego de un salto
+#formater, asegura que cada archivo termina con linea en blanco
+#formatter, elimina espacios innecesarios al final de cada linea
+#linter error si la linea excede los 140 caracteres
+#linter, desactiva argumetn-list-wrapping asi como import-ordering (exige salto linea, fuerza orden imports)
