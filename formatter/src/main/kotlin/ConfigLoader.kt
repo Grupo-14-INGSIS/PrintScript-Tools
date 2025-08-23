@@ -2,9 +2,11 @@ package formatter.src.main.kotlin
 
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class ConfigLoader {
+class ConfigLoader (
+    val configFile: String
+) {
 
-    fun loadConfig(configFile: String): List<FormatRule> {
+    fun loadConfig(): List<FormatRule> {
         // Read file
         // Generate each rule
         return emptyList()

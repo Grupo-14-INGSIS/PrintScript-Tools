@@ -22,7 +22,6 @@ plugins {
 
 rootProject.name = 'IngsisTP'
 include 'parser'
-include 'parser'
 include 'interpreter'
 include 'lexer'
 include 'common'

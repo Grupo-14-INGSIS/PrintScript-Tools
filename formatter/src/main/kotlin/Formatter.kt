@@ -1,31 +1,24 @@
 package formatter.src.main.kotlin
 
+import common.src.main.kotlin.Container
 import common.src.main.kotlin.Token
+import src.main.model.tools.interpreter.lexer.Lexer
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class Formatter(var configFile: String) {
+class Formatter(
+    source: String,
+    configFile: String
+) {
 
-    private val tokenizer: Tokenizer = Tokenizer()
-    private val config: ConfigLoader = ConfigLoader()
+    private val lexer: Lexer = Lexer(source)
+    private val config: ConfigLoader = ConfigLoader(configFile)
 
-    fun execute(source: String): Int {
-        val code: String = readFile(source) ?: return 1 // File not found
-        var tokens: List<Token> = tokenizer.tokenize(code)
-
-        val rules: List<FormatRule> = config.loadConfig(configFile)
-
+    fun execute(source: String) {
+        val rules: List<FormatRule> = config.loadConfig()
+        lexer.splitString()
+        var tokens: Container = lexer.createToken(lexer.list)
         for (rule: FormatRule in rules) {
             tokens = rule.format(tokens)
         }
-
-        writeFile(source, tokens)
-        return 0
-    }
-
-    private fun readFile(file: String): String? {
-        return ""
-    }
-
-    private fun writeFile(file: String, tokens: List<Token>) {
     }
 }
