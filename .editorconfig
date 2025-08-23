@@ -1,4 +1,5 @@
 [*.{kt,kts}]
+disabled_rules = no-wildcard-imports #L el resto son de formatter
 indent_style = space
 indent_size = 4
 continuation_indent_size = 4
@@ -7,4 +8,4 @@ trim_trailing_whitespace = true
 max_line_length = 140
 
 # Reglas que ktlintFormat no puede corregir bien o que causan conflictos
-disabled_rules = experimental:argument-list-wrapping,import-ordering
+disabled_rules = experimental:argument-list-wrapping,import-ordering #L
