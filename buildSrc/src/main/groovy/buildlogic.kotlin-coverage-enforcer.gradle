@@ -1,0 +1,18 @@
+plugins {
+    id 'org.jetbrains.kotlinx.kover'
+}
+
+kover {
+    verify {
+        rule {
+            bound {
+                minValue = 80
+                metric = 'LINE'
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'koverVerify'
+}
