@@ -9,6 +9,6 @@ class ConfigLoader (
     fun loadConfig(): List<FormatRule> {
         // Read file
         // Generate each rule
-        return emptyList()
+        return listOf()
     }
 }

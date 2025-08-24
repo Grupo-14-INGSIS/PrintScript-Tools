@@ -11,7 +11,19 @@ class Container {
     }
 
     fun get(index: Int): Token? {
-        return if (index < size) container[index] else null
+        return if (index in 0..<size) {
+            container[index]
+        } else {
+            null
+        }
+    }
+
+    fun remove(index: Int): Token? {
+        return if (index in 0..<size) {
+            container.removeAt(index)
+        } else {
+            null
+        }
     }
 
     fun first(): Token? {
