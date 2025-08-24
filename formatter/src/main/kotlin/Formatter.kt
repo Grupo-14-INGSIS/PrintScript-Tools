@@ -12,12 +12,16 @@ class Formatter(
     private val lexer: Lexer = Lexer(source)
     private val config: ConfigLoader = ConfigLoader(configFile)
 
-    fun execute(source: String) {
+    fun execute(source: String): Int {
         val rules: List<FormatRule> = config.loadConfig()
         lexer.splitString()
-        var tokens: Container = lexer.createToken(lexer.list)
+        val tokens: Container = lexer.createToken(lexer.list)
+        var result: Boolean
         for (rule: FormatRule in rules) {
-            tokens = rule.format(tokens)
+            if(!rule.format(tokens)) {// An error has occurred
+                return 1
+            }
         }
+        return 0
     }
 }

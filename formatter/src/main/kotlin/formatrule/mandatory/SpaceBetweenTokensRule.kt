@@ -6,13 +6,9 @@ import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
 /** Must have as much one space between tokens */
-class spaceBetweenTokensRule: FormatRule {
+class SpaceBetweenTokensRule: FormatRule {
 
     private val space = DataType.SPACE
-
-    /*
-    este método tendría que asegurar que haya un solo espacio entre dos tokens (que no sean espacios)
-     */
 
     override fun format(tokens: Container): Boolean {
         var firstToken: Token?
