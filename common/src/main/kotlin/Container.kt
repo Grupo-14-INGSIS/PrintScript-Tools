@@ -9,6 +9,18 @@ class Container {
         container.add(token)
         size++
     }
+    fun addAt(token: Token, index: Int): Boolean {
+        if (0 > index || index > container.size) return false
+        container.add(index, token)
+        return true
+    }
+    fun remove(index: Int): Token? {
+        return if (index in 0 until size()) {
+            container.removeAt(index)
+        } else {
+            null
+        }
+    }
 
     fun get(index: Int): Token? {
         return if (index < size) container[index] else null

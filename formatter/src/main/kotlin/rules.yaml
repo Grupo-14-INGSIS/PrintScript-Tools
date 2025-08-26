@@ -1,14 +1,11 @@
 rules:
-  - mandatory:
-    - spaceBetweenTokens
-    - lineBreakAfterSemicolon
-    - spaceBeforeOperator
-    - spaceAfterOperator
+  switch:
+    NoSpaceBeforeColon: true
+    NoSpaceAfterColon: true
+    NoSpaceBeforeEquals: true
+    NoSpaceAfterEquals: true
 
-  - optional:
-    - spaceBeforeColon: true
-    - spaceAfterColon: true
+  setValue:
+    # Any value in {0, 1, 2}
+    lineBreakBeforePrint: 2
 
-    - spaceBeforeEquals: true
-    - spaceAfterEquals: true
-    - lineBreakBeforePrint: { 0,1,2 }
