@@ -1,0 +1,40 @@
+plugins {
+    id 'jacoco'
+}
+//aplico el plugin de jacoco
+
+allprojects { //defino los proyectos (raiz+subproyectos) que van a usar Maven Central como repo para resolver dependencias
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects { //configura todos los proyectos de forma homogenea
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'jacoco'
+
+    dependencies { //dependencias comunes para todos los subproyectos
+        implementation "org.jetbrains.kotlin:kotlin-stdlib"
+        testImplementation "org.jetbrains.kotlin:kotlin-test"
+        testImplementation "org.junit.jupiter:junit-jupiter:5.9.2"
+        testImplementation "io.mockk:mockk:1.13.7"
+    }
+
+    test { //configura tests
+        useJUnitPlatform()
+    }
+
+    compileKotlin { //comppila el codigo, usa jvm 21 habilitando nuevas caracteristicas
+        kotlinOptions {
+            jvmTarget = "21"
+        }
+    }
+
+    compileTestKotlin { //lo msimo del anterior, pero para tests
+        kotlinOptions {
+            jvmTarget = "21"
+        }
+    }
+}
+
+//este archivo inicia su ciclo de vida con jacoco, antes no lo use en nada, aclaro
