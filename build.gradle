@@ -3,11 +3,7 @@ plugins {
 }
 //aplico el plugin de jacoco
 
-allprojects { //defino los proyectos (raiz+subproyectos) que van a usar Maven Central como repo para resolver dependencias
-    repositories {
-        mavenCentral()
-    }
-}
+//saco all projects maven porque ya esta configurado en myPlugin-conventions
 
 subprojects { //configura todos los proyectos de forma homogenea
     apply plugin: 'org.jetbrains.kotlin.jvm'
