@@ -18,3 +18,5 @@ rootProject.name = 'IngsisTP'
 include 'parser', 'interpreter', 'lexer', 'common', 'formatter', 'CLI'
 
 //el directorio se llama cli, pero el Mmodulo CLI. Trat[e de cambiarlo, pero no funciono.
+include 'linter'
+

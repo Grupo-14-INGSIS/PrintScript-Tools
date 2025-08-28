@@ -18,19 +18,42 @@ subprojects { //configura todos los proyectos de forma homogenea
 
     test { //configura tests
         useJUnitPlatform()
+        finalizedBy jacocoTestReport // Genera reporte después de tests
     }
 
-    compileKotlin { //comppila el codigo, usa jvm 21 habilitando nuevas caracteristicas
+    jacocoTestReport {
+        dependsOn test // Asegura que los tests se ejecuten primero
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        dependsOn jacocoTestReport
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.10
+                }
+            }
+        }
+    }
+
+    compileKotlin { //compila el codigo, usa jvm 21 habilitando nuevas caracteristicas
         kotlinOptions {
             jvmTarget = "21"
         }
     }
 
-    compileTestKotlin { //lo msimo del anterior, pero para tests
+    compileTestKotlin { //lo mismo del anterior, pero para tests
         kotlinOptions {
             jvmTarget = "21"
         }
     }
+
+    // Ya no necesitas esta tarea personalizada, usa directamente jacocoTestCoverageVerification
+    // tasks.register("verifyCoverage") {
+    //     dependsOn tasks.named("test"), tasks.named("jacocoTestReport")
+    // }
 }
-
-//este archivo inicia su ciclo de vida con jacoco, antes no lo use en nada, aclaro
