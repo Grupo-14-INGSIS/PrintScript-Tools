@@ -3,6 +3,7 @@ package parser.src.test.kotlin
 import common.src.main.kotlin.ASTNode
 import common.src.main.kotlin.Container
 import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Position
 import common.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -28,7 +29,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], 0))
+            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
@@ -53,7 +54,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], 0))
+            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
@@ -75,7 +76,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], 0))
+            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
@@ -107,7 +108,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], 0))
+            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()

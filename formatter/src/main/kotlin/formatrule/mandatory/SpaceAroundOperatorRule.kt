@@ -2,6 +2,7 @@ package formatter.src.main.kotlin.formatrule.mandatory
 
 import common.src.main.kotlin.Container
 import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Position
 import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
@@ -36,13 +37,13 @@ class SpaceAroundOperatorRule : FormatRule {
                 next = tokens.get(i + 1)
                 if (next != null) {
                     if (next.type != space) {
-                        tokens.addAt(Token(space, " ", 0), i + 1)
+                        tokens.addAt(Token(space, " ", Position(0, 0)), i + 1)
                     }
                 }
                 previous = tokens.get(i - 1)
                 if (previous != null) {
                     if (previous.type != space) {
-                        tokens.addAt(Token(space, " ", 0), i - 1)
+                        tokens.addAt(Token(space, " ", Position(0, 0)), i - 1)
                         i++
                     }
                 }

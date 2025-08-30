@@ -1,6 +1,7 @@
 package model.structure
 import common.src.main.kotlin.Container
 import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Position
 import common.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -10,7 +11,7 @@ class ContainerTest {
     @Test
     fun `test add token to container`() {
         val container = Container()
-        val token = Token(DataType.IDENTIFIER, "test", 0)
+        val token = Token(DataType.IDENTIFIER, "test", Position(0, 0))
 
         container.addContainer(token)
 
@@ -21,8 +22,8 @@ class ContainerTest {
     @Test
     fun `test add multiple tokens to container`() {
         val container = Container()
-        val token1 = Token(DataType.LET_KEYWORD, "let", 0)
-        val token2 = Token(DataType.IDENTIFIER, "x", 1)
+        val token1 = Token(DataType.LET_KEYWORD, "let", Position(0, 0))
+        val token2 = Token(DataType.IDENTIFIER, "x", Position(1, 1))
 
         container.addContainer(token1)
         container.addContainer(token2)
