@@ -4,7 +4,3 @@ plugins {
     id 'jacoco'
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
