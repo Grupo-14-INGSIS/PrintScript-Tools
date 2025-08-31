@@ -2,67 +2,70 @@ name: CI/CD
 
 on:
   push:
-    branches:   
+    branches:
       - main
+
 jobs:
   ci-cd:
-    runs-on: ubuntu-latest #sistema preparado para ubuntu, no se corresponde con el SO de nuestra  compu
-    
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
           path: |
             ~/.gradle/caches
-            ~/.gradle/wrapper/
-          key: gradle -${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.propoerties') }}
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
-# CI: Formateo 
       - name: Run ktlintFormat
         run: |
           CHANGES_BEFORE=$(git diff --name-only)
           ./gradlew ktlintFormat --quiet
           CHANGES_AFTER=$(git diff --name-only)
           if [ "$CHANGES_BEFORE" != "$CHANGES_AFTER" ]; then
-            echo "Build bloqueado: ktlintFormat modificó archivos."
+            echo "❌ Build bloqueado: ktlintFormat modificó archivos."
             exit 1
           fi
 
       - name: Run ktlintCheck
-        run: |
-          ./gradlew ktlintCheck --quiet
+        run: ./gradlew ktlintCheck --quiet
 
-      #CI: Tests 
       - name: Run tests
         run: |
           ./gradlew test --continue > .git/test-output.log
           if grep -q "FAILED" .git/test-output.log; then
-            echo "Build bloqueado: fallaron tests."
+            echo "❌ Build bloqueado: fallaron tests."
             cat .git/test-output.log | grep FAILED
             exit 1
           fi
 
-      # CI: Coverage 
       - name: Verify coverage
         run: |
           ./gradlew jacocoTestCoverageVerification --quiet
           if [ $? -ne 0 ]; then
-            echo "Build bloqueado: cobertura de código inferior al 80%."
+            echo "❌ Build bloqueado: cobertura de código inferior al 80%."
             ./gradlew jacocoTestReport
             exit 1
           fi
 
-      # CI: Check y Build
       - name: Check
         run: ./gradlew check
 
       - name: Build
         run: ./gradlew build
 
-      # CD: Publicación en GitHub Packages 
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish
