@@ -2,12 +2,13 @@ plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
     id 'org.jetbrains.kotlin.jvm'
     id 'jacoco'
+    id 'maven-publish'
 }
 
 group = 'org.example'
 version = 'unspecified'
 
-repositories {
+repositories { //defindo de donde puedo consumir dependencias
     mavenCentral()
 }
 
