@@ -4,3 +4,11 @@ plugins {
     id 'org.jlleitschuh.gradle.ktlint' version '11.6.0'
     id 'jacoco'
 }
+
+dependencies{
+    implementation project(":lexer")
+    implementation project(":parser")
+    implementation project(":linter")
+    implementation project(":common")
+    implementation project(":formatter")
+}
