@@ -10,7 +10,7 @@ import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
-class ConfigLoader (
+class ConfigLoader(
     val configFile: String
 ) {
 
@@ -49,7 +49,7 @@ class ConfigLoader (
                 "NoSpaceBeforeEquals" -> output.add(NoSpaceBeforeEqualsRule())
                 "NoSpaceAfterEquals" -> output.add(NoSpaceAfterEqualsRule())
 
-                //"lineBreakBeforePrint" -> output.add(LineBreakBeforePrint(rules[rule]))
+                // "lineBreakBeforePrint" -> output.add(LineBreakBeforePrint(rules[rule]))
             }
         }
         return output
@@ -75,5 +75,4 @@ class ConfigLoader (
 
         return output
     }
-
 }

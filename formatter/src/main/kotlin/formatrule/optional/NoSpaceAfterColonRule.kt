@@ -5,7 +5,7 @@ import common.src.main.kotlin.DataType
 import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class NoSpaceAfterColonRule: FormatRule {
+class NoSpaceAfterColonRule : FormatRule {
 
     private val colon = DataType.COLON
     private val space = DataType.SPACE
@@ -22,8 +22,9 @@ class NoSpaceAfterColonRule: FormatRule {
              */
             if (token.type == colon) {
                 next = tokens.get(i + 1)
-                if (next == null) break // End of tokens
-                else if (next.type == space) {
+                if (next == null) {
+                    break // End of tokens
+                } else if (next.type == space) {
                     if (tokens.remove(i + 1) == null) return false
                 }
             } else {

@@ -5,7 +5,7 @@ import common.src.main.kotlin.DataType
 import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class NoSpaceBeforeEqualsRule: FormatRule {
+class NoSpaceBeforeEqualsRule : FormatRule {
 
     private val equals = DataType.ASSIGNATION
     private val space = DataType.SPACE

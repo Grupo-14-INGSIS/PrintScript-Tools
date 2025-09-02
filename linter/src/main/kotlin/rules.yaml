@@ -1,0 +1,5 @@
+rules:
+  identifierNaming:
+    style: camelCase
+  printlnArg:
+    enabled: true

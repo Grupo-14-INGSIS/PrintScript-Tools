@@ -6,7 +6,7 @@ import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
 /** Must have as much one space between tokens */
-class SpaceBetweenTokensRule: FormatRule {
+class SpaceBetweenTokensRule : FormatRule {
 
     private val space = DataType.SPACE
 
@@ -26,8 +26,9 @@ class SpaceBetweenTokensRule: FormatRule {
              */
             if (firstToken.type == space) {
                 secondToken = tokens.get(i + 1)
-                if (secondToken == null) break // End of tokens
-                else if (secondToken.type == space) {
+                if (secondToken == null) {
+                    break // End of tokens
+                } else if (secondToken.type == space) {
                     if (tokens.remove(i + 1) == null) return false
                 }
             } else {

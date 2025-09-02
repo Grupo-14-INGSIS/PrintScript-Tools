@@ -1,4 +1,5 @@
 import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -257,11 +258,17 @@ println(x + 1);"""
         lexer.splitString()
         val container = lexer.createToken(lexer.list)
 
-        // Verificar que las posiciones se asignan correctamente
-        container.container.forEachIndexed { index, token ->
-            assertEquals(index, token.position)
+        var expectedColumn = 0
+        container.container.forEach { token ->
+            val expectedPosition = Position(line = 0, column = expectedColumn)
+            assertEquals(expectedPosition, token.position)
+            // Incrementar la columna según la longitud del token
+            expectedColumn += token.content.length
         }
     }
+    // test ajustado, si no, entiendo que cada token es una columna, cuando cada caracter debe ser una columnsa
+
+
 
     @Test
     fun `test empty strings and filtering`() {

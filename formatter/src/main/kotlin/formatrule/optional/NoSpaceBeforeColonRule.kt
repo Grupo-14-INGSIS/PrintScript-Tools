@@ -5,7 +5,7 @@ import common.src.main.kotlin.DataType
 import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class NoSpaceBeforeColonRule: FormatRule {
+class NoSpaceBeforeColonRule : FormatRule {
 
     private val colon = DataType.COLON
     private val space = DataType.SPACE

@@ -3,11 +3,12 @@ package parser.src.main.kotlin
 import common.src.main.kotlin.ASTNode
 import common.src.main.kotlin.Container
 import common.src.main.kotlin.DataType
+import common.src.main.kotlin.Position
 import common.src.main.kotlin.Token
 
 class Grammar {
 
-    private val invalid = ASTNode(Token(DataType.INVALID, "", 0), listOf())
+    private val invalid = ASTNode(Token(DataType.INVALID, "", Position(0, 0)), listOf())
 
     private val pratt = PrattParser()
 
@@ -18,7 +19,7 @@ class Grammar {
         // VARIABLE DECLARATION
 
         return if (isAssignation(tokens)) {
-            val declaration = Token(DataType.DECLARATION, "", 0)
+            val declaration = Token(DataType.DECLARATION, "", Position(0, 0))
             ASTNode(
                 tokens.get(4)!!,
                 listOf( // ASSIGNATION
@@ -133,7 +134,7 @@ class Grammar {
 
     fun funcallParse(tokens: Container): ASTNode {
         return ASTNode(
-            Token(DataType.FUNCTION_CALL, "", 0),
+            Token(DataType.FUNCTION_CALL, "", Position(0, 0)),
             listOf(
                 varParse(tokens.sliceOne(0)), // IDENTIFIER
                 expParse(tokens.slice(3, tokens.size() - 1)) // PARAMETERS

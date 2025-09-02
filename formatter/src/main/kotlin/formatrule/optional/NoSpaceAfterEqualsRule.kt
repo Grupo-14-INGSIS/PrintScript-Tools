@@ -5,7 +5,7 @@ import common.src.main.kotlin.DataType
 import common.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class NoSpaceAfterEqualsRule: FormatRule {
+class NoSpaceAfterEqualsRule : FormatRule {
 
     private val equals = DataType.ASSIGNATION
     private val space = DataType.SPACE
@@ -22,8 +22,9 @@ class NoSpaceAfterEqualsRule: FormatRule {
              */
             if (token.type == equals) {
                 next = tokens.get(i + 1)
-                if (next == null) break // End of tokens
-                else if (next.type == space) {
+                if (next == null) {
+                    break // End of tokens
+                } else if (next.type == space) {
                     if (tokens.remove(i + 1) == null) return false
                 }
             } else {

@@ -16,6 +16,7 @@ class Formatter(
         val rules: List<FormatRule> = config.loadConfig()
         lexer.splitString()
         val tokens: Container = lexer.createToken(lexer.list)
+        var result: Boolean
         for (rule: FormatRule in rules) {
             if(!rule.format(tokens)) {// An error has occurred
                 return Container()

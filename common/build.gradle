@@ -1,5 +1,7 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions' // sin versión
     id 'org.jlleitschuh.gradle.ktlint' version '11.6.0'
+    id 'jacoco'
+    id 'maven-publish'
 }
 
