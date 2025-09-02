@@ -1,9 +1,7 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions' //sin la extension .gradle
     //no lo puedo poner en bbuild.gradle/subpoject/dependencias (es un plugin)
-    id 'org.jlleitschuh.gradle.ktlint' version '11.6.0'
-    id 'jacoco'
-    id 'maven-publish'
+
 }
 
 dependencies{
