@@ -4,16 +4,16 @@ import common.src.main.kotlin.DataType
 import formatter.src.main.kotlin.Formatter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import kotlin.test.assertNotNull
 
 class FormatterTest {
 
-    val source = "let   x: string     =    \"Hello, World!\";"
-    val configFile = "C:\\Users\\santi\\faculty\\INGSIS\\PrintScript-Tools\\formatter\\src\\test\\resources\\format_rules.yaml"
-
     @Test
-    fun basicTest1() {
+    fun onlyMandatoryTest() {
+        // Testing only mandatory rules
+        val source = "let    x:   string    =    \"Hi\"  ;"
+        val configFile = "C:\\Users\\santi\\faculty\\INGSIS\\PrintScript-Tools\\formatter\\src\\test\\resources\\test1rules.yaml"
         val formatter = Formatter(source, configFile)
-        print("Init formatter")
         val types = listOf(
             DataType.LET_KEYWORD,
             DataType.SPACE,
@@ -25,22 +25,37 @@ class FormatterTest {
             DataType.ASSIGNATION,
             DataType.SPACE,
             DataType.STRING_LITERAL,
+            DataType.SPACE,
             DataType.SEMICOLON
         )
-        print("init types list")
         val actual = formatter.execute()
-        print("executed formatter")
         assertEquals(types.size, actual.size())
-        if (actual.size() > 0) {
-            for (i in types.indices) {
-                assertEquals(types[i], actual.get(i))
-            }
+        for (i in types.indices) {
+            assertEquals(types[i], actual.get(i)!!.type)
         }
     }
 
     @Test
-    fun basicTest2() {
-
+    fun optionalTest() {
+        // Testing all rules
+        val source = "let  x  :  number = 14;"
+        val configFile = "C:\\Users\\santi\\faculty\\INGSIS\\PrintScript-Tools\\formatter\\src\\test\\resources\\test2rules.yaml"
+        val formatter = Formatter(source, configFile)
+        val types = listOf(
+            DataType.LET_KEYWORD,
+            DataType.SPACE,
+            DataType.IDENTIFIER,
+            DataType.COLON,
+            DataType.NUMBER_TYPE,
+            DataType.ASSIGNATION,
+            DataType.NUMBER_LITERAL,
+            DataType.SEMICOLON
+        )
+        val actual = formatter.execute()
+        assertEquals(types.size, actual.size())
+        for (i in types.indices) {
+            assertEquals(types[i], actual.get(i)!!.type)
+        }
     }
 
 }

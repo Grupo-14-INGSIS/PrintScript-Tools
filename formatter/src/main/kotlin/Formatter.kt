@@ -15,12 +15,9 @@ class Formatter(
     fun execute(): Container {
         val rules: List<FormatRule> = config.loadConfig()
         lexer.splitString()
-        val tokens: Container = lexer.createToken(lexer.list)
-        var result: Boolean
+        var tokens: Container = lexer.createToken(lexer.list)
         for (rule: FormatRule in rules) {
-            if(!rule.format(tokens)) {// An error has occurred
-                return Container()
-            }
+            tokens = rule.format(tokens)
         }
         return tokens
     }

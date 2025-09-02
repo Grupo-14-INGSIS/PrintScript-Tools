@@ -10,13 +10,14 @@ class NoSpaceAfterEqualsRule : FormatRule {
     private val equals = DataType.ASSIGNATION
     private val space = DataType.SPACE
 
-    override fun format(tokens: Container): Boolean {
+    override fun format(source: Container): Container {
         var token: Token?
         var next: Token?
+        val tokens = source.copy()
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)
-            if (token == null) return false
+            if (token == null) break
             /*
              * Delete every space after an equals token
              */
@@ -25,12 +26,14 @@ class NoSpaceAfterEqualsRule : FormatRule {
                 if (next == null) {
                     break // End of tokens
                 } else if (next.type == space) {
-                    if (tokens.remove(i + 1) == null) return false
+                    if (tokens.remove(i + 1) == null) break
+                } else {
+                    i++
                 }
             } else {
                 i++
             }
         }
-        return true
+        return tokens
     }
 }

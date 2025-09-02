@@ -8,6 +8,10 @@ class Container {
         container.add(token)
     }
 
+    fun addAll(contents: List<Token>) {
+        container.addAll(contents)
+    }
+
     fun addAt(token: Token, index: Int): Boolean {
         if (0 > index || index > container.size) return false
         container.add(index, token)
@@ -55,6 +59,12 @@ class Container {
         for (i in safeFrom until safeTo) {
             output.addContainer(get(i)!!)
         }
+        return output
+    }
+
+    fun copy(): Container {
+        val output = Container()
+        output.addAll(container)
         return output
     }
 

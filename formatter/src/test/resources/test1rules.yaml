@@ -1,0 +1,11 @@
+rules:
+  switch:
+    NoSpaceBeforeColon: false
+    NoSpaceAfterColon: false
+    NoSpaceBeforeEquals: false
+    NoSpaceAfterEquals: false
+
+  setValue:
+    # Any value in {0, 1, 2}
+    lineBreakBeforePrint: 2
+

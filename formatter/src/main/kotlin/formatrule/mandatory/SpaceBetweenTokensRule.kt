@@ -10,13 +10,27 @@ class SpaceBetweenTokensRule : FormatRule {
 
     private val space = DataType.SPACE
 
-    override fun format(tokens: Container): Boolean {
+    // It's not necessary to have at least one space between each of this tokens
+    private val exceptions = listOf(
+        DataType.COLON,
+        DataType.SEMICOLON,
+        DataType.ADDITION,
+        DataType.SUBTRACTION,
+        DataType.MULTIPLICATION,
+        DataType.DIVISION,
+        DataType.ASSIGNATION,
+        DataType.OPEN_PARENTHESIS,
+        DataType.CLOSE_PARENTHESIS
+    )
+
+    override fun format(source: Container): Container {
         var firstToken: Token?
         var secondToken: Token?
+        val tokens = source.copy()
         var i = 0
         while (i < tokens.size()) {
             firstToken = tokens.get(i)
-            if (firstToken == null) return false
+            if (firstToken == null) break
             /*
              * Keep every non-space token
              * Keep a space only if the previous one was not a space
@@ -29,12 +43,14 @@ class SpaceBetweenTokensRule : FormatRule {
                 if (secondToken == null) {
                     break // End of tokens
                 } else if (secondToken.type == space) {
-                    if (tokens.remove(i + 1) == null) return false
+                    if (tokens.remove(i + 1) == null) break
+                } else { // Non-space token after space -> continue
+                    i++
                 }
             } else {
                 i++
             }
         }
-        return true
+        return tokens
     }
 }
