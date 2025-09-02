@@ -9,8 +9,8 @@ import java.io.File
 class AnalyzerCommand : Command {
     override fun execute(args: List<String>) {
         if (args.size < 2) {
-            println("Error: Debe especificar el archivo fuente y el archivo de configuración de análisis")
-            println("Uso: analyzer <archivo_fuente> <archivo_config_lint> [version]")
+            println("Error: Must specify the source file and the analysis configuration file.")
+            println("Usage: analyzer <source_file> <configuration_file> [version]")
             return
         }
 
@@ -19,7 +19,7 @@ class AnalyzerCommand : Command {
         val version = if (args.size > 2) args[2] else "1.0"
 
         if (version != "1.0") {
-            println("Error: Versión no soportada. Solo se admite la versión 1.0")
+            println("Error: Unsupported version. Only 1.0 is admitted.")
             return
         }
 
@@ -28,46 +28,42 @@ class AnalyzerCommand : Command {
             val configFileObj = File(configFile)
 
             if (!sourceFileObj.exists()) {
-                println("Error: El archivo fuente '$sourceFile' no existe")
+                println("Error: The source file '$sourceFile' does not exist.")
                 return
             }
 
             if (!configFileObj.exists()) {
-                println("Error: El archivo de configuración '$configFile' no existe")
+                println("Error: The configuration file '$configFile' does not exist.")
                 return
             }
 
             val source = sourceFileObj.readText()
-            println("Iniciando análisis de '$sourceFile'...")
+            println("Starting formatting of '$sourceFile'.")
 
             // Progreso: Análisis léxico y sintáctico
-            print("Construyendo AST... ")
+            print("Building AST")
             val lexer = Lexer(source)
             lexer.splitString()
             val tokens = lexer.createToken(lexer.list)
             val parser = Parser(tokens)
             val ast = parser.parse()
-            println("✓ Completado")
 
             // Progreso: Cargando reglas de linting
-            print("Cargando reglas de análisis... ")
+            print("Loading analysis rules.")
             val lintRules = loadLintRules(configFile)
             val linter = Linter(lintRules)
-            println("✓ Completado")
 
-            // Progreso: Ejecutando análisis
-            print("Ejecutando análisis de código... ")
+            print("Executing code analysis.")
             val lintErrors = linter.all(ast)
-            println("✓ Completado")
 
             if (lintErrors.isEmpty()) {
-                println("\n✅ Análisis exitoso: No se encontraron problemas de código")
+                println("\nSUCCESS: No errors were found.")
             } else {
-                println("\n⚠️ Se encontraron ${lintErrors.size} problema(s) de código:")
-                lintErrors.forEach { error -> println(error) }
+                println("FAILED: ${lintErrors.size} error(s) were found:")
+                lintErrors.forEach { error -> println("* $error") }
             }
         } catch (e: Exception) {
-            println("Error durante el análisis: ${e.message}")
+            println("Error during analysis: ${e.message}")
             e.printStackTrace()
         }
     }
