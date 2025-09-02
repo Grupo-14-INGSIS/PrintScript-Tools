@@ -30,17 +30,17 @@ class ConfigLoader (
         val optionalRules = readConfig()
         output.addAll(createConfigurableRules(optionalRules))
         output.addAll(createMandatoryRules())
-        return listOf()
+        return output
     }
 
-    private fun createMandatoryRules(): List<FormatRule> {
+    fun createMandatoryRules(): List<FormatRule> {
         val output = mutableListOf<FormatRule>()
         output.add(SpaceAroundOperatorRule())
         output.add(SpaceBetweenTokensRule())
         return output
     }
 
-    private fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
+    fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
         val output = mutableListOf<FormatRule>()
         for (rule in rules.keys) {
             when (rule) {
@@ -55,12 +55,13 @@ class ConfigLoader (
         return output
     }
 
-    private fun readConfig(): Map<String, Any> {
+    fun readConfig(): Map<String, Any> {
         val output = mutableMapOf<String, Any>()
         val yaml = Yaml()
         val data = yaml.load<Map<String, Any>>(File(configFile).readText())
-        val switchRules: Map<String, Boolean> = data["switch"] as Map<String, Boolean>
-        val valueRules: Map<String, Any> = data["setValue"] as Map<String, Any>
+        val rules = data["rules"] as Map<String, Any>
+        val switchRules: Map<String, Boolean> = rules["switch"] as Map<String, Boolean>
+        val valueRules: Map<String, Any> = rules["setValue"] as Map<String, Any>
 
         for (rule in switchRules.keys) {
             if (switchRules[rule] == true) {

@@ -23,7 +23,7 @@ class Container {
     }
 
     fun remove(index: Int): Token? {
-        return if (index in 0..<size()) {
+        return if (index in 0 until size()) {
             container.removeAt(index)
         } else {
             null
