@@ -13,7 +13,7 @@ class ConfigLoader {
 }
 
 
-//si necesito agregar una regla, se crea su rule (implementacion de la interfaz) su config
+// si necesito agregar una regla, se crea su rule (implementacion de la interfaz) su config
 /*
 // ---CASO DE USO---
 val loader = ConfigLoader()
