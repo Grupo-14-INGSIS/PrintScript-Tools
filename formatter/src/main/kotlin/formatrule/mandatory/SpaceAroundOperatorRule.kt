@@ -10,23 +10,23 @@ class SpaceAroundOperatorRule : FormatRule {
 
     private val space = DataType.SPACE
 
-    private val equals = DataType.ASSIGNATION
-    private val addition = DataType.ADDITION
-    private val subtraction = DataType.SUBTRACTION
-    private val multiplication = DataType.MULTIPLICATION
-    private val division = DataType.DIVISION
+    private val operators = listOf(
+        DataType.ADDITION,
+        DataType.SUBTRACTION,
+        DataType.MULTIPLICATION,
+        DataType.DIVISION
+    )
 
-    private val operators = listOf(equals, addition, subtraction, multiplication, division)
-
-    override fun format(tokens: Container): Boolean {
+    override fun format(source: Container): Container {
         var token: Token?
         var previous: Token?
         var next: Token?
+        val tokens = source.copy()
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)
             if (token == null) {
-                return false
+                break
             } else if (token.type in operators) {
                 /*
                  * Check first the right space and then the left token,
@@ -50,6 +50,6 @@ class SpaceAroundOperatorRule : FormatRule {
             }
             i++
         }
-        return true
+        return tokens
     }
 }

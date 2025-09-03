@@ -10,8 +10,8 @@ import java.io.File
 class ValidationCommand : Command {
     override fun execute(args: List<String>) {
         if (args.isEmpty()) {
-            println("Error: Debe especificar el archivo fuente")
-            println("Uso: validation <archivo_fuente> [version]")
+            println("Error: Must specify the source file.")
+            println("Usage: validation <archivo_fuente> [version]")
             return
         }
 
@@ -19,52 +19,47 @@ class ValidationCommand : Command {
         val version = if (args.size > 1) args[1] else "1.0"
 
         if (version != "1.0") {
-            println("Error: Versión no soportada. Solo se admite la versión 1.0")
+            println("Error: Unsupported version. Only 1.0 is admitted.")
             return
         }
 
         try {
             val file = File(sourceFile)
             if (!file.exists()) {
-                println("Error: El archivo '$sourceFile' no existe")
+                println("Error: The source file '$sourceFile' does not exist.")
                 return
             }
 
             val source = file.readText()
-            println("Iniciando validación de '$sourceFile'...")
+            // println("Iniciando validación de '$sourceFile'...")
 
             // Progreso: Análisis léxico
-            print("Realizando análisis léxico... ")
+            print("Analyzing")
             val lexer = Lexer(source)
             lexer.splitString()
             val tokens = lexer.createToken(lexer.list)
-            println("✓ Completado")
 
             // Progreso: Análisis sintáctico
-            print("Realizando análisis sintáctico... ")
             val parser = Parser(tokens)
             val ast: ASTNode = parser.parse()
-            println("✓ Completado")
 
             // Progreso: Análisis semántico (usando Linter)
-            print("Realizando análisis semántico... ")
 
             // ⚠️ Por ahora sin reglas concretas, lista vacía
             val rules: List<LintRule> = emptyList()
             val linter = Linter(rules)
             val lintErrors = linter.all(ast)
-            println("✓ Completado")
 
             if (lintErrors.isEmpty()) {
-                println("\n✅ Validación exitosa: No se encontraron errores")
+                println("\nSUCCESS: No errors were found")
             } else {
-                println("\n❌ Se encontraron ${lintErrors.size} error(es):")
+                println("\nFAILED: ${lintErrors.size} error(s) were found:")
                 lintErrors.forEach { error: linter.LintError ->
                     println(error.toString())
                 }
             }
         } catch (e: Exception) {
-            println("Error durante la validación: ${e.message}")
+            println("Error durante validation: ${e.message}")
             e.printStackTrace()
         }
     }

@@ -10,13 +10,14 @@ class NoSpaceBeforeColonRule : FormatRule {
     private val colon = DataType.COLON
     private val space = DataType.SPACE
 
-    override fun format(tokens: Container): Boolean {
+    override fun format(source: Container): Container {
         var token: Token?
         var previous: Token?
+        val tokens = source.copy()
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)
-            if (token == null) return false
+            if (token == null) break
             /*
              * Delete every space that comes before a colon
              * IDEA:
@@ -37,16 +38,17 @@ class NoSpaceBeforeColonRule : FormatRule {
                         break
                     } else if (previous.type == space) { // It's a space
                         // Remove it and correct i value
-                        if (tokens.remove(i + 1) == null) return false
+                        if (tokens.remove(i - 1) == null) break
                         i--
                     } else { // It's not a space => There are no spaces before the colon
                         break
                     }
                 }
+                i++
             } else { // Not a colon, continue
                 i++
             }
         }
-        return true
+        return tokens
     }
 }

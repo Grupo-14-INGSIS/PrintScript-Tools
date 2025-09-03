@@ -4,10 +4,11 @@ import formatter.src.main.kotlin.Formatter
 import java.io.File
 
 class FormatterCommand : Command {
+
     override fun execute(args: List<String>) {
         if (args.size < 2) {
-            println("Error: Debe especificar el archivo fuente y el archivo de configuración")
-            println("Uso: formatter <archivo_fuente> <archivo_config> [version]")
+            println("Error: Must specify the source file and the format configuration file.")
+            println("Usage: formatter <source_file> <configuration_file> [version]")
             return
         }
 
@@ -16,7 +17,7 @@ class FormatterCommand : Command {
         val version = if (args.size > 2) args[2] else "1.0"
 
         if (version != "1.0") {
-            println("Error: Versión no soportada. Solo se admite la versión 1.0")
+            println("Error: Unsupported version. Only 1.0 is admitted.")
             return
         }
 
@@ -24,42 +25,31 @@ class FormatterCommand : Command {
             val sourceFileObj = File(sourceFile)
             val configFileObj = File(configFile)
 
+            // Check both source file and config
             if (!sourceFileObj.exists()) {
-                println("Error: El archivo fuente '$sourceFile' no existe")
+                println("Error: The source file '$sourceFile' does not exist.")
                 return
             }
 
             if (!configFileObj.exists()) {
-                println("Error: El archivo de configuración '$configFile' no existe")
+                println("Error: The configuration file '$configFile' does not exist.")
                 return
             }
 
             val source = sourceFileObj.readText()
-            println("Iniciando formateo de '$sourceFile'...")
+            println("Starting formatting of '$sourceFile'.")
 
-            // Progreso: Validación previa
-            print("Validando archivo fuente... ")
-            // Aquí deberías validar que el archivo sea sintácticamente correcto
-            println("✓ Completado")
+            // LINTER
 
-            // Progreso: Cargando configuración
-            print("Cargando configuración de formato... ")
+            println("Executing code format")
             val formatter = Formatter(source, configFile)
-            println("✓ Completado")
+            val result = formatter.execute()
 
-            // Progreso: Aplicando formato
-            print("Aplicando reglas de formato... ")
-            val result = formatter.execute(source)
-            println("✓ Completado")
+            // Write to file
 
-            if (result == 0) {
-                println("\n✅ Formateo exitoso")
-                // Aquí deberías guardar el archivo formateado o mostrarlo
-            } else {
-                println("\n❌ Error durante el formateo (código: $result)")
-            }
+            println("Finished formatting.")
         } catch (e: Exception) {
-            println("Error durante el formateo: ${e.message}")
+            println("Error during formatting: ${e.message}")
             e.printStackTrace()
         }
     }
