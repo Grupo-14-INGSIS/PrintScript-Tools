@@ -21,4 +21,20 @@ class Interpreter {
         handler.interpret(node, action)
         return true
     }
+
+    fun determineAction(node: ASTNode): Actions {
+        return when (node.token.content) {
+            "+" -> Actions.ADD
+            "-" -> Actions.SUBTRACT
+            "*" -> Actions.MULTIPLY
+            "/" -> Actions.DIVIDE
+            "print" -> Actions.PRINT
+            "var" -> Actions.VAR_DECLARATION
+            "=" -> Actions.VAR_DECLARATION_AND_ASSIGNMENT
+            "if" -> Actions.IF_STATEMENT
+            "readInput" -> Actions.READ_INPUT
+            "readEnv" -> Actions.READ_ENV
+            else -> throw IllegalArgumentException("Unknown action for token: '${node.token.content}'")
+        }
+    }
 }
