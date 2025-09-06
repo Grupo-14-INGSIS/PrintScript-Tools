@@ -18,8 +18,9 @@ class AnalyzerCommand : Command {
         val configFile = args[1]
         val version = if (args.size > 2) args[2] else "1.0"
 
-        if (version != "1.0") {
-            println("Error: Unsupported version. Only 1.0 is admitted.")
+        val supportedVersions = setOf("1.0", "1.1")
+        if (version !in supportedVersions) {
+            println("Error: Unsupported version.")
             return
         }
 
