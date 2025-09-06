@@ -1,25 +1,53 @@
 package src.main.model.tools.interpreter.interpreter
 
+import IfStatement
+import InputProvider
+import ReadEnv
+import ReadInput
 import common.src.main.kotlin.ASTNode
 
-class Interpreter {
-    private val actionHandlers = mapOf(
-        Actions.ADD to Add, // sin parentesis pq soo object, no class
-        Actions.SUBTRACT to Subtract,
-        Actions.MULTIPLY to Multiply,
-        Actions.DIVIDE to Divide,
-        Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
-        Actions.DIVIDE to Divide,
-        Actions.PRINT to Print,
-        Actions.VAR_DECLARATION to VarDeclaration,
-        Actions.VAR_DECLARATION_AND_ASSIGNMENT to src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment
-    )
+class Interpreter(
+    private val version: String = "1.0",
+    private val inputProvider: InputProvider = ConsoleInputProvider()
+) {
+
+    private val actionHandlers = mutableMapOf<Actions, ActionType>().apply {
+        // PrintScript 1.0 handlers
+        put(Actions.ADD, Add)
+        put(Actions.SUBTRACT, Subtract)
+        put(Actions.MULTIPLY, Multiply)
+        put(Actions.DIVIDE, Divide)
+        put(Actions.ASSIGNMENT_TO_EXISTING_VAR, AssignmentToExistingVar)
+        put(Actions.PRINT, Print)
+        put(Actions.VAR_DECLARATION, VarDeclaration)
+        put(Actions.VAR_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
+
+        // PrintScript 1.1 handlers (solo si la versión es 1.1)
+        if (version == "1.1") {
+            put(Actions.READ_INPUT, ReadInput(inputProvider))
+            put(Actions.READ_ENV, ReadEnv(inputProvider))
+            put(Actions.IF_STATEMENT, IfStatement(this@Interpreter))
+            // Agregar más handlers según necesites
+        }
+    }
 
     fun interpret(node: ASTNode, action: Actions): Any? {
+        // Validar que la acción sea compatible con la versión
+        if (!isActionSupportedInVersion(action, version)) {
+            throw IllegalArgumentException(
+                "Action $action is not supported in PrintScript version $version"
+            )
+        }
+
         val handler = actionHandlers[action]
-            ?: return false
-        handler.interpret(node, action)
-        return true
+            ?: throw IllegalArgumentException("No handler found for action: $action")
+
+        return try {
+            handler.interpret(node, action)
+        } catch (e: Exception) {
+            println("Error during interpretation: ${e.message}")
+            false
+        }
     }
 
     fun determineAction(node: ASTNode): Actions {
@@ -35,6 +63,33 @@ class Interpreter {
             "readInput" -> Actions.READ_INPUT
             "readEnv" -> Actions.READ_ENV
             else -> throw IllegalArgumentException("Unknown action for token: '${node.token.content}'")
+        }
+    }
+
+    private fun isActionSupportedInVersion(action: Actions, version: String): Boolean {
+        val v10Actions = setOf(
+            Actions.ADD,
+            Actions.SUBTRACT,
+            Actions.MULTIPLY,
+            Actions.DIVIDE,
+            Actions.ASSIGNMENT_TO_EXISTING_VAR,
+            Actions.PRINT,
+            Actions.VAR_DECLARATION,
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT
+        )
+
+        val v11OnlyActions = setOf(
+            Actions.READ_INPUT,
+            Actions.READ_ENV,
+            Actions.IF_STATEMENT,
+            Actions.CONST_DECLARATION,
+            Actions.CONST_DECLARATION_AND_ASSIGNMENT
+        )
+
+        return when (version) {
+            "1.0" -> action in v10Actions
+            "1.1" -> action in v10Actions || action in v11OnlyActions
+            else -> false
         }
     }
 }

@@ -6,44 +6,51 @@ import common.src.main.kotlin.DataType
 import common.src.main.kotlin.Position
 import common.src.main.kotlin.Token
 
-class Grammar {
+class Grammar(private val version: String = "1.0") {
 
     private val invalid = ASTNode(Token(DataType.INVALID, "", Position(0, 0)), listOf())
-
     private val pratt = PrattParser()
 
     fun stmtParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
         }
-        // VARIABLE DECLARATION
 
-        return if (isAssignation(tokens)) {
-            val declaration = Token(DataType.DECLARATION, "", Position(0, 0))
-            ASTNode(
+        // CONST support for PrintScript 1.1
+        if (isAssignation(tokens)) {
+            val declarationType = tokens.get(0)!!.type
+            val isConst = declarationType == DataType.CONST_KEYWORD
+
+            val declaration = Token(
+                if (isConst) DataType.DECLARATION else DataType.DECLARATION,
+                "",
+                Position(0, 0)
+            )
+
+            return ASTNode(
                 tokens.get(4)!!,
-                listOf( // ASSIGNATION
+                listOf(
                     ASTNode(
                         declaration,
                         listOf(
                             varParse(tokens.sliceOne(1)),
                             typeParse(tokens.sliceOne(3))
                         )
-                    ), // DECLARATION
-                    expParse(tokens.slice(5)) // EXPRESSION TO ASSOCIATE
+                    ),
+                    expParse(tokens.slice(5))
                 )
             )
-        } else {
-            expParse(tokens)
         }
+
+        return expParse(tokens)
     }
 
     private fun isAssignation(tokens: Container): Boolean {
-        val let = DataType.LET_KEYWORD
+        val first = tokens.get(0)!!.type
         val colon = DataType.COLON
         val assignation = DataType.ASSIGNATION
         return (
-            tokens.get(0)!!.type == let &&
+            (first == DataType.LET_KEYWORD || (version == "1.1" && first == DataType.CONST_KEYWORD)) &&
                 tokens.get(2)!!.type == colon &&
                 tokens.get(4)!!.type == assignation
             )
@@ -57,35 +64,34 @@ class Grammar {
         return ASTNode(tokens.get(0)!!, listOf())
     }
 
-    /*
-    <exp> ::= <var> | <funCall> | <arith> | "(" <exp> ")" | <literal>
-     */
     fun expParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
         }
+
+        if (isFunctionCall(tokens)) {
+            return parseFunctionCall(tokens)
+        }
+
         if (isArith(tokens)) {
             return pratt.arithParse(tokens)
         }
-        /*
-        if (isFunCall(tokens)) {
-            return funcallParse(tokens)
-        }
-        */
+
         if (tokens.first()!!.type == DataType.PRINTLN) {
             return ASTNode(
                 tokens.first()!!,
-                listOf(
-                    expParse(tokens.slice(1))
-                )
+                listOf(expParse(tokens.slice(1)))
             )
         }
+
         if (tokens.first()!!.type == DataType.IDENTIFIER) {
             return varParse(tokens)
         }
+
         if (isLiteral(tokens)) {
             return litParse(tokens)
         }
+
         if (
             tokens.first()!!.type == DataType.OPEN_PARENTHESIS &&
             tokens.last()!!.type == DataType.CLOSE_PARENTHESIS
@@ -96,12 +102,22 @@ class Grammar {
         return invalid
     }
 
-    private fun isFunCall(tokens: Container): Boolean {
+    private fun isFunctionCall(tokens: Container): Boolean {
         return (
             tokens.size() >= 3 &&
                 tokens.get(1)!!.type == DataType.OPEN_PARENTHESIS &&
                 tokens.get(tokens.size() - 1)!!.type == DataType.CLOSE_PARENTHESIS
             )
+    }
+
+    private fun parseFunctionCall(tokens: Container): ASTNode {
+        val functionName = tokens.get(0)!!
+        val args = tokens.slice(2, tokens.size() - 1)
+
+        return ASTNode(
+            functionName,
+            if (args.isEmpty()) emptyList() else listOf(expParse(args))
+        )
     }
 
     private fun isArithSymbol(symbol: String): Boolean {
@@ -127,7 +143,8 @@ class Grammar {
         return (
             tokens.size() == 1 && (
                 tokens.first()!!.type == DataType.NUMBER_LITERAL ||
-                    tokens.first()!!.type == DataType.STRING_LITERAL
+                    tokens.first()!!.type == DataType.STRING_LITERAL ||
+                    tokens.first()!!.type == DataType.BOOLEAN_LITERAL
                 )
             )
     }
@@ -136,8 +153,8 @@ class Grammar {
         return ASTNode(
             Token(DataType.FUNCTION_CALL, "", Position(0, 0)),
             listOf(
-                varParse(tokens.sliceOne(0)), // IDENTIFIER
-                expParse(tokens.slice(3, tokens.size() - 1)) // PARAMETERS
+                varParse(tokens.sliceOne(0)),
+                expParse(tokens.slice(3, tokens.size() - 1))
             )
         )
     }

@@ -7,13 +7,13 @@ import common.src.main.kotlin.TokenPattern
 import common.src.main.kotlin.Position
 
 object TokenFactory {
-    fun createTokens(pieces: List<String>): Container {
+    fun createTokens(pieces: List<String>, version: String = "1.0"): Container {
         val container = Container()
         var position = Position(line = 0, column = 0)
 
         pieces.filter { it.isNotEmpty() }
             .forEach { piece ->
-                val type = TokenMap.classifyTokenMap(piece)
+                val type = TokenMap.classifyTokenMap(piece, version)
                     ?: TokenPattern.classifyTokenPattern(piece)
 
                 val token = Token(type, piece, position)
