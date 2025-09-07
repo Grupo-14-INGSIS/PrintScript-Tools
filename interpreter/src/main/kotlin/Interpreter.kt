@@ -43,7 +43,7 @@ class Interpreter(
             ?: throw IllegalArgumentException("No handler found for action: $action")
 
         return try {
-            handler.interpret(node, action)
+            handler.interpret(node)
         } catch (e: Exception) {
             println("Error during interpretation: ${e.message}")
             false

@@ -5,7 +5,7 @@ import common.src.main.kotlin.ASTNode
 object VarDeclaration : ActionType {
     private val variables = mutableMapOf<String, Any?>()
 
-    override fun interpret(node: ASTNode, actions: Actions): Any {
+    override fun interpret(node: ASTNode): Any {
         require(node.children.size >= 2) { "Declaración inválida: faltan argumentos" }
 
         val variableName = node.children[0].token.content

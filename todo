@@ -1,0 +1,12 @@
+to do
+tests formatter e interpreter
+adapter
+consigna del martes (tests, adapter, PR)
+verificar modulo x modulo si cumple las 2 cosnignas
+inmutabilidad
+mostrar % avance del formatter
+reglas propias de nuestro formatter
+arreglar lexer
+garantizar retrocompatibilidad
+cli que lee desde la terminal
+subir coverage en
