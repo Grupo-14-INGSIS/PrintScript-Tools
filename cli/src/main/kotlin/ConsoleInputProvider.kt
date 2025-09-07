@@ -18,3 +18,6 @@ class ConsoleInputProvider : InputProvider {
     }
 }
 // lee desde la terminal
+
+
+/*la interfaz de inputProvider asi como readEnv y readInput quedan en INterpreter pq contienen logica de interpretacion*/

@@ -8,7 +8,7 @@ import common.src.main.kotlin.ASTNode
 
 class Interpreter(
     private val version: String = "1.0",
-    private val inputProvider: InputProvider = ConsoleInputProvider()
+    private val inputProvider: InputProvider? = null
 ) {
 
     private val actionHandlers = mutableMapOf<Actions, ActionType>().apply {
@@ -24,8 +24,8 @@ class Interpreter(
 
         // PrintScript 1.1 handlers (solo si la versión es 1.1)
         if (version == "1.1") {
-            put(Actions.READ_INPUT, ReadInput(inputProvider))
-            put(Actions.READ_ENV, ReadEnv(inputProvider))
+            inputProvider?.let { ReadInput(it) }?.let { put(Actions.READ_INPUT, it) }
+            inputProvider?.let { ReadEnv(it) }?.let { put(Actions.READ_ENV, it) }
             put(Actions.IF_STATEMENT, IfStatement(this@Interpreter))
             // Agregar más handlers según necesites
         }
