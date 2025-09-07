@@ -43,8 +43,8 @@ class AnalyzerCommand : Command {
 
             // Progreso: Análisis léxico y sintáctico
             print("Building AST")
-            val lexer = Lexer(source)
-            lexer.splitString()
+            val lexer = Lexer.from(source)
+            lexer.split()
             val tokens = lexer.createToken(lexer.list)
             val parser = Parser(tokens)
             val ast = parser.parse()

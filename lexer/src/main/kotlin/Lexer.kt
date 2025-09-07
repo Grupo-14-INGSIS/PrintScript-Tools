@@ -1,53 +1,54 @@
 package src.main.model.tools.interpreter.lexer
+
 import common.src.main.kotlin.Container
 import java.io.File
 
-class Lexer(val input: String) { // conviene que no se pueda reasignar el input, es lo que recibo y no va a variar
+class Lexer(private val source: CharSource) {
 
-    constructor(file: File) : this(FileReader().readAsString(file))
+    var list = mutableListOf<String>()
 
-    val list = mutableListOf<String>()
-    private val fileReader = FileReader()
-
-    fun splitString() {
+    fun split(lotSize: Int = 8192) {
         var state = LexerState()
 
-        input.forEach { char -> state = classifier(char, state) }
+        val reader = source.openReader()
+        val buffer = CharArray(lotSize)
 
-        finalizeParsing(state)
-    }
-
-    fun splitStringFromFile(file: File, lotSize: Int = 8192) {
-        var state = LexerState()
-
-        fileReader.processFile(file, lotSize) { char -> state = classifier(char, state) }
-        finalizeParsing(state)
-    }
-
-    private fun finalizeParsing(state: LexerState) {
-        if (state.currentPiece.isNotEmpty()) {
-            list.addAll(state.pieces + state.currentPiece)
-        } else {
-            list.addAll(state.pieces)
+        reader.use {
+            var charsRead: Int
+            while (reader.read(buffer).also { charsRead = it } != -1) {
+                for (i in 0 until charsRead) {
+                    state = classifier(buffer[i], state)
+                }
+            }
         }
+
+        finalizeParsing(state)
     }
 
     private fun classifier(char: Char, state: LexerState): LexerState {
-        val characterType = CharacterClassifier.classify(char)
-        val handler = CharacterHandlerFactory.getHandler(characterType) // puedo operar sobre la clase porque es un object (singleton)
+        val type = CharacterClassifier.classify(char)
+        val handler = CharacterHandlerFactory.getHandler(type)
         return handler.handle(char, state)
+    }
+
+    private fun finalizeParsing(state: LexerState) {
+        val allPieces = if (state.currentPiece.isNotEmpty()) {
+            state.pieces + state.currentPiece
+        } else {
+            state.pieces
+        }
+        list = allPieces.toMutableList()
     }
 
     fun createToken(list: List<String>): Container {
         return TokenFactory.createTokens(list)
     }
 
-    companion object { // companion object tiene que ir dentro de la clase
-        fun fromFile(file: File): Lexer = Lexer(file)
-        fun fromFilePath(path: String): Lexer = Lexer(File(path))
+    companion object {
+        fun from(input: Any): Lexer = when (input) {
+            is String -> Lexer(StringCharSource(input))
+            is File -> Lexer(FileCharSource(input))
+            else -> throw IllegalArgumentException("Unsupported input type: ${input::class}")
+        }
     }
 }
-
-// hace lo MISMO que la version anterior, pero ahora prgormao en el mismo dominio, oculto codigo y es extensible
-// generar lista de palabras separando por espacios
-// tomar cada elemento y clasificarlo generanodo un token y guardarlo en container

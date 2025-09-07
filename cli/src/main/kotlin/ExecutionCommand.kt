@@ -40,8 +40,8 @@ class ExecutionCommand : Command {
 
         try {
             // Paso 1: Parsear a AST
-            val lexer = Lexer(source)
-            lexer.splitString()
+            val lexer = Lexer.from(source)
+            lexer.split()
             val tokens = lexer.createToken(lexer.list)
 
             // Paso 2: analisis sintactivo

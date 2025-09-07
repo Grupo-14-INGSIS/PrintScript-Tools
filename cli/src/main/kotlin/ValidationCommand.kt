@@ -35,8 +35,8 @@ class ValidationCommand : Command {
 
             // Progreso: Análisis léxico
             print("Analyzing")
-            val lexer = Lexer(source)
-            lexer.splitString()
+            val lexer = Lexer.from(source)
+            lexer.split()
             val tokens = lexer.createToken(lexer.list)
 
             // Progreso: Análisis sintáctico
