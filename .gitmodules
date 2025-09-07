@@ -1,0 +1,3 @@
+[submodule "printscript-tck"]
+	path = printscript-tck
+	url = git@github.com:EmmaBeni/printscript-tck.git
