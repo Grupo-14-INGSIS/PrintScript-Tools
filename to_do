@@ -1,5 +1,6 @@
 to do
-tests formatter e interpreter
+
+tests formatter
 adapter
 consigna del martes (tests, adapter, PR)
 verificar modulo x modulo si cumple las 2 cosnignas
@@ -9,4 +10,4 @@ reglas propias de nuestro formatter
 arreglar lexer
 garantizar retrocompatibilidad
 cli que lee desde la terminal
-subir coverage en
+subir coverage en ci/cd
