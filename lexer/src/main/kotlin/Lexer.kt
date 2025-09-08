@@ -1,6 +1,6 @@
 package src.main.model.tools.interpreter.lexer
 
-import common.src.main.kotlin.Container
+import container.src.main.kotlin.Container
 import java.io.File
 
 class Lexer(private val source: CharSource) {
@@ -52,3 +52,7 @@ class Lexer(private val source: CharSource) {
         }
     }
 }
+
+// hace lo MISMO que la version anterior, pero ahora prgormao en el mismo dominio, oculto codigo y es extensible
+// generar lista de palabras separando por espacios
+// tomar cada elemento y clasificarlo generanodo un token y guardarlo en container

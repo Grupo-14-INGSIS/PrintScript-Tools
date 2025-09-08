@@ -1,6 +1,6 @@
 package linter
 
-import common.src.main.kotlin.Position
+import tokendata.src.main.kotlin.Position
 
 data class LintError(
     val message: String,

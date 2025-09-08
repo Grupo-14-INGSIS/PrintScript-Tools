@@ -15,5 +15,8 @@ plugins {
 }
 
 rootProject.name = 'IngsisTP'
-include 'parser', 'interpreter', 'lexer', 'common', 'formatter', 'cli', 'linter', 'printscript-tck'
+include 'parser', 'interpreter', 'lexer', 'formatter', 'linter', 'cli', 'ast', 'container', 'tokendata', 'reskey', 'token', 'printscript-tck'
+
+//el directorio se llama cli, pero el Módulo CLI. Traté de cambiarlo, pero no funciono.
+include 'linter'
 

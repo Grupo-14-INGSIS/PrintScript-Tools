@@ -3,6 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation project(":common")
     implementation project(':printscript-tck')  // Ahora funciona
+    implementation project(":ast")
+    implementation project(":container")
+    implementation project(":tokendata")
+    implementation project(":token")
 }

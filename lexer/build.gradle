@@ -5,7 +5,9 @@ plugins {
 
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":container"))
+    implementation(project(":token"))
+    implementation(project(":tokendata"))
 }
 
 //el resto de la logica permanece en el plugin

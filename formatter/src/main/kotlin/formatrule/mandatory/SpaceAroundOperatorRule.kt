@@ -1,9 +1,9 @@
 package formatter.src.main.kotlin.formatrule.mandatory
 
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.Token
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
+import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
 class SpaceAroundOperatorRule : FormatRule {

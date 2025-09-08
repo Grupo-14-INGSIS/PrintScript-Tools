@@ -11,5 +11,6 @@ repositories { //defindo de donde puedo consumir dependencias
 
 dependencies {
     implementation 'org.yaml:snakeyaml:2.2'
-    implementation project(":common")
+    implementation project(":ast")
+    implementation project(":tokendata")
 }

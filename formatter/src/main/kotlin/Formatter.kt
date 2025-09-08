@@ -1,6 +1,6 @@
 package formatter.src.main.kotlin
 
-import common.src.main.kotlin.Container
+import container.src.main.kotlin.Container
 import src.main.model.tools.interpreter.lexer.Lexer
 import formatter.src.main.kotlin.formatrule.FormatRule
 

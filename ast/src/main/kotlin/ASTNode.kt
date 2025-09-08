@@ -1,4 +1,7 @@
-package common.src.main.kotlin
+package ast.src.main.kotlin
+
+import tokendata.src.main.kotlin.Position
+import tokendata.src.main.kotlin.DataType
 
 class ASTNode(
     val type: DataType?,

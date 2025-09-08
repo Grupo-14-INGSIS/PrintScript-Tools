@@ -1,5 +1,8 @@
 package src.main.model.tools.cli.cli
 
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
+import linter.LintError
 import linter.Linter
 import linter.LintRule
 import src.main.model.tools.interpreter.lexer.Lexer
@@ -45,17 +48,17 @@ class AnalyzerCommand : Command {
             print("Building AST")
             val lexer = Lexer.from(source)
             lexer.split()
-            val tokens = lexer.createToken(lexer.list)
+            val tokens: Container = lexer.createToken(lexer.list)
             val parser = Parser(tokens)
-            val ast = parser.parse()
+            val ast: ASTNode = parser.parse()
 
             // Progreso: Cargando reglas de linting
             print("Loading analysis rules.")
-            val lintRules = loadLintRules(configFile)
+            val lintRules: List<LintRule> = loadLintRules(configFile)
             val linter = Linter(lintRules)
 
             print("Executing code analysis.")
-            val lintErrors = linter.all(ast)
+            val lintErrors: List<LintError> = linter.all(ast)
 
             if (lintErrors.isEmpty()) {
                 println("\nSUCCESS: No errors were found.")

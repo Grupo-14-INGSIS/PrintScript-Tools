@@ -1,5 +1,6 @@
 package src.main.model.tools.cli.cli
 
+import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.Formatter
 import java.io.File
 
@@ -43,7 +44,7 @@ class FormatterCommand : Command {
 
             println("Executing code format")
             val formatter = Formatter(source, configFile)
-            val result = formatter.execute()
+            val result: Container = formatter.execute()
 
             // Write to file
 

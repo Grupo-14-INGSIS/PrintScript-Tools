@@ -2,7 +2,9 @@ package src.main.model.tools.cli.cli
 
 import src.main.model.tools.interpreter.lexer.Lexer
 import parser.src.main.kotlin.Parser
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
+import linter.LintError
 import linter.Linter
 import linter.LintRule
 import java.io.File
@@ -31,13 +33,13 @@ class ValidationCommand : Command {
             }
 
             val source = file.readText()
-            // println("Iniciando validación de '$sourceFile'...")
+            //println("Iniciando validación de '$sourceFile'...")
 
             // Progreso: Análisis léxico
             print("Analyzing")
             val lexer = Lexer.from(source)
             lexer.split()
-            val tokens = lexer.createToken(lexer.list)
+            val tokens: Container = lexer.createToken(lexer.list)
 
             // Progreso: Análisis sintáctico
             val parser = Parser(tokens)
@@ -48,13 +50,13 @@ class ValidationCommand : Command {
             // ⚠️ Por ahora sin reglas concretas, lista vacía
             val rules: List<LintRule> = emptyList()
             val linter = Linter(rules)
-            val lintErrors = linter.all(ast)
+            val lintErrors: List<LintError> = linter.all(ast)
 
             if (lintErrors.isEmpty()) {
                 println("\nSUCCESS: No errors were found")
             } else {
                 println("\nFAILED: ${lintErrors.size} error(s) were found:")
-                lintErrors.forEach { error: linter.LintError ->
+                lintErrors.forEach { error: LintError ->
                     println(error.toString())
                 }
             }

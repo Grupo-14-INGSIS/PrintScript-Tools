@@ -1,11 +1,9 @@
 package src.main.model.tools.interpreter.lexer
 
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.Token
-import common.src.main.kotlin.TokenMap
-import common.src.main.kotlin.TokenPattern
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.DataType
+import container.src.main.kotlin.Container
+import token.src.main.kotlin.Token
+import tokendata.src.main.kotlin.Position
 
 object TokenFactory {
     fun createTokens(pieces: List<String>, version: String = "1.0"): Container {

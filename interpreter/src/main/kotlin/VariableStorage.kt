@@ -1,3 +1,3 @@
-package common.src.main.kotlin
+package interpreter.src.main.kotlin
 
 class VariableStorage

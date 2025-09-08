@@ -1,14 +1,13 @@
 package parser.src.main.kotlin
 
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.Token
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
 
 class PrattParser {
 
-    private val invalid = ASTNode(Token(DataType.INVALID, "", Position(0, 0)), listOf())
+    private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
 
     fun arithParse(tokens: Container): ASTNode {
         val symbols: MutableList<PrattToken> = prattify(tokens)
@@ -71,7 +70,11 @@ class PrattParser {
         if (symbol.children(1) != null) {
             children.add(prattToAST(symbol.children(1)!!))
         }
-        val output = ASTNode(symbol.token(), children)
+        val output = ASTNode(
+            symbol.token().type,
+            symbol.token().content,
+            symbol.token().position,
+            children)
         return output
     }
 }

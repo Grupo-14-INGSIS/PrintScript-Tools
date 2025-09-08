@@ -4,7 +4,9 @@ plugins {
 }
 
 dependencies {
-     implementation(project(":common"))
-     implementation(project(":lexer"))
-     implementation("org.yaml:snakeyaml:2.0")
+    implementation(project(":container"))
+    implementation(project(":token"))
+    implementation(project(":tokendata"))
+    implementation(project(":lexer"))
+    implementation("org.yaml:snakeyaml:2.0")
 }
