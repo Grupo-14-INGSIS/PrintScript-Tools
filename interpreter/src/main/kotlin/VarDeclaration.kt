@@ -1,6 +1,6 @@
 package src.main.model.tools.interpreter.interpreter
 
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 
 object VarDeclaration : ActionType {
     private val variables = mutableMapOf<String, Any?>()
@@ -8,8 +8,8 @@ object VarDeclaration : ActionType {
     override fun interpret(node: ASTNode, actions: Actions): Any {
         require(node.children.size >= 2) { "Declaración inválida: faltan argumentos" }
 
-        val variableName = node.children[0].token.content
-        val variableType = node.children[1].token.content
+        val variableName = node.children[0].content
+        val variableType = node.children[1].content
 
         // evitar redeclaracion
         if (variables.containsKey(variableName)) {

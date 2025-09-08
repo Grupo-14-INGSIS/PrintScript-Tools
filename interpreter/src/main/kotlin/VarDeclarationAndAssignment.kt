@@ -1,6 +1,6 @@
 package src.main.model.tools.interpreter.interpreter
 
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 
 object VarDeclarationAndAssignment : ActionType {
     private val variables = mutableMapOf<String, Any?>()
@@ -11,9 +11,9 @@ object VarDeclarationAndAssignment : ActionType {
     ): Any {
         require(node.children.size >= 3) { "Declaración con asignación inválida: faltan argumentos" }
 
-        val variableName = node.children[0].token.content // "x"
-        val variableType = node.children[1].token.content // "number"
-        val assignedValue = node.children[2].token.content // "5"
+        val variableName = node.children[0].content // "x"
+        val variableType = node.children[1].content // "number"
+        val assignedValue = node.children[2].content // "5"
 
         // evitar redeclaracion
         if (src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables.containsKey(

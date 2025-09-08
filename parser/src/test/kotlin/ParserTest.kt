@@ -1,10 +1,10 @@
 package parser.src.test.kotlin
 
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.Token
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
+import token.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.Parser
@@ -35,11 +35,11 @@ class ParserTest {
         val root: ASTNode = parser.parse()
         val declaration: ASTNode = root.children[0]
 
-        assertEquals(DataType.ASSIGNATION, root.token.type)
-        assertEquals(DataType.DECLARATION, declaration.token.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].token.type)
-        assertEquals(DataType.IDENTIFIER, declaration.children[0].token.type)
-        assertEquals(DataType.NUMBER_TYPE, declaration.children[1].token.type)
+        assertEquals(DataType.ASSIGNATION, root.type)
+        assertEquals(DataType.DECLARATION, declaration.type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(DataType.IDENTIFIER, declaration.children[0].type)
+        assertEquals(DataType.NUMBER_TYPE, declaration.children[1].type)
     }
 
     @Test
@@ -59,8 +59,8 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.PRINTLN, root.token.type)
-        assertEquals(DataType.STRING_LITERAL, root.children[0].token.type)
+        assertEquals(DataType.PRINTLN, root.type)
+        assertEquals(DataType.STRING_LITERAL, root.children[0].type)
     }
 
     @Test
@@ -82,11 +82,11 @@ class ParserTest {
         val root: ASTNode = parser.parse()
         val mult = root.children[1]
 
-        assertEquals(DataType.ADDITION, root.token.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].token.type)
-        assertEquals(DataType.MULTIPLICATION, mult.token.type)
-        assertEquals(DataType.NUMBER_LITERAL, mult.children[0].token.type)
-        assertEquals(DataType.NUMBER_LITERAL, mult.children[1].token.type)
+        assertEquals(DataType.ADDITION, root.type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[0].type)
+        assertEquals(DataType.MULTIPLICATION, mult.type)
+        assertEquals(DataType.NUMBER_LITERAL, mult.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, mult.children[1].type)
     }
 
     @Test
@@ -125,16 +125,16 @@ class ParserTest {
         val div = sum.children[1]
         val mul = div.children[0]
 
-        assertEquals(DataType.ADDITION, root.token.type)
-        assertEquals(DataType.ADDITION, sum.token.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].token.type)
-        assertEquals(DataType.SUBTRACTION, sub.token.type)
-        assertEquals(DataType.DIVISION, div.token.type)
-        assertEquals(DataType.NUMBER_LITERAL, sub.children[0].token.type)
-        assertEquals(DataType.NUMBER_LITERAL, sub.children[1].token.type)
-        assertEquals(DataType.MULTIPLICATION, mul.token.type)
-        assertEquals(DataType.NUMBER_LITERAL, div.children[1].token.type)
-        assertEquals(DataType.NUMBER_LITERAL, mul.children[0].token.type)
-        assertEquals(DataType.NUMBER_LITERAL, mul.children[1].token.type)
+        assertEquals(DataType.ADDITION, root.type)
+        assertEquals(DataType.ADDITION, sum.type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(DataType.SUBTRACTION, sub.type)
+        assertEquals(DataType.DIVISION, div.type)
+        assertEquals(DataType.NUMBER_LITERAL, sub.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, sub.children[1].type)
+        assertEquals(DataType.MULTIPLICATION, mul.type)
+        assertEquals(DataType.NUMBER_LITERAL, div.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
     }
 }

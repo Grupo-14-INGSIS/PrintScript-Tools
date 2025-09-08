@@ -1,6 +1,7 @@
 package src.main.model.tools.cli.cli
 
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
 import parser.src.main.kotlin.Parser
 import src.main.model.tools.interpreter.lexer.Lexer
 import java.io.File
@@ -32,7 +33,7 @@ class ExecutionCommand : Command {
             // Paso 1: Parsear a AST
             val lexer = Lexer(source)
             lexer.splitString()
-            val tokens = lexer.createToken(lexer.list)
+            val tokens: Container = lexer.createToken(lexer.list)
             val parser = Parser(tokens)
             val ast: ASTNode = parser.parse()
 

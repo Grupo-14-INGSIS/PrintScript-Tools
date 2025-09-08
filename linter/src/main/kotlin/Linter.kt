@@ -1,6 +1,6 @@
 package linter
 
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 
 class Linter(private val rules: List<LintRule>) {
 

@@ -8,6 +8,7 @@ plugins {
 dependencies {
     implementation project(":parser")
     implementation project(":lexer")
-    implementation project(":common")
+    implementation project(":ast")
+    implementation project(":tokendata")
 }
 

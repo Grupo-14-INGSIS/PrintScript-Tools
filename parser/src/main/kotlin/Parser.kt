@@ -1,8 +1,8 @@
 package parser.src.main.kotlin
 
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
 
 class Parser(
     private var tokens: Container
@@ -16,7 +16,7 @@ class Parser(
     }
 
     private fun format(): Container {
-        val output: Container = Container()
+        val output = Container()
         val space = DataType.SPACE
         val semicolon = DataType.SEMICOLON
         for (i in 0 until tokens.size()) {

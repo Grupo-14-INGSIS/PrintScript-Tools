@@ -1,6 +1,6 @@
 package parser.src.main.kotlin
 
-import common.src.main.kotlin.Token
+import token.src.main.kotlin.Token
 
 private val precedences: Map<String, Int> = mapOf(
     "*" to 2,

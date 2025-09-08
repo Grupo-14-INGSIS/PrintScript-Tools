@@ -1,5 +1,5 @@
 import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
+import datatype.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue

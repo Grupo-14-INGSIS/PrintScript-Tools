@@ -1,4 +1,4 @@
-import common.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -38,16 +38,16 @@ class EndToEndTest {
         val ast = parser.parse()
 
         // Assert - Should parse as multiplication having higher precedence
-        assertEquals(DataType.ADDITION, ast.token.type)
+        assertEquals(DataType.ADDITION, ast.type)
         assertEquals(2, ast.children.size)
 
         // Left child should be "2"
-        assertEquals("2", ast.children[0].token.content)
+        assertEquals("2", ast.children[0].content)
 
         // Right child should be multiplication node "3 * 4"
-        assertEquals(DataType.MULTIPLICATION, ast.children[1].token.type)
-        assertEquals("3", ast.children[1].children[0].token.content)
-        assertEquals("4", ast.children[1].children[1].token.content)
+        assertEquals(DataType.MULTIPLICATION, ast.children[1].type)
+        assertEquals("3", ast.children[1].children[0].content)
+        assertEquals("4", ast.children[1].children[1].content)
     }
 
     @Test
@@ -93,15 +93,15 @@ class EndToEndTest {
         val ast = parser.parse()
 
         // Assert - Should parse as multiplication with parentheses resolved
-        assertEquals(DataType.MULTIPLICATION, ast.token.type)
+        assertEquals(DataType.MULTIPLICATION, ast.type)
 
         // Left side should be addition (2 + 3)
-//        assertEquals(DataType.ADDITION, ast.children[0].token.type)
-//        assertEquals("2", ast.children[0].children[0].token.content)
-//        assertEquals("3", ast.children[0].children[1].token.content)
+//        assertEquals(DataType.ADDITION, ast.children[0].type)
+//        assertEquals("2", ast.children[0].children[0].content)
+//        assertEquals("3", ast.children[0].children[1].content)
 
         // Right side should be "4"
-        assertEquals("4", ast.children[1].token.content)
+        assertEquals("4", ast.children[1].content)
     }
 
     @Test
@@ -196,7 +196,7 @@ class EndToEndTest {
             // arithmetic evaluation and return results
             assertNotNull(ast)
             assertTrue(
-                ast.token.type in listOf(
+                ast.type in listOf(
                     DataType.ADDITION,
                     DataType.SUBTRACTION,
                     DataType.MULTIPLICATION,
@@ -241,7 +241,7 @@ class EndToEndTest {
             val ast = parser.parse()
 
             // Check if parsing was successful
-            ast.token.type != DataType.INVALID
+            ast.type != DataType.INVALID
         } catch (e: Exception) {
             println("Pipeline failed with exception: ${e.message}")
             false

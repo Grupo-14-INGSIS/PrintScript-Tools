@@ -1,6 +1,6 @@
 package linter
 
-import common.src.main.kotlin.Position
+import position.src.main.kotlin.Position
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 

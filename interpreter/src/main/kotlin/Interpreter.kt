@@ -1,6 +1,6 @@
 package src.main.model.tools.interpreter.interpreter
 
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 
 class Interpreter {
     private val actionHandlers = mapOf(

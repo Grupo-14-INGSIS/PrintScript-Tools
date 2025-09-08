@@ -1,10 +1,9 @@
 package formatter.src.test.kotlin
 
-import common.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.DataType
 import formatter.src.main.kotlin.Formatter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertNotNull
 
 class FormatterTest {
 

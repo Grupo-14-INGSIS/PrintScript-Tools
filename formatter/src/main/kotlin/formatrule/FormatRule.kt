@@ -1,6 +1,6 @@
 package formatter.src.main.kotlin.formatrule
 
-import common.src.main.kotlin.Container
+import container.src.main.kotlin.Container
 
 interface FormatRule {
     /** Takes a `Container` argument and modifies it, returning true.

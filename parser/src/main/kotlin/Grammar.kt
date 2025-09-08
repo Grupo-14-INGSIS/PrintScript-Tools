@@ -1,14 +1,13 @@
 package parser.src.main.kotlin
 
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.Token
+import ast.src.main.kotlin.ASTNode
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
 
 class Grammar {
 
-    private val invalid = ASTNode(Token(DataType.INVALID, "", Position(0, 0)), listOf())
+    private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
 
     private val pratt = PrattParser()
 
@@ -19,12 +18,15 @@ class Grammar {
         // VARIABLE DECLARATION
 
         return if (isAssignation(tokens)) {
-            val declaration = Token(DataType.DECLARATION, "", Position(0, 0))
             ASTNode(
-                tokens.get(4)!!,
+                tokens.get(4)!!.type,
+                tokens.get(4)!!.content,
+                tokens.get(4)!!.position,
                 listOf( // ASSIGNATION
                     ASTNode(
-                        declaration,
+                        DataType.DECLARATION,
+                        "",
+                        tokens.get(1)!!.position,
                         listOf(
                             varParse(tokens.sliceOne(1)),
                             typeParse(tokens.sliceOne(3))
@@ -50,11 +52,19 @@ class Grammar {
     }
 
     fun varParse(tokens: Container): ASTNode {
-        return ASTNode(tokens.get(0)!!, listOf())
+        return ASTNode(
+            tokens.get(0)!!.type,
+            tokens.get(0)!!.content,
+            tokens.get(0)!!.position,
+            listOf())
     }
 
     fun typeParse(tokens: Container): ASTNode {
-        return ASTNode(tokens.get(0)!!, listOf())
+        return ASTNode(
+            tokens.get(0)!!.type,
+            tokens.get(0)!!.content,
+            tokens.get(0)!!.position,
+            listOf())
     }
 
     /*
@@ -74,7 +84,9 @@ class Grammar {
         */
         if (tokens.first()!!.type == DataType.PRINTLN) {
             return ASTNode(
-                tokens.first()!!,
+                tokens.first()!!.type,
+                tokens.first()!!.content,
+                tokens.first()!!.position,
                 listOf(
                     expParse(tokens.slice(1))
                 )
@@ -134,7 +146,9 @@ class Grammar {
 
     fun funcallParse(tokens: Container): ASTNode {
         return ASTNode(
-            Token(DataType.FUNCTION_CALL, "", Position(0, 0)),
+            DataType.FUNCTION_CALL,
+            tokens.first()!!.content,
+            tokens.first()!!.position,
             listOf(
                 varParse(tokens.sliceOne(0)), // IDENTIFIER
                 expParse(tokens.slice(3, tokens.size() - 1)) // PARAMETERS
@@ -143,10 +157,18 @@ class Grammar {
     }
 
     fun funParse(tokens: Container): ASTNode {
-        return ASTNode(tokens.get(0)!!, listOf())
+        return ASTNode(
+            tokens.first()!!.type,
+            tokens.first()!!.content,
+            tokens.first()!!.position,
+            listOf())
     }
 
     fun litParse(tokens: Container): ASTNode {
-        return ASTNode(tokens.get(0)!!, listOf())
+        return ASTNode(
+            tokens.first()!!.type,
+            tokens.first()!!.content,
+            tokens.first()!!.position,
+            listOf())
     }
 }

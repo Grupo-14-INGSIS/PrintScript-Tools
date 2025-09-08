@@ -1,14 +1,14 @@
 package src.main.model.tools.interpreter.interpreter
 
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 
 object Multiply : ActionType {
     override fun interpret(node: ASTNode, action: Actions): Any {
         val left = node.children[0]
         val right = node.children[1]
 
-        val leftValue = left.token.content
-        val rightValue = right.token.content
+        val leftValue = left.content
+        val rightValue = right.content
 
         val leftNum = leftValue.toDoubleOrNull()
         val rightNum = rightValue.toDoubleOrNull()

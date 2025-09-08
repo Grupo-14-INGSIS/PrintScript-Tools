@@ -1,11 +1,9 @@
 package formatter.src.test.kotlin
 
-import common.src.main.kotlin.DataType
 import formatter.src.main.kotlin.ConfigLoader
 import formatter.src.main.kotlin.formatrule.FormatRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
 
 class ConfigLoaderTest {
     // C:\Users\santi\faculty\INGSIS\PrintScript-Tools\formatter\src\test\resources\format_rules.yaml
