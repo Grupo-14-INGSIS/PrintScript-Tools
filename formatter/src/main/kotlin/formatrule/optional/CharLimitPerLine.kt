@@ -7,7 +7,7 @@ import formatter.src.main.kotlin.formatrule.FormatRule
 class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
 
     override fun format(source: Container): Container {
-        val output = Container()
+        var output = Container()
         val currentLineTokens = mutableListOf<Token>()
         var currentLineLength = 0
         var lineNumber = 1
@@ -23,7 +23,7 @@ class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
                 if (i < segments.lastIndex) {
                     // Fin de línea detectado
                     if (currentLineLength > maxLength) {
-                        output.addContainer(
+                        output = output.addContainer(
                             Token(
                                 type = null,
                                 content = "// Line $lineNumber exceeds $maxLength chars\n",
@@ -31,8 +31,8 @@ class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
                             )
                         )
                     }
-                    output.addAll(currentLineTokens)
-                    output.addContainer(Token(type = null, content = "\n", position = token.position))
+                    output = output.addAll(currentLineTokens)
+                    output = output.addContainer(Token(type = null, content = "\n", position = token.position))
 
                     currentLineTokens.clear()
                     currentLineLength = 0
@@ -44,7 +44,7 @@ class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
         // Última línea sin salto
         if (currentLineTokens.isNotEmpty()) {
             if (currentLineLength > maxLength) {
-                output.addContainer(
+                output = output.addContainer(
                     Token(
                         type = null,
                         content = "// Line $lineNumber exceeds $maxLength chars\n",
@@ -52,7 +52,7 @@ class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
                     )
                 )
             }
-            output.addAll(currentLineTokens)
+            output = output.addAll(currentLineTokens)
         }
 
         return output

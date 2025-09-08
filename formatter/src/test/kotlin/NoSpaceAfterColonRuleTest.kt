@@ -18,10 +18,10 @@ class NoSpaceAfterColonRuleTest {
 
     @Test
     fun `removes space after colon`() {
-        val input = Container()
-        input.addContainer(token(DataType.COLON, ":", 1, 0))
-        input.addContainer(token(DataType.SPACE, " ", 1, 1))
-        input.addContainer(token(DataType.IDENTIFIER, "x", 1, 2))
+        var input = Container()
+        input = input.addContainer(token(DataType.COLON, ":", 1, 0))
+        input = input.addContainer(token(DataType.SPACE, " ", 1, 1))
+        input = input.addContainer(token(DataType.IDENTIFIER, "x", 1, 2))
 
         val result = rule.format(input)
 
@@ -32,9 +32,9 @@ class NoSpaceAfterColonRuleTest {
 
     @Test
     fun `does not remove non-space after colon`() {
-        val input = Container()
-        input.addContainer(token(DataType.COLON, ":", 2, 0))
-        input.addContainer(token(DataType.IDENTIFIER, "y", 2, 1))
+        var input = Container()
+        input = input.addContainer(token(DataType.COLON, ":", 2, 0))
+        input = input.addContainer(token(DataType.IDENTIFIER, "y", 2, 1))
 
         val result = rule.format(input)
 
@@ -45,10 +45,10 @@ class NoSpaceAfterColonRuleTest {
 
     @Test
     fun `does not remove space not after colon`() {
-        val input = Container()
-        input.addContainer(token(DataType.IDENTIFIER, "a", 3, 0))
-        input.addContainer(token(DataType.SPACE, " ", 3, 1))
-        input.addContainer(token(DataType.COLON, ":", 3, 2))
+        var input = Container()
+        input = input.addContainer(token(DataType.IDENTIFIER, "a", 3, 0))
+        input = input.addContainer(token(DataType.SPACE, " ", 3, 1))
+        input = input.addContainer(token(DataType.COLON, ":", 3, 2))
 
         val result = rule.format(input)
 
@@ -60,8 +60,8 @@ class NoSpaceAfterColonRuleTest {
 
     @Test
     fun `handles colon at end of input`() {
-        val input = Container()
-        input.addContainer(token(DataType.COLON, ":", 4, 0))
+        var input = Container()
+        input = input.addContainer(token(DataType.COLON, ":", 4, 0))
 
         val result = rule.format(input)
 
@@ -71,10 +71,10 @@ class NoSpaceAfterColonRuleTest {
 
     @Test
     fun `preserves token positions`() {
-        val input = Container()
-        input.addContainer(token(DataType.COLON, ":", 5, 0))
-        input.addContainer(token(DataType.SPACE, " ", 5, 1))
-        input.addContainer(token(DataType.IDENTIFIER, "z", 5, 2))
+        var input = Container()
+        input = input.addContainer(token(DataType.COLON, ":", 5, 0))
+        input = input.addContainer(token(DataType.SPACE, " ", 5, 1))
+        input = input.addContainer(token(DataType.IDENTIFIER, "z", 5, 2))
 
         val result = rule.format(input)
 

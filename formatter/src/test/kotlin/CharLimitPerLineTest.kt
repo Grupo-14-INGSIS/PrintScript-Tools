@@ -12,7 +12,8 @@ class CharLimitPerLineTest {
     fun `should annotate lines exceeding character limit`() {
         val longLine = Token(type = DataType.STRING_LITERAL, content = "x".repeat(150), position = Position(1, 0))
         val lineBreak = Token(type = DataType.LINE_BREAK, content = "\n", position = Position(1, 150))
-        val container = Container().apply { addAll(listOf(longLine, lineBreak)) }
+        var container = Container()
+        container = container.addAll(listOf(longLine, lineBreak))
 
         val rule = CharLimitPerLine(maxLength = 140)
         val result = rule.format(container)
@@ -24,7 +25,8 @@ class CharLimitPerLineTest {
     fun `should annotate class name not in CamelCase`() {
         val declaration = Token(type = DataType.DECLARATION, content = "class", position = Position(1, 0))
         val identifier = Token(type = DataType.IDENTIFIER, content = "my_class", position = Position(1, 6))
-        val container = Container().apply { addAll(listOf(declaration, identifier)) }
+        var container = Container()
+        container = container.addAll(listOf(declaration, identifier))
 
         val rule = ClassNameCamelCaseRule()
         val result = rule.format(container)

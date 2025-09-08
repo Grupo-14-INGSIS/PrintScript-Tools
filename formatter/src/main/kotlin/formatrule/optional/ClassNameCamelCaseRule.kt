@@ -7,13 +7,13 @@ import formatter.src.main.kotlin.formatrule.FormatRule
 
 class ClassNameCamelCaseRule : FormatRule {
     override fun format(source: Container): Container {
-        val output = Container()
+        var output = Container()
 
         for (token in source.container) {
             if (token.type == DataType.IDENTIFIER) {
                 val name = token.content
                 if (!isCamelCase(name)) {
-                    output.addContainer(
+                    output = output.addContainer(
                         Token(
                             type = null,
                             content = "// Class name '$name' should follow CamelCase\n",
@@ -22,7 +22,7 @@ class ClassNameCamelCaseRule : FormatRule {
                     )
                 }
             }
-            output.addContainer(token)
+            output = output.addContainer(token)
         }
 
         return output

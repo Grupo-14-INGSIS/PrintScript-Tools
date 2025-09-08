@@ -21,7 +21,7 @@ class SpaceAroundOperatorRule : FormatRule {
         var token: Token?
         var previous: Token?
         var next: Token?
-        val tokens = source.copy()
+        var tokens = source
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)
@@ -37,13 +37,13 @@ class SpaceAroundOperatorRule : FormatRule {
                 next = tokens.get(i + 1)
                 if (next != null) {
                     if (next.type != space) {
-                        tokens.addAt(Token(space, " ", Position(0, 0)), i + 1)
+                        tokens = tokens.addAt(Token(space, " ", Position(0, 0)), i + 1)
                     }
                 }
                 previous = tokens.get(i - 1)
                 if (previous != null) {
                     if (previous.type != space) {
-                        tokens.addAt(Token(space, " ", Position(0, 0)), i - 1)
+                        tokens = tokens.addAt(Token(space, " ", Position(0, 0)), i - 1)
                         i++
                     }
                 }

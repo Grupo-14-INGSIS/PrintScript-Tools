@@ -11,10 +11,10 @@ class ContainerTest {
 
     @Test
     fun `test add token to container`() {
-        val container = Container()
+        var container = Container()
         val token = Token(DataType.IDENTIFIER, "test", Position(0, 0))
 
-        container.addContainer(token)
+        container = container.addContainer(token)
 
         assertEquals(1, container.container.size)
         assertEquals(token, container.container[0])
@@ -22,12 +22,12 @@ class ContainerTest {
 
     @Test
     fun `test add multiple tokens to container`() {
-        val container = Container()
+        var container = Container()
         val token1 = Token(DataType.LET_KEYWORD, "let", Position(0, 0))
         val token2 = Token(DataType.IDENTIFIER, "x", Position(1, 1))
 
-        container.addContainer(token1)
-        container.addContainer(token2)
+        container = container.addContainer(token1)
+        container = container.addContainer(token2)
 
         assertEquals(2, container.container.size)
         assertEquals(token1, container.container[0])

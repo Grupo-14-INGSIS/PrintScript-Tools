@@ -13,7 +13,7 @@ class NoSpaceBeforeEqualsRule : FormatRule {
     override fun format(source: Container): Container {
         var token: Token?
         var previous: Token?
-        val tokens = source.copy()
+        var tokens = source
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)
@@ -32,7 +32,9 @@ class NoSpaceBeforeEqualsRule : FormatRule {
                         break
                     } else if (previous.type == space) { // It's a space
                         // Remove it and correct i value
-                        if (tokens.remove(i - 1) == null) break
+                        val response = tokens.remove(i - 1)
+                        tokens = response.container
+                        if (response.token == null) break
                         i--
                     } else { // It's not a space => There are no spaces before the equals
                         break
