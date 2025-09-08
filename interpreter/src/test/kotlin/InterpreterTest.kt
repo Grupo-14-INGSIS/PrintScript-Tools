@@ -2,7 +2,6 @@ package src.main.model.tools.interpreter.interpreter
 
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.Position
-import token.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

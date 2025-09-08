@@ -11,7 +11,7 @@ class FormatterTest {
     fun onlyMandatoryTest() {
         // Testing only mandatory rules
         val source = "let    x:   string    =    \"Hi\"  ;"
-        val configFile = "C:\\Users\\santi\\faculty\\INGSIS\\PrintScript-Tools\\formatter\\src\\test\\resources\\test1rules.yaml"
+        val configFile = "C:\\Users\\laris\\Downloads\\PrintScript-Tools\\formatter\\src\\test\\resources\\test1rules.yaml"
         val formatter = Formatter(source, configFile)
         val types = listOf(
             DataType.LET_KEYWORD,
@@ -38,7 +38,7 @@ class FormatterTest {
     fun optionalTest() {
         // Testing all rules
         val source = "let  x  :  number = 14;"
-        val configFile = "C:\\Users\\santi\\faculty\\INGSIS\\PrintScript-Tools\\formatter\\src\\test\\resources\\test2rules.yaml"
+        val configFile = "C:\\Users\\laris\\Downloads\\PrintScript-Tools\\formatter\\src\\test\\resources\\test2rules.yaml"
         val formatter = Formatter(source, configFile)
         val types = listOf(
             DataType.LET_KEYWORD,
@@ -56,5 +56,4 @@ class FormatterTest {
             assertEquals(types[i], actual.get(i)!!.type)
         }
     }
-
 }

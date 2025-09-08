@@ -66,7 +66,12 @@ class VarDeclarationAndAssignmentTest {
 
     @Test
     fun `throws error on missing arguments`() {
-        val incompleteNode = ASTNode(type = dummyType, content = "=", position = dummyPosition, children = listOf(node("x"), node("number")))
+        val incompleteNode = ASTNode(
+            type = dummyType,
+            content = "=",
+            position = dummyPosition,
+            children = listOf(node("x"), node("number"))
+        )
         val exception = assertThrows(IllegalArgumentException::class.java) {
             VarDeclarationAndAssignment.interpret(incompleteNode)
         }

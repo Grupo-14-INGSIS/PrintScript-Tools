@@ -58,7 +58,8 @@ class Grammar(private val version: String = "1.0") {
             tokens.get(0)!!.type,
             tokens.get(0)!!.content,
             tokens.get(0)!!.position,
-            listOf())
+            listOf()
+        )
     }
 
     fun typeParse(tokens: Container): ASTNode {
@@ -66,7 +67,8 @@ class Grammar(private val version: String = "1.0") {
             tokens.get(0)!!.type,
             tokens.get(0)!!.content,
             tokens.get(0)!!.position,
-            listOf())
+            listOf()
+        )
     }
 
     /*
@@ -180,7 +182,8 @@ class Grammar(private val version: String = "1.0") {
             tokens.first()!!.type,
             tokens.first()!!.content,
             tokens.first()!!.position,
-            listOf())
+            listOf()
+        )
     }
 
     fun litParse(tokens: Container): ASTNode {
@@ -188,6 +191,7 @@ class Grammar(private val version: String = "1.0") {
             tokens.first()!!.type,
             tokens.first()!!.content,
             tokens.first()!!.position,
-            listOf())
+            listOf()
+        )
     }
 }
