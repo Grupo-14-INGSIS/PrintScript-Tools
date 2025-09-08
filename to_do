@@ -11,4 +11,4 @@ cli que lee desde la terminal
 dudas
 
 printscript tck queda como un modulo?
-le aplico ktlinter?
+le aplico coverage y tests?
