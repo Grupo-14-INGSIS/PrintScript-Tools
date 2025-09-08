@@ -6,7 +6,10 @@ import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceBetweenTokensRule
 import formatter.src.main.kotlin.ConfigLoader
 import formatter.src.main.kotlin.formatrule.FormatRule
-import common.src.main.kotlin.*
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
+import token.src.main.kotlin.Token
 
 // Helpers para crear tokens y containers
 fun token(type: DataType, content: String) = Token(type, content, Position(0, 0))

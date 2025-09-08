@@ -1,4 +1,4 @@
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 import src.main.model.tools.interpreter.interpreter.ActionType
 import src.main.model.tools.interpreter.interpreter.Interpreter
 

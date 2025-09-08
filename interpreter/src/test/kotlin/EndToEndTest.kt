@@ -1,4 +1,3 @@
-import common.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.*
 import tokendata.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,6 +9,7 @@ import src.main.model.tools.interpreter.interpreter.Interpreter
 import src.main.model.tools.interpreter.lexer.Lexer
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import container.src.main.kotlin.Container
 
 class EndToEndTest {
 
@@ -25,7 +25,7 @@ class EndToEndTest {
         val input = "2 + 3 * 4"
         val lexer = Lexer.from(input)
         lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val tokens: Container = lexer.createToken(lexer.list)
 
         val parser = Parser(tokens)
         val ast = parser.parse()
@@ -234,7 +234,7 @@ class EndToEndTest {
             val parser = Parser(tokens)
             val ast = parser.parse()
 
-            ast.token.type != DataType.INVALID
+            ast.type != DataType.INVALID
         } catch (e: Exception) {
             println("Pipeline failed with exception: ${e.message}")
             false

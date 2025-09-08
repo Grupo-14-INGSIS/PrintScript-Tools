@@ -1,18 +1,16 @@
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import common.src.main.kotlin.*
+import ast.src.main.kotlin.ASTNode
+import tokendata.src.main.kotlin.Position
+import tokendata.src.main.kotlin.DataType
 import linter.rules.*
 
 class RulesTest {
 
     @Test
     fun `valid println with identifier passes`() {
-        val node = ASTNode(
-            token = Token(DataType.PRINTLN, "println", Position(1, 1)),
-            children = listOf(
-                ASTNode(Token(DataType.IDENTIFIER, "x", Position(1, 9)), emptyList())
-            )
-        )
+        val node = ASTNode(DataType.PRINTLN, "println", Position(1, 1), listOf(
+            ASTNode(DataType.IDENTIFIER, "x", Position(1, 9), emptyList())))
 
         val rule = PrintLnRule()
         val errors = rule.apply(node)
@@ -21,10 +19,8 @@ class RulesTest {
 
     @Test
     fun `valid println with literal passes`() {
-        val node = ASTNode(
-            token = Token(DataType.PRINTLN, "println", Position(2, 1)),
-            children = listOf(
-                ASTNode(Token(DataType.STRING_LITERAL, "\"hello\"", Position(2, 9)), emptyList())
+        val node = ASTNode(DataType.PRINTLN, "println", Position(2, 1), listOf(
+            ASTNode(DataType.STRING_LITERAL, "\"hello\"", Position(2, 9), emptyList())
             )
         )
 
@@ -35,10 +31,8 @@ class RulesTest {
 
     @Test
     fun `invalid println with unsupported type fails`() {
-        val node = ASTNode(
-            token = Token(DataType.PRINTLN, "println", Position(3, 1)),
-            children = listOf(
-                ASTNode(Token(DataType.ASSIGNATION, "=", Position(3, 9)), emptyList())
+        val node = ASTNode(DataType.PRINTLN, "println", Position(3, 1), listOf(
+            ASTNode(DataType.ASSIGNATION, "=", Position(3, 9), emptyList())
             )
         )
 
@@ -51,10 +45,8 @@ class RulesTest {
 
     @Test
     fun `disabled rule returns no errors`() {
-        val node = ASTNode(
-            token = Token(DataType.PRINTLN, "println", Position(4, 1)),
-            children = listOf(
-                ASTNode(Token(DataType.ASSIGNATION, "=", Position(4, 9)), emptyList())
+        val node = ASTNode(DataType.PRINTLN, "println", Position(4, 1), listOf(
+                ASTNode(DataType.ASSIGNATION, "=", Position(4, 9), emptyList())
             )
         )
 
@@ -66,10 +58,7 @@ class RulesTest {
 
     @Test
     fun `valid camelCase identifier passes`() {
-        val node = ASTNode(
-            token = Token(DataType.IDENTIFIER, "myVariable", Position(1, 1)),
-            children = emptyList()
-        )
+        val node = ASTNode(DataType.IDENTIFIER, "myVariable", Position(1, 1), emptyList())
 
         val rule = IdentifierNamingRule("camelCase")
         val errors = rule.apply(node)
@@ -79,9 +68,7 @@ class RulesTest {
     @Test
     fun `invalid camelCase identifier fails`() {
         val node = ASTNode(
-            token = Token(DataType.IDENTIFIER, "My_variable", Position(2, 1)),
-            children = emptyList()
-        )
+            DataType.IDENTIFIER, "My_variable", Position(2, 1), emptyList())
 
         val rule = IdentifierNamingRule("camelCase")
         val errors = rule.apply(node)
@@ -92,10 +79,7 @@ class RulesTest {
 
     @Test
     fun `valid snake_case identifier passes`() {
-        val node = ASTNode(
-            token = Token(DataType.IDENTIFIER, "my_variable_1", Position(3, 1)),
-            children = emptyList()
-        )
+        val node = ASTNode(DataType.IDENTIFIER, "my_variable_1", Position(3, 1), emptyList())
 
         val rule = IdentifierNamingRule("snake_case")
         val errors = rule.apply(node)
@@ -104,10 +88,7 @@ class RulesTest {
 
     @Test
     fun `invalid snake_case identifier fails`() {
-        val node = ASTNode(
-            token = Token(DataType.IDENTIFIER, "myVariable", Position(4, 1)),
-            children = emptyList()
-        )
+        val node = ASTNode(DataType.IDENTIFIER, "myVariable", Position(4, 1), emptyList())
 
         val rule = IdentifierNamingRule("snake_case")
         val errors = rule.apply(node)
@@ -118,10 +99,7 @@ class RulesTest {
 
     @Test
     fun `unknown style accepts all identifiers`() {
-        val node = ASTNode(
-            token = Token(DataType.IDENTIFIER, "ANY_STYLE", Position(5, 1)),
-            children = emptyList()
-        )
+        val node = ASTNode(DataType.IDENTIFIER, "ANY_STYLE", Position(5, 1), emptyList())
 
         val rule = IdentifierNamingRule("PascalCase")
         val errors = rule.apply(node)

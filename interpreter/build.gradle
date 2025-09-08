@@ -8,5 +8,7 @@ dependencies {
     implementation project(":lexer")
     implementation project(":ast")
     implementation project(":tokendata")
+    implementation project(":token")
+    implementation project(":container")
 }
 

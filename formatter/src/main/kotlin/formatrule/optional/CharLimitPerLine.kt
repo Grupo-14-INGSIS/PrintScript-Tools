@@ -1,10 +1,11 @@
 package formatter.src.main.kotlin.formatrule.optional
 
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.Token
+import container.src.main.kotlin.Container
+import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
 class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
+
     override fun format(source: Container): Container {
         val output = Container()
         val currentLineTokens = mutableListOf<Token>()

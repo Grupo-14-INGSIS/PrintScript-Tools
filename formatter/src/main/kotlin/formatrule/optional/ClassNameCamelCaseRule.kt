@@ -1,8 +1,8 @@
 package formatter.src.main.kotlin.formatrule.optional
 
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Token
+import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
+import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
 class ClassNameCamelCaseRule : FormatRule {

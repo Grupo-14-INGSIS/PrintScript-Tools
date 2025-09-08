@@ -2,10 +2,10 @@ package test.container
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import common.src.main.kotlin.Container
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Token
-import common.src.main.kotlin.Position
+import token.src.main.kotlin.Token
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
+import container.src.main.kotlin.Container
 
 class SpaceAroundOperatorRuleTest {
 

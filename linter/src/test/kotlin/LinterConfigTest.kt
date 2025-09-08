@@ -2,6 +2,7 @@ package linter
 
 import linter.config.RulesConfig
 import linter.config.IdentifierNamingConfig
+import linter.config.LinterConfig
 import linter.config.PrintLnConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*

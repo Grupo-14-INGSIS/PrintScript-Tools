@@ -1,6 +1,4 @@
-package linter
-
-import linter.config.RulesConfig
+package linter.config
 
 data class LinterConfig(
     val rules: RulesConfig

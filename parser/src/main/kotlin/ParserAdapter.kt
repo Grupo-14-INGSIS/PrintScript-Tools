@@ -1,4 +1,4 @@
-package parser
+package parser.src.main.kotlin
 
 import interpreter.*
 import java.io.InputStream

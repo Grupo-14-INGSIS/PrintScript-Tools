@@ -5,10 +5,10 @@ import ReadInput
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import src.main.model.tools.interpreter.interpreter.ActionType
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.Token
+import ast.src.main.kotlin.ASTNode
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
+import token.src.main.kotlin.Token
 
 class ReadInputTest {
 
@@ -28,15 +28,14 @@ class ReadInputTest {
     }
 
     private fun nodeWithPrompt(promptText: String): ASTNode {
-        val promptToken = token("\"$promptText\"")
-        return ASTNode(token = promptToken, children = emptyList())
+        return ASTNode(DataType.STRING_TYPE, "\"$promptText\"", Position(0, 0), children = emptyList())
     }
 
     @Test
     fun `returns numeric input when convertible`() {
         val inputProvider = FakeInputProvider("42.5")
         val action: ActionType = ReadInput(inputProvider)
-        val node = ASTNode(token = token(""), children = listOf(nodeWithPrompt("Enter a number")))
+        val node = ASTNode(DataType.STRING_TYPE, "", Position(0, 0), children = listOf(nodeWithPrompt("Enter a number")))
         val result = action.interpret(node)
         assertEquals(42.5, result)
     }
@@ -45,7 +44,7 @@ class ReadInputTest {
     fun `returns string input when not convertible`() {
         val inputProvider = FakeInputProvider("hello")
         val action: ActionType = ReadInput(inputProvider)
-        val node = ASTNode(token = token(""), children = listOf(nodeWithPrompt("Enter text")))
+        val node = ASTNode(DataType.STRING_TYPE, "", Position(0, 0), children = listOf(nodeWithPrompt("Enter text")))
         val result = action.interpret(node)
         assertEquals("hello", result)
     }
@@ -54,7 +53,7 @@ class ReadInputTest {
     fun `throws when no prompt node is provided`() {
         val inputProvider = FakeInputProvider("ignored")
         val action: ActionType = ReadInput(inputProvider)
-        val node = ASTNode(token = token(""), children = emptyList())
+        val node = ASTNode(DataType.STRING_TYPE, "", Position(0, 0), children = emptyList())
         val exception = assertThrows(IllegalArgumentException::class.java) {
             action.interpret(node)
         }

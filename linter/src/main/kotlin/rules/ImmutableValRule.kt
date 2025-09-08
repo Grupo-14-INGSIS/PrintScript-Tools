@@ -1,7 +1,7 @@
 package linter.rules
 
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNode
+import tokendata.src.main.kotlin.DataType
 import linter.LintError
 import linter.LintRule
 
@@ -12,19 +12,18 @@ class ImmutableValRule : LintRule {
         val reassigned = mutableSetOf<String>()
 
         fun traverse(node: ASTNode) {
-            val token = node.token
 
-            if (token.type == DataType.DECLARATION && token.content == "var") {
-                val identifierNode = node.children.firstOrNull { it.token.type == DataType.IDENTIFIER }
-                val name = identifierNode?.token?.content
+            if (node.type == DataType.DECLARATION && node.content == "var") {
+                val identifierNode = node.children.firstOrNull { it.type == DataType.IDENTIFIER }
+                val name = identifierNode?.content
                 if (name != null) {
                     declaredVars[name] = node
                 }
             }
 
-            if (token.type == DataType.ASSIGNATION) {
-                val targetNode = node.children.firstOrNull { it.token.type == DataType.IDENTIFIER }
-                val name = targetNode?.token?.content
+            if (node.type == DataType.ASSIGNATION) {
+                val targetNode = node.children.firstOrNull { it.type == DataType.IDENTIFIER }
+                val name = targetNode?.content
                 if (name != null) {
                     reassigned.add(name)
                 }
@@ -40,7 +39,7 @@ class ImmutableValRule : LintRule {
                 errors.add(
                     LintError(
                         message = "Variable '$name' declared with 'var' but never reassigned. Use 'val' instead.",
-                        position = node.token.position
+                        position = node.position
                     )
                 )
             }

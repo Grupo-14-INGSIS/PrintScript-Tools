@@ -127,7 +127,9 @@ class Grammar(private val version: String = "1.0") {
         val args = tokens.slice(2, tokens.size() - 1)
 
         return ASTNode(
-            functionName,
+            functionName.type,
+            functionName.content,
+            functionName.position,
             if (args.isEmpty()) emptyList() else listOf(expParse(args))
         )
     }

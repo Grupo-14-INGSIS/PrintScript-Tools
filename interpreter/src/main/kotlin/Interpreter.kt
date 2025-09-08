@@ -4,7 +4,7 @@ import IfStatement
 import InputProvider
 import ReadEnv
 import ReadInput
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 
 class Interpreter(
     private val version: String = "1.0",
@@ -51,7 +51,7 @@ class Interpreter(
     }
 
     fun determineAction(node: ASTNode): Actions {
-        return when (node.token.content) {
+        return when (node.content) {
             "+" -> Actions.ADD
             "-" -> Actions.SUBTRACT
             "*" -> Actions.MULTIPLY
@@ -62,7 +62,7 @@ class Interpreter(
             "if" -> Actions.IF_STATEMENT
             "readInput" -> Actions.READ_INPUT
             "readEnv" -> Actions.READ_ENV
-            else -> throw IllegalArgumentException("Unknown action for token: '${node.token.content}'")
+            else -> throw IllegalArgumentException("Unknown action for token: '${node.content}'")
         }
     }
 

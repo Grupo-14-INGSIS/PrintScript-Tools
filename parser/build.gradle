@@ -8,4 +8,5 @@ dependencies {
     implementation project(":container")
     implementation project(":tokendata")
     implementation project(":token")
+    implementation project(":interpreter")
 }

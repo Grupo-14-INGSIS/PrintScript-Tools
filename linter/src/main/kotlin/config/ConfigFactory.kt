@@ -1,7 +1,5 @@
 package linter.config
 
-import linter.LinterConfig
-
 class ConfigFactory {
     fun createConfig(yamlMap: Map<String, Any>): LinterConfig {
         val rulesMap = yamlMap["rules"] as? Map<String, Any> ?: emptyMap()

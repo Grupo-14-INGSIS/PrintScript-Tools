@@ -1,7 +1,7 @@
 package linter
 
 import ast.src.main.kotlin.ASTNode
-import position.src.main.kotlin.Position
+import tokendata.src.main.kotlin.Position
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*

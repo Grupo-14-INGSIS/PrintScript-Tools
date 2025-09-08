@@ -1,10 +1,10 @@
-import common.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNode
 import src.main.model.tools.interpreter.interpreter.ActionType
 
 class ReadEnv(private val inputProvider: InputProvider) : ActionType {
     override fun interpret(node: ASTNode): Any {
         val varNameNode = node.children.firstOrNull() ?: throw IllegalArgumentException("readEnv requires a variable name argument")
-        val varName = varNameNode.token.content.removeSurrounding("\"", "'")
+        val varName = varNameNode.content.removeSurrounding("\"", "'")
         val envValue = inputProvider.readEnv(varName) ?: throw IllegalArgumentException("Environment variable '$varName' not found")
 
         return when {

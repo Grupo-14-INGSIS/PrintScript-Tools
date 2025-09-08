@@ -3,10 +3,10 @@ package test.model.tools.interpreter
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import src.main.model.tools.interpreter.interpreter.AssignmentToExistingVar
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
-import common.src.main.kotlin.Token
+import ast.src.main.kotlin.ASTNode
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
+import token.src.main.kotlin.Token
 
 class AssignmentToExistingVarTest {
 
@@ -14,14 +14,10 @@ class AssignmentToExistingVarTest {
         val dummyType = DataType.IDENTIFIER
         val dummyPosition = Position(line = 1, column = 1)
 
-        val nameToken = Token(type = dummyType, content = variableName, position = dummyPosition)
-        val valueToken = Token(type = dummyType, content = value, position = dummyPosition)
-        val rootToken = Token(type = dummyType, content = "assignment", position = dummyPosition)
+        val nameNode = ASTNode(type = dummyType, content = variableName, position = dummyPosition, children = emptyList())
+        val valueNode = ASTNode(type = dummyType, content = value, position = dummyPosition, children = emptyList())
 
-        val nameNode = ASTNode(token = nameToken, children = emptyList())
-        val valueNode = ASTNode(token = valueToken, children = emptyList())
-
-        return ASTNode(token = rootToken, children = listOf(nameNode, valueNode))
+        return ASTNode(type = dummyType, content = "assignment", position = dummyPosition, children = listOf(nameNode, valueNode))
     }
 
     @Test

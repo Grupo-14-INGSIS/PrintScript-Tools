@@ -2,13 +2,10 @@ package formatter.tests
 
 import org.junit.jupiter.api.Assertions.*
 import formatter.src.main.kotlin.ConfigLoader
-import formatter.src.main.kotlin.formatrule.FormatRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import formatter.src.main.kotlin.ConfigLoader
-
 
 class ConfigLoaderTest {
 

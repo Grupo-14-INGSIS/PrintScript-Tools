@@ -1,7 +1,8 @@
 package src.main.model.tools.interpreter.interpreter
 
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.Token
+import ast.src.main.kotlin.ASTNode
+import tokendata.src.main.kotlin.Position
+import token.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -9,10 +10,7 @@ import org.junit.jupiter.api.Test
 class InterpreterTest {
 
     private fun node(content: String, children: List<ASTNode> = emptyList()) =
-        ASTNode(
-            Token(type = null, content = content, position = common.src.main.kotlin.Position(1, 1)),
-            children
-        )
+        ASTNode(type = null, content = content, position = Position(1, 1), children)
 
     @Test
     fun `determineAction arithmetic`() {

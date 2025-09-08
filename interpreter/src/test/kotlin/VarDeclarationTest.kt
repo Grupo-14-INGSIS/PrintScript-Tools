@@ -3,10 +3,10 @@ package test.model.tools.interpreter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import src.main.model.tools.interpreter.interpreter.VarDeclaration
-import common.src.main.kotlin.ASTNode
-import common.src.main.kotlin.Token
-import common.src.main.kotlin.DataType
-import common.src.main.kotlin.Position
+import ast.src.main.kotlin.ASTNode
+import token.src.main.kotlin.Token
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
 
 class VarDeclarationTest {
 
@@ -14,13 +14,13 @@ class VarDeclarationTest {
     private val dummyType = DataType.IDENTIFIER
 
     private fun token(content: String) = Token(type = dummyType, content = content, position = dummyPosition)
-    private fun node(content: String) = ASTNode(token = token(content), children = emptyList())
+    private fun node(content: String) = ASTNode(type = dummyType, content = content, position = dummyPosition, children = emptyList())
 
     private fun declarationNode(name: String, type: String): ASTNode {
         val nameNode = node(name)
         val typeNode = node(type)
         val rootToken = token("var")
-        return ASTNode(token = rootToken, children = listOf(nameNode, typeNode))
+        return ASTNode(type = dummyType, content = "var", position = dummyPosition, children = listOf(nameNode, typeNode))
     }
 
     @Test
@@ -56,7 +56,7 @@ class VarDeclarationTest {
 
     @Test
     fun `throws error on missing arguments`() {
-        val incompleteNode = ASTNode(token = token("var"), children = listOf(node("x")))
+        val incompleteNode = ASTNode(type = dummyType, content = "var", position = dummyPosition, children = listOf(node("x")))
         val exception = assertThrows(IllegalArgumentException::class.java) {
             VarDeclaration.interpret(incompleteNode)
         }

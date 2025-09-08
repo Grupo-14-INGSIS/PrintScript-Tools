@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import formatter.src.main.kotlin.Formatter
-import common.src.main.kotlin.*
+import container.src.main.kotlin.Container
 
 // Helper rápido
 fun contents(container: Container): List<String> = container.container.map { it.content }

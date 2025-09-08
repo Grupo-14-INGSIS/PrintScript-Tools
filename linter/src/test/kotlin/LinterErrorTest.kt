@@ -1,6 +1,6 @@
 package linter
 
-import position.src.main.kotlin.Position
+import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 

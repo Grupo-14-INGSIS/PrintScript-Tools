@@ -1,8 +1,8 @@
 package model.structure
 
 import container.src.main.kotlin.Container
-import datatype.src.main.kotlin.DataType
-import position.src.main.kotlin.Position
+import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
