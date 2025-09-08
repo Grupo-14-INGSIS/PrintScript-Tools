@@ -19,7 +19,7 @@ class Container {
     }
 
     fun get(index: Int): Token? {
-        return if (index in 0..<size()) {
+        return if (index in 0 until size()) {
             container[index]
         } else {
             null
@@ -78,7 +78,7 @@ class Container {
 
     fun checkIs(tokens: List<DataType>): Boolean {
         if (size() != tokens.size) return false
-        for (i in 0..size()) {
+        for (i in 0 until size()) {
             if (get(i)!!.type == tokens[i]) return false
         }
         return true

@@ -1,65 +1,53 @@
-package formatter.src.test.kotlin
+package formatter.tests
 
-import common.src.main.kotlin.DataType
-import formatter.src.main.kotlin.ConfigLoader
-import formatter.src.main.kotlin.formatrule.FormatRule
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import formatter.src.main.kotlin.ConfigLoader
+
 
 class ConfigLoaderTest {
-    // C:\Users\santi\faculty\INGSIS\PrintScript-Tools\formatter\src\test\resources\format_rules.yaml
-    val configFile = "C:\\Users\\santi\\faculty\\INGSIS\\PrintScript-Tools\\formatter\\src\\test\\resources\\format_rules.yaml"
-
-    val mandatoryRules = 2 // total 3
-    val configurableRules = 4 // total 5
-    val totalRules = mandatoryRules + configurableRules
 
     @Test
-    fun createMandatoryRules() {
-        val loader = ConfigLoader(configFile)
-        val rules: List<FormatRule> = loader.createMandatoryRules()
+    fun `readConfig loads switches and values from yaml`(@TempDir tempDir: Path) {
+        val yamlContent = """
+            rules:
+              switch:
+                NoSpaceBeforeColon: true
+                NoSpaceAfterColon: false
+              setValue:
+                LineLength: 80
+        """.trimIndent()
 
-        assertEquals(mandatoryRules, rules.size)
+        val configFile = tempDir.resolve("config.yml").toFile()
+        configFile.writeText(yamlContent)
+
+        val loader = ConfigLoader(configFile.absolutePath)
+        val result = loader.readConfig()
+
+        // Solo NoSpaceBeforeColon debería estar
+        assertTrue(result.containsKey("NoSpaceBeforeColon"))
+        assertFalse(result.containsKey("NoSpaceAfterColon"))
+        // setValue debe incluirse siempre
+        assertEquals(80, result["LineLength"])
     }
 
     @Test
-    fun testReadConfig() {
-        val loader = ConfigLoader(configFile)
-        val rules: Map<String, Any> = loader.readConfig()
+    fun `createConfigurableRules creates rules for known keys`() {
+        val loader = ConfigLoader("dummy.yml")
+        val rules = loader.createConfigurableRules(
+            mapOf(
+                "NoSpaceBeforeColon" to true,
+                "NoSpaceAfterEquals" to true,
+                "UnknownRule" to true
+            )
+        )
 
-        assertEquals(5, rules.size)
-
-        assertEquals(true, rules.containsKey("NoSpaceBeforeColon"))
-        assertEquals(true, rules["NoSpaceBeforeColon"])
-
-        assertEquals(true, rules.containsKey("NoSpaceAfterColon"))
-        assertEquals(true, rules["NoSpaceAfterColon"])
-
-        assertEquals(true, rules.containsKey("NoSpaceBeforeEquals"))
-        assertEquals(true, rules["NoSpaceBeforeEquals"])
-
-        assertEquals(true, rules.containsKey("NoSpaceAfterEquals"))
-        assertEquals(true, rules["NoSpaceAfterEquals"])
-
-        assertEquals(true, rules.containsKey("lineBreakBeforePrint"))
-        assertEquals(2, rules["lineBreakBeforePrint"])
+        val names = rules.map { it::class.simpleName }.toSet()
+        assertTrue(names.contains("NoSpaceBeforeColonRule"))
+        assertTrue(names.contains("NoSpaceAfterEqualsRule"))
+        // UnknownRule no debería haberse agregado
+        assertEquals(2, rules.size)
     }
-
-    @Test
-    fun createConfigurableRules() {
-        val loader = ConfigLoader(configFile)
-        val yaml = loader.readConfig()
-        val rules: List<FormatRule> = loader.createConfigurableRules(yaml)
-
-        assertEquals(configurableRules, rules.size)
-    }
-
-    @Test
-    fun testLoadConfig() {
-        val loader = ConfigLoader(configFile)
-        val rules: List<FormatRule> = loader.loadConfig()
-        assertEquals(totalRules, rules.size)
-    }
-
 }

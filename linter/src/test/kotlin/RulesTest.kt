@@ -1,0 +1,130 @@
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
+import common.src.main.kotlin.*
+import linter.rules.*
+
+class RulesTest {
+
+    @Test
+    fun `valid println with identifier passes`() {
+        val node = ASTNode(
+            token = Token(DataType.PRINTLN, "println", Position(1, 1)),
+            children = listOf(
+                ASTNode(Token(DataType.IDENTIFIER, "x", Position(1, 9)), emptyList())
+            )
+        )
+
+        val rule = PrintLnRule()
+        val errors = rule.apply(node)
+        assertTrue(errors.isEmpty())
+    }
+
+    @Test
+    fun `valid println with literal passes`() {
+        val node = ASTNode(
+            token = Token(DataType.PRINTLN, "println", Position(2, 1)),
+            children = listOf(
+                ASTNode(Token(DataType.STRING_LITERAL, "\"hello\"", Position(2, 9)), emptyList())
+            )
+        )
+
+        val rule = PrintLnRule()
+        val errors = rule.apply(node)
+        assertTrue(errors.isEmpty())
+    }
+
+    @Test
+    fun `invalid println with unsupported type fails`() {
+        val node = ASTNode(
+            token = Token(DataType.PRINTLN, "println", Position(3, 1)),
+            children = listOf(
+                ASTNode(Token(DataType.ASSIGNATION, "=", Position(3, 9)), emptyList())
+            )
+        )
+
+        val rule = PrintLnRule()
+        val errors = rule.apply(node)
+        assertEquals(1, errors.size)
+        assertEquals("println argument must be a literal or identifier", errors[0].message)
+        assertEquals(Position(3, 1), errors[0].position)
+    }
+
+    @Test
+    fun `disabled rule returns no errors`() {
+        val node = ASTNode(
+            token = Token(DataType.PRINTLN, "println", Position(4, 1)),
+            children = listOf(
+                ASTNode(Token(DataType.ASSIGNATION, "=", Position(4, 9)), emptyList())
+            )
+        )
+
+        val rule = PrintLnRule(enabled = false)
+        val errors = rule.apply(node)
+        assertTrue(errors.isEmpty())
+    }
+
+
+    @Test
+    fun `valid camelCase identifier passes`() {
+        val node = ASTNode(
+            token = Token(DataType.IDENTIFIER, "myVariable", Position(1, 1)),
+            children = emptyList()
+        )
+
+        val rule = IdentifierNamingRule("camelCase")
+        val errors = rule.apply(node)
+        assertTrue(errors.isEmpty())
+    }
+
+    @Test
+    fun `invalid camelCase identifier fails`() {
+        val node = ASTNode(
+            token = Token(DataType.IDENTIFIER, "My_variable", Position(2, 1)),
+            children = emptyList()
+        )
+
+        val rule = IdentifierNamingRule("camelCase")
+        val errors = rule.apply(node)
+        assertEquals(1, errors.size)
+        assertEquals("Identifier 'My_variable' does not match camelCase style", errors[0].message)
+        assertEquals(Position(2, 1), errors[0].position)
+    }
+
+    @Test
+    fun `valid snake_case identifier passes`() {
+        val node = ASTNode(
+            token = Token(DataType.IDENTIFIER, "my_variable_1", Position(3, 1)),
+            children = emptyList()
+        )
+
+        val rule = IdentifierNamingRule("snake_case")
+        val errors = rule.apply(node)
+        assertTrue(errors.isEmpty())
+    }
+
+    @Test
+    fun `invalid snake_case identifier fails`() {
+        val node = ASTNode(
+            token = Token(DataType.IDENTIFIER, "myVariable", Position(4, 1)),
+            children = emptyList()
+        )
+
+        val rule = IdentifierNamingRule("snake_case")
+        val errors = rule.apply(node)
+        assertEquals(1, errors.size)
+        assertEquals("Identifier 'myVariable' does not match snake_case style", errors[0].message)
+        assertEquals(Position(4, 1), errors[0].position)
+    }
+
+    @Test
+    fun `unknown style accepts all identifiers`() {
+        val node = ASTNode(
+            token = Token(DataType.IDENTIFIER, "ANY_STYLE", Position(5, 1)),
+            children = emptyList()
+        )
+
+        val rule = IdentifierNamingRule("PascalCase")
+        val errors = rule.apply(node)
+        assertTrue(errors.isEmpty())
+    }
+}

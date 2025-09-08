@@ -1,8 +1,5 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
-    id 'org.jetbrains.kotlin.jvm'
-    id 'jacoco'
-    id 'maven-publish'
 }
 
 group = 'org.example'
@@ -13,11 +10,6 @@ repositories { //defindo de donde puedo consumir dependencias
 }
 
 dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation 'org.yaml:snakeyaml:2.2'
     implementation project(":common")
-}
-
-test {
-    useJUnitPlatform()
 }

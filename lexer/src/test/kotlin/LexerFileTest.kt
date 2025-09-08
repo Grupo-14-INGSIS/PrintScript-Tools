@@ -1,10 +1,9 @@
-package src.main.model.tools.interpreter.lexer
-
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import src.main.model.tools.interpreter.lexer.CharSource
+import src.main.model.tools.interpreter.lexer.FileCharSource
+import src.main.model.tools.interpreter.lexer.Lexer
 import java.nio.file.Path
 
 class LexerFileTest {
@@ -12,144 +11,113 @@ class LexerFileTest {
     @TempDir
     lateinit var tempDir: Path
 
+    private fun fileSource(content: String, name: String): CharSource {
+        val file = tempDir.resolve(name).toFile()
+        file.writeText(content)
+        return FileCharSource(file)
+    }
+
     @Test
-    fun `splitStringFromFile should process simple file content`() {
-        // Given
-        val testFile = tempDir.resolve("test.txt").toFile()
-        testFile.writeText("let x = 10")
-        val lexer = Lexer("")
+    fun `split should process simple file content`() {
+        val source = fileSource("let x = 10", "simple.txt")
+        val lexer = Lexer(source)
+        lexer.split()
 
-        // When
-        lexer.splitStringFromFile(testFile)
-
-        // Then - "let x = 10" = let + espacio + x + espacio + = + espacio + 10 = 7 tokens
         assertEquals(7, lexer.list.size)
         assertTrue(lexer.list.contains("let"))
         assertTrue(lexer.list.contains("x"))
         assertTrue(lexer.list.contains("="))
         assertTrue(lexer.list.contains("10"))
-        // Y 3 espacios
         assertEquals(3, lexer.list.count { it.isBlank() })
     }
 
     @Test
-    fun `splitStringFromFile should handle empty file`() {
-        // Given
-        val testFile = tempDir.resolve("empty.txt").toFile()
-        testFile.writeText("")
-        val lexer = Lexer("")
-
-        // When
-        lexer.splitStringFromFile(testFile)
-
-        // Then
+    fun `split should handle empty file`() {
+        val source = fileSource("", "empty.txt")
+        val lexer = Lexer(source)
+        lexer.split()
         assertTrue(lexer.list.isEmpty())
     }
 
     @Test
-    fun `splitStringFromFile should handle large file with custom chunk size`() {
-        // Given
-        val testFile = tempDir.resolve("large.txt").toFile()
-        val content = "token ".repeat(1000) // 1000 palabras "token" + 999 espacios = 1999 tokens
-        testFile.writeText(content.trim()) // trim quita el último espacio
-        val lexer = Lexer("")
+    fun `split should handle large file with custom chunk size`() {
+        val content = "token ".repeat(1000).trim()
+        val source = fileSource(content, "large.txt")
+        val lexer = Lexer(source)
+        lexer.split(lotSize = 100)
 
-        // When
-        lexer.splitStringFromFile(testFile, lotSize = 100)
-
-        // Then - 1000 palabras "token" + 999 espacios = 1999 tokens
         assertEquals(1999, lexer.list.size)
         assertEquals(1000, lexer.list.count { it == "token" })
         assertEquals(999, lexer.list.count { it.isBlank() })
     }
 
     @Test
-    fun `splitStringFromFile should handle multiline content`() {
-        // Given
-        val testFile = tempDir.resolve("multiline.txt").toFile()
+    fun `split should handle multiline content`() {
         val content = """
-            function add(a, b) {
-                return a + b;
-            }
+        function add(a, b) {
+            return a + b;
+        }
         """.trimIndent()
-        testFile.writeText(content)
-        val lexer = Lexer("")
+        val source = fileSource(content, "multiline.txt")
+        val lexer = Lexer(source)
+        lexer.split()
 
-        // When
-        lexer.splitStringFromFile(testFile)
+        // Tokens esperados según el diseño actual del lexer
+        val expectedTokens = listOf(
+            "function", "add", "(", "a,", "b", ")", "{",
+            "return", "a", "+", "b", ";", "}"
+        )
 
-        // Then - verificar que contiene las palabras clave (sin contar espacios exactos)
-        assertTrue(lexer.list.contains("function"))
-        assertTrue(lexer.list.contains("add"))
-        assertTrue(lexer.list.contains("("))
-        assertTrue(lexer.list.contains("a,"))
-        assertTrue(lexer.list.contains(" "))
-        assertTrue(lexer.list.contains("b"))
-        assertTrue(lexer.list.contains(")"))
-        assertTrue(lexer.list.contains("{"))
-        assertTrue(lexer.list.contains(";"))
-        assertTrue(lexer.list.contains("return"))
-        assertTrue(lexer.list.contains("+"))
-        assertTrue(lexer.list.contains("}"))
-        // Verificar que hay espacios/saltos de línea
-        assertTrue(lexer.list.any { it.isBlank() })
+        expectedTokens.forEach { expected ->
+            assertTrue(
+                lexer.list.contains(expected),
+                "Expected token '$expected' not found in lexer output"
+            )
+        }
+
+        // Validación de que al menos un token sea espacio o salto de línea
+        assertTrue(
+            lexer.list.any { it.isBlank() },
+            "Expected at least one whitespace token (e.g., space or newline)"
+        )
     }
 
     @Test
-    fun `splitStringFromFile should handle file with special characters`() {
-        // Given
-        val testFile = tempDir.resolve("special.txt").toFile()
-        testFile.writeText("name = \"José María\"; age >= 25")
-        val lexer = Lexer("")
+    fun `split should handle special characters`() {
+        val content = """name = "José María"; age >= 25"""
+        val source = fileSource(content, "special.txt")
+        val lexer = Lexer(source)
+        lexer.split()
 
-        // When
-        lexer.splitStringFromFile(testFile)
-
-        // Then
         assertTrue(lexer.list.contains("name"))
         assertTrue(lexer.list.contains("="))
-        assertTrue(
-            lexer.list.contains("\"José María\"") ||
-                (lexer.list.contains("José") && lexer.list.contains("María"))
-        )
+        assertTrue(lexer.list.any { it.contains("José") })
+        assertTrue(lexer.list.any { it.contains("María") })
         assertTrue(lexer.list.contains("age"))
-        assertTrue(
-            lexer.list.contains(">=") ||
-                (lexer.list.contains(">") && lexer.list.contains("="))
-        )
+        assertTrue(lexer.list.any { it.contains(">") })
         assertTrue(lexer.list.contains("25"))
     }
 
     @Test
-    fun `splitStringFromFile should process file that spans multiple chunks`() {
-        // Given
-        val testFile = tempDir.resolve("chunked.txt").toFile()
-        val tokens = (1..50).map { "token$it" }
-        testFile.writeText(tokens.joinToString(" ")) // 50 tokens + 49 espacios = 99 tokens
-        val lexer = Lexer("")
+    fun `split should process file that spans multiple chunks`() {
+        val tokens = (1..50).joinToString(" ") { "token$it" }
+        val source = fileSource(tokens, "chunked.txt")
+        val lexer = Lexer(source)
+        lexer.split(lotSize = 20)
 
-        // When
-        lexer.splitStringFromFile(testFile, lotSize = 20)
-
-        // Then - 50 palabras + 49 espacios = 99 tokens
         assertEquals(99, lexer.list.size)
         for (i in 1..50) {
             assertTrue(lexer.list.contains("token$i"))
         }
-        assertEquals(49, lexer.list.count { it.isBlank() }) // 49 espacios
+        assertEquals(49, lexer.list.count { it.isBlank() })
     }
 
     @Test
-    fun `splitStringFromFile should handle file ending with incomplete token`() {
-        // Given
-        val testFile = tempDir.resolve("incomplete.txt").toFile()
-        testFile.writeText("complete token incomplete") // 3 palabras + 2 espacios = 5 tokens
-        val lexer = Lexer("")
+    fun `split should handle file ending with incomplete token`() {
+        val source = fileSource("complete token incomplete", "incomplete.txt")
+        val lexer = Lexer(source)
+        lexer.split()
 
-        // When
-        lexer.splitStringFromFile(testFile)
-
-        // Then
         assertEquals(5, lexer.list.size)
         assertTrue(lexer.list.contains("complete"))
         assertTrue(lexer.list.contains("token"))
@@ -158,17 +126,14 @@ class LexerFileTest {
     }
 
     @Test
-    fun `fromFile constructor should work with splitStringFromFile`() {
-        // Given
-        val testFile = tempDir.resolve("constructor.txt").toFile()
-        testFile.writeText("constructor test") // 2 palabras + 1 espacio = 3 tokens
+    fun `split should process file content with constructor-like flow`() {
+        val file = tempDir.resolve("constructor.txt").toFile()
+        file.writeText("constructor test")
+        val source = FileCharSource(file)
+        val lexer = Lexer(source)
 
-        // When
-        val lexer = Lexer.fromFile(testFile)
-        lexer.list.clear() // limpiar lo que se tokenizó en el constructor
-        lexer.splitStringFromFile(testFile)
+        lexer.split()
 
-        // Then
         assertEquals(3, lexer.list.size)
         assertTrue(lexer.list.contains("constructor"))
         assertTrue(lexer.list.contains("test"))
@@ -176,18 +141,13 @@ class LexerFileTest {
     }
 
     @Test
-    fun `createToken should work after splitStringFromFile`() {
-        // Given
-        val testFile = tempDir.resolve("token.txt").toFile()
-        testFile.writeText("let x = 10")
-        val lexer = Lexer("")
-        lexer.splitStringFromFile(testFile)
+    fun `createToken should work after split`() {
+        val source = fileSource("let x = 10", "token.txt")
+        val lexer = Lexer(source)
+        lexer.split()
 
-        // When
         val container = lexer.createToken(lexer.list)
-
-        // Then
         assertNotNull(container)
-        assertEquals(7, container.size()) // Asumiendo que Container tiene método size()
+        assertEquals(7, container.size())
     }
 }

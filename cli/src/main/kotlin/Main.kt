@@ -1,6 +1,7 @@
 package src.main.model.tools.cli.cli
 
-class Main {
+object Main {
+    @JvmStatic // estatica para poder compilar y ejecutar directo de aca
     fun main(args: Array<String>) {
         val cli = Cli(
             mapOf(

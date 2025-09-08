@@ -1,62 +1,62 @@
-package cli
-
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import src.main.model.tools.cli.cli.ExecutionCommand
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
-import java.nio.file.Path
+import kotlin.test.Test
 
 class ExecutionCommandTest {
-    private val originalOut = System.out
-    private val outputStream = ByteArrayOutputStream()
-
-    @BeforeEach
-    fun setUp() {
-        System.setOut(PrintStream(outputStream))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        System.setOut(originalOut)
-    }
-
-    private fun getOutput(): String = outputStream.toString()
-
     @Test
-    fun `should require source file argument`() {
+    fun `no arguments prints usage`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
+
         val command = ExecutionCommand()
         command.execute(emptyList())
 
-        val output = getOutput()
-        assertTrue(output.contains("Error: Debe especificar el archivo fuente"))
-        assertTrue(output.contains("Uso: execution"))
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Must specify the source file."))
+        assertTrue(output.contains("Usage: execution <source_file> [version]"))
     }
 
     @Test
-    fun `should handle non-existent file`() {
-        val command = ExecutionCommand()
-        command.execute(listOf("missing.txt"))
+    fun `unsupported version prints error`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
-        assertTrue(getOutput().contains("Error: El archivo 'missing.txt' no existe"))
+        val command = ExecutionCommand()
+        command.execute(listOf("file.txt", "2.0"))
+
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: Unsupported version. Only 1.0 and 1.1 are supported."))
     }
 
     @Test
-    fun `should start execution when file exists`(@TempDir tempDir: Path) {
-        val sourceFile = tempDir.resolve("program.txt").toFile()
-        sourceFile.writeText("println(\"Hello\");")
+    fun `source file does not exist`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
         val command = ExecutionCommand()
+        command.execute(listOf("nonexistent.txt"))
 
-        try {
-            command.execute(listOf(sourceFile.absolutePath))
-        } catch (e: Exception) {
-            // Expected - dependencies not available
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: The source file 'nonexistent.txt' does not exist."))
+    }
+
+    @Test
+    fun `successful execution prints completion`() {
+        val sourceFile = File.createTempFile("source", ".txt").apply {
+            writeText("print(1)") // Asegurate que esto sea válido para tu lexer/parser
         }
 
-        assertTrue(getOutput().contains("Iniciando ejecución"))
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
+
+        val command = ExecutionCommand()
+        command.execute(listOf(sourceFile.absolutePath))
+
+        val output = outputStream.toString()
+        assertTrue(output.contains("Starting execution of"))
+        assertTrue(output.contains("Execution completed successfully"))
     }
 }

@@ -3,7 +3,7 @@ package src.main.model.tools.interpreter.interpreter
 import common.src.main.kotlin.ASTNode
 
 object Add : ActionType {
-    override fun interpret(node: ASTNode, action: Actions): Any {
+    override fun interpret(node: ASTNode): Any {
         // Acceder directamente al Token (no .token)
         val left = node.children[0] // Es Token directamente
         val right = node.children[1] // Es Token directamente

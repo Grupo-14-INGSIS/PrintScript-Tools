@@ -31,12 +31,12 @@ class ValidationCommand : Command {
             }
 
             val source = file.readText()
-            //println("Iniciando validación de '$sourceFile'...")
+            // println("Iniciando validación de '$sourceFile'...")
 
             // Progreso: Análisis léxico
             print("Analyzing")
-            val lexer = Lexer(source)
-            lexer.splitString()
+            val lexer = Lexer.from(source)
+            lexer.split()
             val tokens = lexer.createToken(lexer.list)
 
             // Progreso: Análisis sintáctico

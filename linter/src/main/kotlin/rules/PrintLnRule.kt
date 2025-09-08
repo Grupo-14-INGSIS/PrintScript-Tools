@@ -20,8 +20,10 @@ class PrintLnRule(private val enabled: Boolean = true) : LintRule {
                 val pos = node.token.position
                 errors += LintError(
                     "println argument must be a literal or identifier",
-                    Position(pos.line,
-                    pos.column)
+                    Position(
+                        pos.line,
+                        pos.column
+                    )
                 )
             }
         }

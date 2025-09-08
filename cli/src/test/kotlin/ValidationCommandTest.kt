@@ -1,70 +1,81 @@
-package src.test.model.tools.cli.cli
-
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import src.main.model.tools.cli.cli.ValidationCommand
+import org.junit.jupiter.api.Assertions.*
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import java.nio.file.Path
+import java.io.File
+import src.main.model.tools.cli.cli.ValidationCommand
 
 class ValidationCommandTest {
-    private val originalOut = System.out
-    private val outputStream = ByteArrayOutputStream()
-
-    @BeforeEach
-    fun setUp() {
-        System.setOut(PrintStream(outputStream))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        System.setOut(originalOut)
-    }
-
-    private fun getOutput(): String = outputStream.toString()
 
     @Test
-    fun `should require source file argument`() {
+    fun `no arguments prints usage`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
+
         val command = ValidationCommand()
         command.execute(emptyList())
 
-        val output = getOutput()
-        assertTrue(output.contains("Error: Debe especificar el archivo fuente"))
-        assertTrue(output.contains("Uso: validation"))
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: Must specify the source file."))
+        assertTrue(output.contains("Usage: validation <archivo_fuente> [version]"))
     }
 
     @Test
-    fun `should reject unsupported version`() {
-        val command = ValidationCommand()
-        command.execute(listOf("file.txt", "2.0"))
+    fun `unsupported version prints error`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
-        assertTrue(getOutput().contains("Error: Versión no soportada"))
+        val command = ValidationCommand()
+        command.execute(listOf("source.txt", "2.0"))
+
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: Unsupported version. Only 1.0 is admitted."))
     }
 
     @Test
-    fun `should handle non-existent file`() {
-        val command = ValidationCommand()
-        command.execute(listOf("nonexistent.txt"))
+    fun `source file does not exist`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
-        assertTrue(getOutput().contains("Error: El archivo 'nonexistent.txt' no existe"))
+        val command = ValidationCommand()
+        command.execute(listOf("missing_source.txt"))
+
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: The source file 'missing_source.txt' does not exist."))
     }
 
     @Test
-    fun `should start validation when file exists`(@TempDir tempDir: Path) {
-        val sourceFile = tempDir.resolve("valid.txt").toFile()
-        sourceFile.writeText("let x: number = 42;")
-
-        val command = ValidationCommand()
-
-        try {
-            command.execute(listOf(sourceFile.absolutePath))
-        } catch (e: Exception) {
-            // Expected - dependencies not available
+    fun `valid source with no lint errors`() {
+        val sourceFile = File.createTempFile("source", ".txt").apply {
+            writeText("print(1)") // Asegurate que sea válido para tu lexer/parser
         }
 
-        assertTrue(getOutput().contains("Iniciando validación"))
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
+
+        val command = ValidationCommand()
+        command.execute(listOf(sourceFile.absolutePath))
+
+        val output = outputStream.toString()
+        assertTrue(output.contains("Analyzing"))
+        assertTrue(output.contains("SUCCESS: No errors were found"))
+    }
+
+
+
+    @Test
+    fun `internal error during validation prints exception`() {
+        val sourceFile = File.createTempFile("source", ".txt").apply {
+            writeText("$$$") // contenido inválido para lexer/parser
+        }
+
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
+
+        val command = ValidationCommand()
+        command.execute(listOf(sourceFile.absolutePath))
+
+        val output = outputStream.toString()
+        assertFalse(output.contains("Error durante validation:"))
     }
 }

@@ -18,8 +18,9 @@ class AnalyzerCommand : Command {
         val configFile = args[1]
         val version = if (args.size > 2) args[2] else "1.0"
 
-        if (version != "1.0") {
-            println("Error: Unsupported version. Only 1.0 is admitted.")
+        val supportedVersions = setOf("1.0", "1.1")
+        if (version !in supportedVersions) {
+            println("Error: Unsupported version.")
             return
         }
 
@@ -42,8 +43,8 @@ class AnalyzerCommand : Command {
 
             // Progreso: Análisis léxico y sintáctico
             print("Building AST")
-            val lexer = Lexer(source)
-            lexer.splitString()
+            val lexer = Lexer.from(source)
+            lexer.split()
             val tokens = lexer.createToken(lexer.list)
             val parser = Parser(tokens)
             val ast = parser.parse()

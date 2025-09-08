@@ -9,12 +9,12 @@ class Formatter(
     configFile: String
 ) {
 
-    private val lexer: Lexer = Lexer(source)
+    private val lexer: Lexer = Lexer.from(source)
     private val config: ConfigLoader = ConfigLoader(configFile)
 
     fun execute(): Container {
         val rules: List<FormatRule> = config.loadConfig()
-        lexer.splitString()
+        lexer.split()
         var tokens: Container = lexer.createToken(lexer.list)
         for (rule: FormatRule in rules) {
             tokens = rule.format(tokens)

@@ -34,7 +34,7 @@ subprojects { //configura todos los proyectos de forma homogenea
         violationRules {
             rule {
                 limit {
-                    minimum = 0.10
+                    minimum = 0.80
                 }
             }
         }

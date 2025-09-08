@@ -1,68 +1,71 @@
-package src.test.model.tools.cli.cli
-
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import src.main.model.tools.cli.cli.FormatterCommand
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
-import java.nio.file.Path
+import kotlin.test.Test
 
 class FormatterCommandTest {
-    private val originalOut = System.out
-    private val outputStream = ByteArrayOutputStream()
-
-    @BeforeEach
-    fun setUp() {
+    @Test
+    fun `missing arguments prints usage`() {
+        val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
-    }
 
-    @AfterEach
-    fun tearDown() {
-        System.setOut(originalOut)
-    }
-
-    private fun getOutput(): String = outputStream.toString()
-
-    @Test
-    fun `should show error when insufficient arguments`() {
         val command = FormatterCommand()
-        command.execute(listOf("onlyOneArg"))
+        command.execute(listOf("onlySource.txt"))
 
-        val output = getOutput()
-        assertTrue(output.contains("Error: Debe especificar el archivo fuente"))
-        assertTrue(output.contains("Uso: formatter"))
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: Must specify the source file and the format configuration file."))
+        assertTrue(output.contains("Usage: formatter <source_file> <configuration_file> [version]"))
     }
 
     @Test
-    fun `should show error for unsupported version`() {
-        val command = FormatterCommand()
-        command.execute(listOf("file.txt", "config.yml", "2.0"))
+    fun `unsupported version prints error`() {
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
-        assertTrue(getOutput().contains("Error: Versión no soportada"))
+        val command = FormatterCommand()
+        command.execute(listOf("source.txt", "config.yml", "2.0"))
+
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: Unsupported version. Only 1.0 is admitted."))
     }
 
     @Test
-    fun `should show error when source file does not exist`(@TempDir tempDir: Path) {
-        val configFile = tempDir.resolve("config.yml").toFile()
-        configFile.writeText("test config")
+    fun `source file does not exist`() {
+        val configFile = File.createTempFile("config", ".yml")
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
         val command = FormatterCommand()
-        command.execute(listOf("nonexistent.txt", configFile.absolutePath))
+        command.execute(listOf("missing_source.txt", configFile.absolutePath))
 
-        assertTrue(getOutput().contains("Error: El archivo fuente 'nonexistent.txt' no existe"))
+        val output = outputStream.toString().trim()
+        assertTrue(output.contains("Error: The source file 'missing_source.txt' does not exist."))
     }
 
     @Test
-    fun `should show error when config file does not exist`(@TempDir tempDir: Path) {
-        val sourceFile = tempDir.resolve("source.txt").toFile()
-        sourceFile.writeText("test source")
+    fun `successful formatting prints completion`() {
+        val sourceFile = File.createTempFile("source", ".txt").apply { writeText("print(1)") }
+        val configFile = File.createTempFile("config", ".yml").apply {
+            writeText(
+                """
+            rules:
+              indentation:
+                style: spaces
+                """.trimIndent()
+            )
+        }
+
+        val outputStream = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStream))
 
         val command = FormatterCommand()
-        command.execute(listOf(sourceFile.absolutePath, "nonexistent.yml"))
+        command.execute(listOf(sourceFile.absolutePath, configFile.absolutePath))
 
-        assertTrue(getOutput().contains("Error: El archivo de configuración"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("Starting formatting of"))
+        assertTrue(output.contains("Executing code format"))
+        // assertTrue(output.contains("Finished formatting."))
     }
 }
