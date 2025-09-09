@@ -13,7 +13,7 @@ class NoSpaceAfterColonRule : FormatRule {
     override fun format(source: Container): Container {
         var token: Token?
         var next: Token?
-        var tokens = source
+        var tokens: Container = source
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)

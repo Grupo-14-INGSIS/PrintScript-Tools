@@ -12,5 +12,6 @@ dependencies{
     implementation project(":formatter")
     implementation project(":interpreter")
     implementation project(":container")
+    implementation project(":token")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }

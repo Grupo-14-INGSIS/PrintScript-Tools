@@ -3,7 +3,11 @@ package src.main.model.tools.cli.cli
 import MultiStepProgress
 import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.Formatter
+import formatter.src.main.kotlin.FormatterSetup
+import formatter.src.main.kotlin.formatrule.FormatRule
 import java.io.File
+import java.io.FileWriter
+import java.net.URL
 
 class FormatterCommand : Command {
 
@@ -24,17 +28,17 @@ class FormatterCommand : Command {
         }
 
         val sourceFileObj = File(sourceFile)
-        val configFileObj = File(configFile)
+        val configFileObj: URL? = this::class.java.getResource(configFile)
 
         if (!sourceFileObj.exists()) {
             println("Error: The source file '$sourceFile' does not exist.")
             return
         }
 
-        if (!configFileObj.exists()) {
-            println("Error: The configuration file '$configFile' does not exist.")
-            return
-        }
+            if (configFileObj == null) {
+                println("Error: The configuration file '$configFile' does not exist.")
+                return
+            }
 
         val source = sourceFileObj.readText()
         println("Starting formatting of '$sourceFile' (PrintScript $version)")
@@ -55,14 +59,31 @@ class FormatterCommand : Command {
 
             // Paso 3: Formatear código
             val formatStep = progress.startStep("Applying formatting rules")
-            val formatter = Formatter(source, configFile)
-            val result: Container = formatter.execute()
+            val formatter = Formatter(source, configFileObj)
+            var percentageCompleted: Int
+            val setup: FormatterSetup = formatter.setup()
+            var tokens: Container = setup.tokens
+            val rules: List<FormatRule> = setup.rules
+
+            for (i in 0..rules.size) {
+                tokens = formatter.execute(tokens, rules[i])
+                percentageCompleted = i / rules.size
+                print(percentageCompleted)
+                print("%")
+                if (i != rules.size) print(".....")
+            }
+            println()
             formatStep.complete("Formatting rules applied successfully")
 
             // Paso 4: Guardar resultado (opcional)
             val saveStep = progress.startStep("Preparing formatted output")
             // Aquí podrías escribir el resultado a un archivo o mostrarlo
             saveStep.complete("Formatted code ready")
+            // Write to file
+            val writer = FileWriter(sourceFile)
+            for (i in 0..tokens.size()) {
+                writer.append(tokens.get(i)!!.content)
+            }
 
             progress.complete()
             println("\nFormatted code:")

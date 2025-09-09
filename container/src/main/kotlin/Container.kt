@@ -62,10 +62,10 @@ class Container(
     }
 
     fun slice(from: Int, to: Int = size()): Container {
-        if (from > to) return Container()
+        if (from >= to) return Container()
 
         val safeFrom = if (from < 0) 0 else from
-        val safeTo = if (to >= size()) size() else to
+        val safeTo = if (to > size()) size() else to
 
         return Container(container.subList(safeFrom, safeTo))
     }
