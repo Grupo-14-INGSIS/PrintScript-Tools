@@ -74,7 +74,8 @@ class PrattParser {
             symbol.token().type,
             symbol.token().content,
             symbol.token().position,
-            children)
+            children
+        )
         return output
     }
 }

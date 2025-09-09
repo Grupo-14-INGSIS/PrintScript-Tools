@@ -9,8 +9,12 @@ class RulesTest {
 
     @Test
     fun `valid println with identifier passes`() {
-        val node = ASTNode(DataType.PRINTLN, "println", Position(1, 1), listOf(
-            ASTNode(DataType.IDENTIFIER, "x", Position(1, 9), emptyList())))
+        val node = ASTNode(
+            DataType.PRINTLN, "println", Position(1, 1),
+            listOf(
+                ASTNode(DataType.IDENTIFIER, "x", Position(1, 9), emptyList())
+            )
+        )
 
         val rule = PrintLnRule()
         val errors = rule.apply(node)
@@ -19,8 +23,12 @@ class RulesTest {
 
     @Test
     fun `valid println with literal passes`() {
-        val node = ASTNode(DataType.PRINTLN, "println", Position(2, 1), listOf(
-            ASTNode(DataType.STRING_LITERAL, "\"hello\"", Position(2, 9), emptyList())
+        val node = ASTNode(
+            DataType.PRINTLN,
+            "println",
+            Position(2, 1),
+            listOf(
+                ASTNode(DataType.STRING_LITERAL, "\"hello\"", Position(2, 9), emptyList())
             )
         )
 
@@ -31,8 +39,12 @@ class RulesTest {
 
     @Test
     fun `invalid println with unsupported type fails`() {
-        val node = ASTNode(DataType.PRINTLN, "println", Position(3, 1), listOf(
-            ASTNode(DataType.ASSIGNATION, "=", Position(3, 9), emptyList())
+        val node = ASTNode(
+            DataType.PRINTLN,
+            "println",
+            Position(3, 1),
+            listOf(
+                ASTNode(DataType.ASSIGNATION, "=", Position(3, 9), emptyList())
             )
         )
 
@@ -45,7 +57,11 @@ class RulesTest {
 
     @Test
     fun `disabled rule returns no errors`() {
-        val node = ASTNode(DataType.PRINTLN, "println", Position(4, 1), listOf(
+        val node = ASTNode(
+            DataType.PRINTLN,
+            "println",
+            Position(4, 1),
+            listOf(
                 ASTNode(DataType.ASSIGNATION, "=", Position(4, 9), emptyList())
             )
         )
@@ -68,7 +84,11 @@ class RulesTest {
     @Test
     fun `invalid camelCase identifier fails`() {
         val node = ASTNode(
-            DataType.IDENTIFIER, "My_variable", Position(2, 1), emptyList())
+            DataType.IDENTIFIER,
+            "My_variable",
+            Position(2, 1),
+            emptyList()
+        )
 
         val rule = IdentifierNamingRule("camelCase")
         val errors = rule.apply(node)

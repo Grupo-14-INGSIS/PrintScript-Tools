@@ -56,5 +56,4 @@ class FormatterTest {
             assertEquals(types[i], actual.get(i)!!.type)
         }
     }
-
 }

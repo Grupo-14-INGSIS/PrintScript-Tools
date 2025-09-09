@@ -6,7 +6,6 @@ import src.main.model.tools.interpreter.interpreter.AssignmentToExistingVar
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
-import token.src.main.kotlin.Token
 
 class AssignmentToExistingVarTest {
 

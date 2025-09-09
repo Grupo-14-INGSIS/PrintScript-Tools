@@ -33,7 +33,7 @@ class ValidationCommand : Command {
             }
 
             val source = file.readText()
-            //println("Iniciando validación de '$sourceFile'...")
+            // println("Iniciando validación de '$sourceFile'...")
 
             // Progreso: Análisis léxico
             print("Analyzing")

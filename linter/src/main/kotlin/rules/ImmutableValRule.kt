@@ -12,7 +12,6 @@ class ImmutableValRule : LintRule {
         val reassigned = mutableSetOf<String>()
 
         fun traverse(node: ASTNode) {
-
             if (node.type == DataType.DECLARATION && node.content == "var") {
                 val identifierNode = node.children.firstOrNull { it.type == DataType.IDENTIFIER }
                 val name = identifierNode?.content

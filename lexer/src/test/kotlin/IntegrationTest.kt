@@ -1,5 +1,4 @@
 import common.src.main.kotlin.DataType
-import datatype.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import src.main.model.tools.interpreter.lexer.Lexer

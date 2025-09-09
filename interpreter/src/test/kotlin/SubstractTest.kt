@@ -1,7 +1,6 @@
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
-import token.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import src.main.model.tools.interpreter.interpreter.Subtract
 import kotlin.test.Test
