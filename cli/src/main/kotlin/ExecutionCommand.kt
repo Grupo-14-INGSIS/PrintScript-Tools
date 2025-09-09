@@ -51,7 +51,7 @@ class ExecutionCommand : Command {
             tokenStep.complete("${tokens.size()} tokens generated")
 
             // Paso 3: Análisis sintáctico
-            val parserStep = progress.startStep("Building Abstract Syntax Tree")
+            val parserStep = progress.startStep("Parsing source code...")
             val parser = Parser(tokens)
             val ast: ASTNode = parser.parse()
             parserStep.complete("AST built successfully")
