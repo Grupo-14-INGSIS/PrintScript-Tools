@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 🔍 Checkout del código
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -18,14 +17,12 @@ jobs:
         run: chmod +x ./gradlew #esto es para dar permisos, si no github actions no puede acceder a gradlew
 
 
-      # ☕ Setup de JDK para Kotlin/Gradle
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # 🧠 Cache de Gradle para reproducibilidad
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -36,51 +33,46 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      # 🎯 Validación de formateo bloqueante
       - name: Run ktlintFormat
         run: |
           CHANGES_BEFORE=$(git diff --name-only)
           ./gradlew ktlintFormat --quiet
           CHANGES_AFTER=$(git diff --name-only)
           if [ "$CHANGES_BEFORE" != "$CHANGES_AFTER" ]; then
-            echo "❌ Build bloqueado: ktlintFormat modificó archivos."
+            echo "Build bloqueado: ktlintFormat modificó archivos."
             exit 1
           fi
 
       - name: Run ktlintCheck
         run: ./gradlew ktlintCheck --quiet
 
-      # 🧪 Tests con bloqueo si hay fallos
       - name: Run tests
         run: |
           ./gradlew test --continue > .git/test-output.log
           if grep -q "FAILED" .git/test-output.log; then
-            echo "❌ Build bloqueado: fallaron tests."
+            echo "Build bloqueado: fallaron tests."
             cat .git/test-output.log | grep FAILED
             exit 1
           fi
 
-      # 📊 Verificación de cobertura mínima
       - name: Verify coverage
         run: |
           ./gradlew jacocoTestCoverageVerification --quiet
           if [ $? -ne 0 ]; then
-            echo "❌ Build bloqueado: cobertura de código inferior al 80%."
+            echo "Build bloqueado: cobertura de código inferior al 80%."
             ./gradlew jacocoTestReport
             exit 1
           fi
 
-      # ✅ Check general
       - name: Check
         run: ./gradlew check
 
-      # 🏗️ Build final
       - name: Build
         run: ./gradlew build
 
-      # 🚀 Publicación en GitHub Packages
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish
         env:
+          GITHUB_ACTOR: ${{ GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
