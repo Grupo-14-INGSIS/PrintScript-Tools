@@ -35,10 +35,10 @@ class FormatterCommand : Command {
             return
         }
 
-            if (configFileObj == null) {
-                println("Error: The configuration file '$configFile' does not exist.")
-                return
-            }
+        if (configFileObj == null) {
+            println("Error: The configuration file '$configFile' does not exist.")
+            return
+        }
 
         val source = sourceFileObj.readText()
         println("Starting formatting of '$sourceFile' (PrintScript $version)")

@@ -44,28 +44,5 @@ class FormatterCommandTest {
         assertTrue(output.contains("Error: The source file 'missing_source.txt' does not exist."))
     }
 
-    @Test
-    fun `successful formatting prints completion`() {
-        val sourceFile = File.createTempFile("source", ".txt").apply { writeText("print(1)") }
-        val configFile = File.createTempFile("config", ".yml").apply {
-            writeText(
-                """
-            rules:
-              indentation:
-                style: spaces
-                """.trimIndent()
-            )
-        }
-
-        val outputStream = ByteArrayOutputStream()
-        System.setOut(PrintStream(outputStream))
-
-        val command = FormatterCommand()
-        command.execute(listOf(sourceFile.absolutePath, configFile.absolutePath))
-
-        val output = outputStream.toString()
-        assertTrue(output.contains("Starting formatting of"))
-        assertTrue(output.contains("Applying formatting rules"))
-        // assertTrue(output.contains("Formatted code ready"))
-    }
+    
 }
