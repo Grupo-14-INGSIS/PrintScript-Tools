@@ -2,7 +2,11 @@ package src.main.model.tools.cli.cli
 
 import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.Formatter
+import formatter.src.main.kotlin.FormatterSetup
+import formatter.src.main.kotlin.formatrule.FormatRule
 import java.io.File
+import java.io.FileWriter
+import java.net.URL
 
 class FormatterCommand : Command {
 
@@ -24,7 +28,7 @@ class FormatterCommand : Command {
 
         try {
             val sourceFileObj = File(sourceFile)
-            val configFileObj = File(configFile)
+            val configFileObj: URL? = this::class.java.getResource(configFile)
 
             // Check both source file and config
             if (!sourceFileObj.exists()) {
@@ -32,7 +36,7 @@ class FormatterCommand : Command {
                 return
             }
 
-            if (!configFileObj.exists()) {
+            if (configFileObj == null) {
                 println("Error: The configuration file '$configFile' does not exist.")
                 return
             }
@@ -43,10 +47,27 @@ class FormatterCommand : Command {
             // LINTER
 
             println("Executing code format")
-            val formatter = Formatter(source, configFile)
-            val result: Container = formatter.execute()
+            val formatter = Formatter(source, configFileObj)
+            val setup: FormatterSetup = formatter.setup()
+            var tokens: Container = setup.tokens
+            val rules: List<FormatRule> = setup.rules
+
+            var percentageCompleted: Int
+
+            for (i in 0..rules.size) {
+                tokens = formatter.execute(tokens, rules[i])
+                percentageCompleted = i / rules.size
+                print(percentageCompleted)
+                print("%")
+                if (i != rules.size) print(".....")
+            }
+            println()
 
             // Write to file
+            val writer = FileWriter(sourceFile)
+            for (i in 0..tokens.size()) {
+                writer.append(tokens.get(i)!!.content)
+            }
 
             println("Finished formatting.")
         } catch (e: Exception) {

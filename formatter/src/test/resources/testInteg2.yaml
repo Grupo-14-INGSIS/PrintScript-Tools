@@ -1,0 +1,4 @@
+rules:
+  switch:
+    NoSpaceBeforeColon: true
+  setValue: {}
