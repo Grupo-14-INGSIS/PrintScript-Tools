@@ -74,5 +74,5 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish
         env:
-          GITHUB_ACTOR: ${{ GITHUB_ACTOR }}
+          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
