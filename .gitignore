@@ -11,3 +11,5 @@ build/
 .kotlin/
 
 *.log
+
+*.env
