@@ -1,6 +1,6 @@
 package cli.src.main.kotlin
 
-import InputProvider
+import interpreter.src.main.kotlin.InputProvider
 import java.io.BufferedReader
 import java.io.InputStreamReader
 

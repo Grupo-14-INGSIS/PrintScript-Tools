@@ -2,10 +2,14 @@ package cli.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
 import container.src.main.kotlin.Container
+import lexer.src.main.kotlin.Lexer
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.Linter
 import linter.src.main.kotlin.LintRule
-import lexer.src.mail.kotlin.Lexer
+import linter.src.main.kotlin.config.ConfigFactory
+import linter.src.main.kotlin.config.ConfigLoader
+import linter.src.main.kotlin.rules.IdentifierNamingRule
+import linter.src.main.kotlin.rules.PrintLnRule
 import parser.src.main.kotlin.Parser
 import java.io.File
 
@@ -92,20 +96,20 @@ class AnalyzerCommand : Command {
     }
 
     private fun loadLintRules(configFile: String): List<LintRule> {
-        val loader = linter.config.ConfigLoader()
+        val loader = ConfigLoader()
         val yamlMap = loader.loadYaml(configFile)
 
-        val factory = linter.config.ConfigFactory()
+        val factory = ConfigFactory()
         val config = factory.createConfig(yamlMap)
 
         val rules = mutableListOf<LintRule>()
 
         config.rules.identifierNaming?.let {
-            rules += linter.rules.IdentifierNamingRule(it.style)
+            rules += IdentifierNamingRule(it.style)
         }
 
         config.rules.printlnArg?.let {
-            rules += linter.rules.PrintLnRule(it.enabled)
+            rules += PrintLnRule(it.enabled)
         }
 
         return rules

@@ -12,5 +12,6 @@ dudas
 
 
 FALLA CI/CD (tiene que correr sobre printscript/tck?)
-printscript tck queda como un modulo?
-le aplico coverage y tests?
+printscript tck queda como un modulo? no
+le aplico coverage y tests? no
+tenemos que usar una libreria para leer de la terminal?
