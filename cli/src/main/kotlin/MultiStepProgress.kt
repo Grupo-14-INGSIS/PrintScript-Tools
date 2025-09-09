@@ -15,6 +15,7 @@ class MultiStepProgress {
     fun startStep(message: String): ProgressIndicator {
         currentStep++
         val progressMessage = "[$currentStep/$totalSteps] $message"
+        println(progressMessage)
         val indicator = ProgressIndicator(progressMessage)
         indicator.start()
         return indicator
