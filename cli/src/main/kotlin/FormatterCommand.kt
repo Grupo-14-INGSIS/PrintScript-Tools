@@ -12,6 +12,7 @@ import java.net.URL
 class FormatterCommand : Command {
 
     override fun execute(args: List<String>) {
+
         if (args.size < 2) {
             println("Error: Must specify the source file and the format configuration file.")
             println("Usage: formatter <source_file> <configuration_file> [version]")
@@ -35,10 +36,10 @@ class FormatterCommand : Command {
             return
         }
 
-            if (configFileObj == null) {
-                println("Error: The configuration file '$configFile' does not exist.")
-                return
-            }
+        if (configFileObj == null) {
+            println("Error: The configuration file '$configFile' does not exist.")
+            return
+        }
 
         val source = sourceFileObj.readText()
         println("Starting formatting of '$sourceFile' (PrintScript $version)")
@@ -64,31 +65,31 @@ class FormatterCommand : Command {
             val setup: FormatterSetup = formatter.setup()
             var tokens: Container = setup.tokens
             val rules: List<FormatRule> = setup.rules
-
-            for (i in 0..rules.size) {
+            for (i in 0 until rules.size) {
                 tokens = formatter.execute(tokens, rules[i])
-                percentageCompleted = i / rules.size
+                percentageCompleted = i * 100 / rules.size
                 print(percentageCompleted)
                 print("%")
-                if (i != rules.size) print(".....")
+                if (i < rules.size) print(".....")
             }
-            println()
+            println("100%")
             formatStep.complete("Formatting rules applied successfully")
 
             // Paso 4: Guardar resultado (opcional)
             val saveStep = progress.startStep("Preparing formatted output")
-            // Aquí podrías escribir el resultado a un archivo o mostrarlo
-            saveStep.complete("Formatted code ready")
-            // Write to file
             val writer = FileWriter(sourceFile)
-            for (i in 0..tokens.size()) {
+            for (i in 0 until tokens.size()) {
                 writer.append(tokens.get(i)!!.content)
             }
+            saveStep.complete("Formatted code ready")
 
             progress.complete()
             println("\nFormatted code:")
             println("=".repeat(50))
-            // Mostrar el resultado formateado
+            for (i in 0 until tokens.size()) {
+                print(tokens.get(i)!!.content)
+            }
+            println()
             println("=".repeat(50)) // no funciona el * como en python para repetri un string
         } catch (e: Exception) {
             println("Error during formatting: ${e.message}")

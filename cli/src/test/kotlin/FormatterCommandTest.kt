@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import src.main.model.tools.cli.cli.FormatterCommand
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileDescriptor
+import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.test.Test
 
@@ -47,6 +49,7 @@ class FormatterCommandTest {
     @Test
     fun `successful formatting prints completion`() {
         val sourceFile = File.createTempFile("source", ".txt").apply { writeText("print(1)") }
+        /*
         val configFile = File.createTempFile("config", ".yml").apply {
             writeText(
                 """
@@ -56,15 +59,21 @@ class FormatterCommandTest {
                 """.trimIndent()
             )
         }
-
+         */
+        val configFile = "/format_rules.yaml"
+        val originalOut = System.out
         val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
 
         val command = FormatterCommand()
-        command.execute(listOf(sourceFile.absolutePath, configFile.absolutePath))
+        command.execute(listOf(sourceFile.absolutePath, configFile))
 
         val output = outputStream.toString()
-        assertTrue(output.contains("Starting formatting of"))
+
+        System.setOut(originalOut)
+        println(output)
+
+        assertTrue(output.contains("Starting formatting of")) //Giving false
         assertTrue(output.contains("Applying formatting rules"))
         // assertTrue(output.contains("Formatted code ready"))
     }
