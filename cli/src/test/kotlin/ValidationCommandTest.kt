@@ -29,7 +29,7 @@ class ValidationCommandTest {
         command.execute(listOf("source.txt", "2.0"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: Unsupported version. Only 1.0 is admitted."))
+        assertTrue(output.contains("Error: Unsupported version. Only 1.0 and 1.1 are supported."))
     }
 
     @Test
@@ -57,8 +57,8 @@ class ValidationCommandTest {
         command.execute(listOf(sourceFile.absolutePath))
 
         val output = outputStream.toString()
-        assertTrue(output.contains("Analyzing"))
-        assertTrue(output.contains("SUCCESS: No errors were found"))
+        assertTrue(output.contains("Starting validation"))
+        assertTrue(output.contains("SUCCESS: Code validation passed"))
     }
 
 

@@ -58,9 +58,7 @@ class Container(
 
     fun take(at: Int): Container {
         if (at < 0 || at >= size()) return Container()
-        var output = Container()
-        output = output.addContainer(get(at)!!)
-        return output
+        return Container(listOf(get(at)!!))
     }
 
     fun slice(from: Int, to: Int = size()): Container {
@@ -69,8 +67,7 @@ class Container(
         val safeFrom = if (from < 0) 0 else from
         val safeTo = if (to > size()) size() else to
 
-        val output: List<Token> = container.subList(safeFrom, safeTo)
-        return Container(output)
+        return Container(container.subList(safeFrom, safeTo))
     }
 
     fun size(): Int {

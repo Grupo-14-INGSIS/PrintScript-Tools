@@ -65,7 +65,7 @@ class FormatterCommandTest {
 
         val output = outputStream.toString()
         assertTrue(output.contains("Starting formatting of"))
-        assertTrue(output.contains("Executing code format"))
-        // assertTrue(output.contains("Finished formatting."))
+        assertTrue(output.contains("Applying formatting rules"))
+        // assertTrue(output.contains("Formatted code ready"))
     }
 }

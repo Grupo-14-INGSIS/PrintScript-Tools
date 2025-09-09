@@ -57,6 +57,6 @@ class ExecutionCommandTest {
 
         val output = outputStream.toString()
         assertTrue(output.contains("Starting execution of"))
-        assertTrue(output.contains("Execution completed successfully"))
+        assertTrue(output.contains("Program executed successfully"))
     }
 }

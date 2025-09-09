@@ -83,6 +83,6 @@ class AnalayzerCommandTest {
         analyzer.execute(listOf(sourceFile.absolutePath, configFile.absolutePath))
 
         val output = outputStream.toString()
-        assertTrue(output.contains("SUCCESS: No errors were found."))
+        assertTrue(output.contains("SUCCESS: No issues were found"))
     }
 }
