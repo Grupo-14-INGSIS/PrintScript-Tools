@@ -7,7 +7,7 @@ import kotlin.test.Test
 
 class MultiStepProgressTest {
 
-    private lateinit var multiStepProgress: MultiStepProgress
+    private lateinit var multiStepProgress: MultiStepProgress // lateint pq no se inicializa al moemento de crear l variable
     private lateinit var outputStream: ByteArrayOutputStream
     private lateinit var originalOut: PrintStream
 

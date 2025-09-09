@@ -44,6 +44,7 @@ class Lexer(private val source: CharSource) {
         return TokenFactory.createTokens(list)
     }
 
+// puede leer un String gracias a...
     companion object {
         fun from(input: Any): Lexer = when (input) {
             is String -> Lexer(StringCharSource(input))
