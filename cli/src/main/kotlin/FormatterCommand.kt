@@ -11,7 +11,6 @@ import java.net.URL
 class FormatterCommand : Command {
 
     override fun execute(args: List<String>) {
-
         if (args.size < 2) {
             println("Error: Must specify the source file and the format configuration file.")
             println("Usage: formatter <source_file> <configuration_file> [version]")

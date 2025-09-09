@@ -5,7 +5,7 @@ import java.io.File
 
 class Lexer(private val source: CharSource) {
 
-    var list = mutableListOf<String>()
+    var list = listOf<String>()
 
     fun split(lotSize: Int = 8192) {
         var state = LexerState()
@@ -22,7 +22,7 @@ class Lexer(private val source: CharSource) {
             }
         }
 
-        finalizeParsing(state)
+        return finalizeParsing(state)
     }
 
     private fun classifier(char: Char, state: LexerState): LexerState {
@@ -37,13 +37,14 @@ class Lexer(private val source: CharSource) {
         } else {
             state.pieces
         }
-        list = allPieces.toMutableList()
+        list = allPieces
     }
 
     fun createToken(list: List<String>): Container {
         return TokenFactory.createTokens(list)
     }
 
+// puede leer un String gracias a...
     companion object {
         fun from(input: Any): Lexer = when (input) {
             is String -> Lexer(StringCharSource(input))

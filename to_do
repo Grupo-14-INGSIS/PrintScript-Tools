@@ -5,11 +5,12 @@ consigna del martes (tests, adapter, PR)
 verificar modulo x modulo si cumple las 2 cosnignas
 garantizar retrocompatibilidad
 cli que lee desde la terminal
+inmutabilidad
 REVISAR ENTREGABLES
 
 dudas
 
 
-FALLA CI/CD
+FALLA CI/CD (tiene que correr sobre printscript/tck?)
 printscript tck queda como un modulo?
 le aplico coverage y tests?

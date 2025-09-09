@@ -8,3 +8,5 @@ class FileCharSource(private val file: File) : CharSource {
         return file.bufferedReader()
     }
 }
+
+// transformo file en stream encapsuladno el file en un Reader

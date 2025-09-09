@@ -73,7 +73,7 @@ class FormatterCommandTest {
         System.setOut(originalOut)
         println(output)
 
-        assertTrue(output.contains("Starting formatting of")) //Giving false
+        assertTrue(output.contains("Starting formatting of")) // Giving false
         assertTrue(output.contains("Applying formatting rules"))
         // assertTrue(output.contains("Formatted code ready"))
     }
