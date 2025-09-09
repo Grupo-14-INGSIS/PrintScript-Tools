@@ -1,4 +1,4 @@
-package linter.config
+package linter.src.main.kotlin.config
 
 import org.yaml.snakeyaml.Yaml
 import java.io.File

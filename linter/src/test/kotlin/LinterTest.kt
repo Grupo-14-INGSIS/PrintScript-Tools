@@ -1,8 +1,11 @@
-package linter
+package linter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.Position
 import io.mockk.*
+import linter.src.main.kotlin.LintError
+import linter.src.main.kotlin.Linter
+import linter.src.main.kotlin.LintRule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach

@@ -1,3 +1,6 @@
+package cli.src.test.kotlin
+
+import cli.src.main.kotlin.MultiStepProgress
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

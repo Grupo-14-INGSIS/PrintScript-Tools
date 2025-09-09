@@ -1,8 +1,8 @@
-package test.model.tools.interpreter
+package interpreter.src.test.kotlin
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment
+import interpreter.src.main.kotlin.VarDeclarationAndAssignment
 import ast.src.main.kotlin.ASTNode
 import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType

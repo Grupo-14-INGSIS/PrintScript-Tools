@@ -1,13 +1,12 @@
-package src.main.model.tools.cli.cli
+package cli.src.main.kotlin
 
-import MultiStepProgress
-import src.main.model.tools.interpreter.lexer.Lexer
+import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
 import ast.src.main.kotlin.ASTNode
 import container.src.main.kotlin.Container
-import linter.LintError
-import linter.Linter
-import linter.LintRule
+import linter.src.main.kotlin.LintError
+import linter.src.main.kotlin.Linter
+import linter.src.main.kotlin.LintRule
 import java.io.File
 
 class ValidationCommand : Command {

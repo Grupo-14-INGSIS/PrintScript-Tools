@@ -1,5 +1,8 @@
-package linter.config
+package linter.src.test.kotlin
 
+import linter.src.main.kotlin.config.IdentifierNamingConfig
+import linter.src.main.kotlin.config.PrintLnConfig
+import linter.src.main.kotlin.config.RulesConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 

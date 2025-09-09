@@ -1,10 +1,10 @@
-package linter.rules
+package linter.src.main.kotlin.rules
 
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
-import linter.LintError
-import linter.LintRule
+import linter.src.main.kotlin.LintError
+import linter.src.main.kotlin.LintRule
 
 class PrintLnRule(private val enabled: Boolean = true) : LintRule {
 

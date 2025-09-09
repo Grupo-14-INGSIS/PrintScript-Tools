@@ -1,4 +1,4 @@
-package src.main.model.tools.interpreter.interpreter
+package interpreter.src.main.kotlin
 
 enum class Actions {
     ADD,

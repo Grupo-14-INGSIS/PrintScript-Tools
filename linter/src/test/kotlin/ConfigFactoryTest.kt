@@ -1,5 +1,5 @@
-package linter.config
-
+package linter.src.test.kotlin
+import linter.src.main.kotlin.config.ConfigFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach

@@ -1,8 +1,8 @@
-package test.model.tools.interpreter
+package cli.src.test.kotlin
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import src.main.model.tools.interpreter.interpreter.ConsoleInputProvider
+import cli.src.main.kotlin.ConsoleInputProvider
 import java.io.ByteArrayInputStream
 
 class ConsoleInputProviderTest {

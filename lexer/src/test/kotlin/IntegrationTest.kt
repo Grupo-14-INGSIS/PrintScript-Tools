@@ -1,7 +1,9 @@
+package lexer.src.test.kotlin
+
 import tokendata.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import src.main.model.tools.interpreter.lexer.Lexer
+import lexer.src.main.kotlin.Lexer
 
 class IntegrationTest {
 

@@ -1,10 +1,11 @@
-package src.main.model.tools.interpreter.interpreter
+package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-
+import interpreter.src.main.kotlin.Interpreter
+import interpreter.src.main.kotlin.Actions
 
 class InterpreterTest {
 

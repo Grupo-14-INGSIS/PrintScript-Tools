@@ -1,5 +1,7 @@
+package cli.src.test.kotlin
+
 import org.junit.jupiter.api.Assertions.assertTrue
-import src.main.model.tools.cli.cli.ExecutionCommand
+import cli.src.main.kotlin.ExecutionCommand
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream

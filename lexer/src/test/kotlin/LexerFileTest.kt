@@ -1,9 +1,11 @@
+package lexer.src.test.kotlin
+
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import src.main.model.tools.interpreter.lexer.CharSource
-import src.main.model.tools.interpreter.lexer.FileCharSource
-import src.main.model.tools.interpreter.lexer.Lexer
+import lexer.src.main.kotlin.CharSource
+import lexer.src.main.kotlin.FileCharSource
+import lexer.src.main.kotlin.Lexer
 import java.nio.file.Path
 
 class LexerFileTest {

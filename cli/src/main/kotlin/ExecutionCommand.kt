@@ -1,12 +1,10 @@
-package src.main.model.tools.cli.cli
+package cli.src.main.kotlin
 
-import MultiStepProgress
 import ast.src.main.kotlin.ASTNode
 import container.src.main.kotlin.Container
 import parser.src.main.kotlin.Parser
-import src.main.model.tools.interpreter.interpreter.ConsoleInputProvider
-import src.main.model.tools.interpreter.interpreter.Interpreter
-import src.main.model.tools.interpreter.lexer.Lexer
+import interpreter.src.main.kotlin.Interpreter
+import lexer.src.main.kotlin.Lexer
 import java.io.File
 
 class ExecutionCommand : Command {

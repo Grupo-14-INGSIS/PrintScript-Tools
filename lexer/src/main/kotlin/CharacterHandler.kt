@@ -1,4 +1,4 @@
-package src.main.model.tools.interpreter.lexer
+package lexer.src.main.kotlin
 
 interface CharacterHandler {
     fun handle(char: Char, state: LexerState): LexerState

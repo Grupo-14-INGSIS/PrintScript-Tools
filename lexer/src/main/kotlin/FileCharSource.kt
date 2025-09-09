@@ -1,4 +1,4 @@
-package src.main.model.tools.interpreter.lexer
+package lexer.src.main.kotlin
 
 import java.io.File
 import java.io.Reader

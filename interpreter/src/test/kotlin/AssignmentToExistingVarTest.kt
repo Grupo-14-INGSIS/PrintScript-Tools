@@ -1,8 +1,8 @@
-package test.model.tools.interpreter
+package interpreter.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import src.main.model.tools.interpreter.interpreter.AssignmentToExistingVar
+import interpreter.src.main.kotlin.AssignmentToExistingVar
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position

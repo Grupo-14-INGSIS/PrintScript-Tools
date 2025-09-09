@@ -1,4 +1,4 @@
-package src.main.model.tools.cli.cli
+package cli.src.main.kotlin
 
 class Cli(private val commands: Map<String, Command>) {
 

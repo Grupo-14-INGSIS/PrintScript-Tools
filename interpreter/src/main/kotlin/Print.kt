@@ -1,5 +1,4 @@
-package src.main.model.tools.interpreter.interpreter
-
+package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object Print : ActionType {

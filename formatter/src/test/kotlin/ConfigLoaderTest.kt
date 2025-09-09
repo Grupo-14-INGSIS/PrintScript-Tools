@@ -1,4 +1,4 @@
-package formatter.tests
+package formatter.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.*
 import formatter.src.main.kotlin.ConfigLoader

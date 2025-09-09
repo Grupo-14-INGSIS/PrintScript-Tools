@@ -1,6 +1,8 @@
+package lexer.src.test.kotlin
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import src.main.model.tools.interpreter.lexer.*
+import lexer.src.main.kotlin.*
 
 class LexerUnitTest {
 

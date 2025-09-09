@@ -1,11 +1,11 @@
-package test.model.tools.interpreter
+package intepreter.src.test.kotlin
 
-import InputProvider
-import ReadInput
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import src.main.model.tools.interpreter.interpreter.ActionType
+import interpreter.src.main.kotlin.ActionType
 import ast.src.main.kotlin.ASTNode
+import interpreter.src.main.kotlin.InputProvider
+import interpreter.src.main.kotlin.ReadInput
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token

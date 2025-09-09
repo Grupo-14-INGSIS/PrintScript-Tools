@@ -1,9 +1,5 @@
-package src.main.model.tools.interpreter.interpreter
+package interpreter.src.main.kotlin
 
-import IfStatement
-import InputProvider
-import ReadEnv
-import ReadInput
 import ast.src.main.kotlin.ASTNode
 
 class Interpreter(

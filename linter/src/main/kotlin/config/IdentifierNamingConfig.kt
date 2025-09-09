@@ -1,4 +1,4 @@
-package linter.config
+package linter.src.main.kotlin.config
 
 data class IdentifierNamingConfig(val style: String = "camelCase")
 

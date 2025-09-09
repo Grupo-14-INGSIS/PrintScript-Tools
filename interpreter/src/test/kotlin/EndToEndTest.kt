@@ -1,12 +1,14 @@
+package interpreter.src.test.kotlin
+
 import org.junit.jupiter.api.Assertions.*
 import tokendata.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.Parser
-import src.main.model.tools.interpreter.interpreter.Actions
-import src.main.model.tools.interpreter.interpreter.Interpreter
-import src.main.model.tools.interpreter.lexer.Lexer
+import interpreter.src.main.kotlin.Actions
+import interpreter.src.main.kotlin.Interpreter
+import lexer.src.main.kotlin.Lexer
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import container.src.main.kotlin.Container

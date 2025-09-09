@@ -1,9 +1,9 @@
-package linter.rules
+package linter.src.main.kotlin.rules
 
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.DataType
-import linter.LintError
-import linter.LintRule
+import linter.src.main.kotlin.LintError
+import linter.src.main.kotlin.LintRule
 
 class ImmutableValRule : LintRule {
     override fun apply(root: ASTNode): List<LintError> {

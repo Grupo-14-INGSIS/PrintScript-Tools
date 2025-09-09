@@ -1,9 +1,9 @@
+package cli.src.test.kotlin
+
 import org.junit.jupiter.api.Assertions.assertTrue
-import src.main.model.tools.cli.cli.FormatterCommand
+import cli.src.main.kotlin.FormatterCommand
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileDescriptor
-import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.test.Test
 

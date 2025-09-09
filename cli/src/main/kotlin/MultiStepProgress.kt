@@ -1,4 +1,4 @@
-import src.main.model.tools.cli.progress.ProgressIndicator
+package cli.src.main.kotlin
 
 class MultiStepProgress {
 

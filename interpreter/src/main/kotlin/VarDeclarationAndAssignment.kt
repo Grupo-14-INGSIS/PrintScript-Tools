@@ -1,5 +1,4 @@
-package src.main.model.tools.interpreter.interpreter
-
+package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object VarDeclarationAndAssignment : ActionType {
@@ -15,7 +14,7 @@ object VarDeclarationAndAssignment : ActionType {
         val assignedValue = node.children[2].content // "5"
 
         // evitar redeclaracion
-        if (src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables.containsKey(
+        if (variables.containsKey(
                 variableName
             )
         ) {
@@ -23,18 +22,18 @@ object VarDeclarationAndAssignment : ActionType {
         }
 
         // convertir el valor asignado al tipo correcto
-        val valueToStore = src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.convertValueToType(
+        val valueToStore = convertValueToType(
             assignedValue,
             variableType
         )
 
         // validar que el valor sea compatible con el tipo
-        src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.validateTypeCompatibility(
+        validateTypeCompatibility(
             valueToStore,
             variableType
         )
 
-        src.main.model.tools.interpreter.interpreter.VarDeclarationAndAssignment.variables[variableName] = valueToStore
+        variables[variableName] = valueToStore
 
         return Unit
     }

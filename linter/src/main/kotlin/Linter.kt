@@ -1,4 +1,4 @@
-package linter
+package linter.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
 

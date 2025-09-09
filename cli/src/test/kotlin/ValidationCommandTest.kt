@@ -1,9 +1,11 @@
+package cli.src.test.kotlin
+
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.io.File
-import src.main.model.tools.cli.cli.ValidationCommand
+import cli.src.main.kotlin.ValidationCommand
 
 class ValidationCommandTest {
 

@@ -1,4 +1,4 @@
-package src.main.model.tools.interpreter.lexer
+package lexer.src.main.kotlin
 
 class RegularHandler : CharacterHandler {
     override fun handle(char: Char, state: LexerState): LexerState {

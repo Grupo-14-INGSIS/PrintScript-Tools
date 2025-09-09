@@ -1,4 +1,4 @@
-package src.main.model.tools.cli.cli
+package cli.src.main.kotlin
 
 object Main {
     @JvmStatic // estatica para poder compilar y ejecutar directo de aca

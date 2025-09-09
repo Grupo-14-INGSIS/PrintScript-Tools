@@ -1,4 +1,4 @@
-package model.structure
+package lexer.src.test.kotlin
 
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType

@@ -1,9 +1,11 @@
+package linter.src.test.kotlin
+
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.Position
 import tokendata.src.main.kotlin.DataType
-import linter.rules.*
+import linter.src.main.kotlin.rules.*
 
 class RulesTest {
 

@@ -1,8 +1,11 @@
+package linter.src.test.kotlin
+
 import ast.src.main.kotlin.ASTNode
+import linter.src.main.kotlin.rules.ImmutableValRule
+import linter.src.main.kotlin.rules.IfWithoutElseRule
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
-import linter.rules.IfWithoutElseRule
-import linter.rules.ImmutableValRule
+
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 

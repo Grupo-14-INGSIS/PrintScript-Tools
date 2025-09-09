@@ -1,4 +1,4 @@
-package src.main.model.tools.cli.cli
+package cli.src.main.kotlin
 
 interface Command {
     fun execute(args: List<String>)

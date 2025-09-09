@@ -1,7 +1,7 @@
 package formatter.src.main.kotlin
 
 import container.src.main.kotlin.Container
-import src.main.model.tools.interpreter.lexer.Lexer
+import lexer.src.main.kotlin.Lexer
 import formatter.src.main.kotlin.formatrule.FormatRule
 import java.net.URL
 

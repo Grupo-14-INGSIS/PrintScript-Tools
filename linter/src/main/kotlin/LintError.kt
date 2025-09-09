@@ -1,4 +1,4 @@
-package linter
+package linter.src.main.kotlin
 
 import tokendata.src.main.kotlin.Position
 

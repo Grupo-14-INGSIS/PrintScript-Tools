@@ -1,4 +1,4 @@
-package src.main.model.tools.interpreter.interpreter
+package cli.src.main.kotlin
 
 import InputProvider
 import java.io.BufferedReader

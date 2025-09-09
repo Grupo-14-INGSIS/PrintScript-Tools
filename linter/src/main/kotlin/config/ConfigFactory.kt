@@ -1,4 +1,4 @@
-package linter.config
+package linter.src.main.kotlin.config
 
 class ConfigFactory {
     fun createConfig(yamlMap: Map<String, Any>): LinterConfig {

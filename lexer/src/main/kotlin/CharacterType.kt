@@ -1,4 +1,4 @@
-package src.main.model.tools.interpreter.lexer
+package lexer.src.main.kotlin
 
 enum class CharacterType {
     QUOTE, SEPARATOR, WHITESPACE, REGULAR

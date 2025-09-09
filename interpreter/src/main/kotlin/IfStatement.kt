@@ -1,6 +1,6 @@
+package interpreter.src.main.kotlin
+
 import ast.src.main.kotlin.ASTNode
-import src.main.model.tools.interpreter.interpreter.ActionType
-import src.main.model.tools.interpreter.interpreter.Interpreter
 
 class IfStatement(private val interpreter: Interpreter) : ActionType {
     override fun interpret(node: ASTNode): Any {
