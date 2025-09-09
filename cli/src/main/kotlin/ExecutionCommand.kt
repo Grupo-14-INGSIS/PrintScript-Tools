@@ -73,7 +73,7 @@ class ExecutionCommand : Command {
             val action = try {
                 interpreter.determineAction(currentNode)
             } catch (e: Exception) {
-                println("Unknown action for token '${currentNode.token.content}': ${e.message}")
+                println("Unknown action for token '${currentNode.content}': ${e.message}")
                 continue
             }
 
@@ -84,7 +84,7 @@ class ExecutionCommand : Command {
                     println("Result of '${action.name}': $result")
                 }
             } catch (e: Exception) {
-                println("Error interpreting node '${currentNode.token.content}': ${e.message}")
+                println("Error interpreting node '${currentNode.content}': ${e.message}")
             }
 
             // si existen hijos -> encolarlso

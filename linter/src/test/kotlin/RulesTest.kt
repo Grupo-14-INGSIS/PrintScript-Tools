@@ -10,7 +10,9 @@ class RulesTest {
     @Test
     fun `valid println with identifier passes`() {
         val node = ASTNode(
-            DataType.PRINTLN, "println", Position(1, 1),
+            DataType.PRINTLN,
+            "println",
+            Position(1, 1),
             listOf(
                 ASTNode(DataType.IDENTIFIER, "x", Position(1, 9), emptyList())
             )

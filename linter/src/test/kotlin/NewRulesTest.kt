@@ -10,7 +10,9 @@ class NewRulesTest {
     @Test
     fun `should report var never reassigned`() {
         val declarationNode = ASTNode(
-            DataType.DECLARATION, "var", Position(1, 0),
+            DataType.DECLARATION,
+            "var",
+            Position(1, 0),
             listOf(
                 ASTNode(
                     DataType.IDENTIFIER,
@@ -31,14 +33,18 @@ class NewRulesTest {
     @Test
     fun `should report if without else and no control flow`() {
         val thenBlock = ASTNode(
-            DataType.OPEN_BRACE, "{", Position(1, 3),
+            DataType.OPEN_BRACE,
+            "{",
+            Position(1, 3),
             listOf(
                 ASTNode(DataType.IDENTIFIER, "doSomething", Position(1, 4), emptyList()),
                 ASTNode(DataType.CLOSE_BRACE, "}", Position(1, 15), emptyList())
             )
         )
         val ifNode = ASTNode(
-            DataType.IF_KEYWORD, "if", Position(1, 0),
+            DataType.IF_KEYWORD,
+            "if",
+            Position(1, 0),
             listOf(
                 thenBlock
             )
