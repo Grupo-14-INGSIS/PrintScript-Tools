@@ -44,5 +44,5 @@ class FormatterCommandTest {
         assertTrue(output.contains("Error: The source file 'missing_source.txt' does not exist."))
     }
 
-    
+
 }
