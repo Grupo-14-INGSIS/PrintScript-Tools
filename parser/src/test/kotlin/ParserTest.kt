@@ -13,7 +13,7 @@ class ParserTest {
 
     @Test
     fun basicAssignationTest() {
-        val container = Container()
+        var container = Container()
         val sentence = listOf("let", " ", "myVar", ":", " ", "number", " ", "=", " ", "14", ";")
         val dataTypes = listOf(
             DataType.LET_KEYWORD,
@@ -29,7 +29,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
@@ -44,7 +44,7 @@ class ParserTest {
 
     @Test
     fun basicPrintTest() {
-        val container = Container()
+        var container = Container()
         val sentence = listOf("println", "(", "hi", ")", ";")
         val dataTypes = listOf(
             DataType.PRINTLN,
@@ -54,7 +54,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
@@ -65,7 +65,7 @@ class ParserTest {
 
     @Test
     fun basicArithmeticTest() {
-        val container = Container()
+        var container = Container()
         val sentence = listOf("8", "+", "2", "*", "3", ";")
         val dataTypes = listOf(
             DataType.NUMBER_LITERAL,
@@ -76,7 +76,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
@@ -91,7 +91,7 @@ class ParserTest {
 
     @Test
     fun basicArithmeticTest2() {
-        val container = Container()
+        var container = Container()
         val sentence = listOf("10", "-", "8", "+", "4", "*", "3", "/", "2", "+", "4", ";")
         val dataTypes = listOf(
             DataType.NUMBER_LITERAL,
@@ -108,7 +108,7 @@ class ParserTest {
             DataType.SEMICOLON
         )
         for (i in sentence.indices) {
-            container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()

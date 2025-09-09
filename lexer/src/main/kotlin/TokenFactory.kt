@@ -7,7 +7,7 @@ import tokendata.src.main.kotlin.Position
 
 object TokenFactory {
     fun createTokens(pieces: List<String>, version: String = "1.0"): Container {
-        val container = Container()
+        var container = Container()
         var position = Position(line = 0, column = 0)
 
         pieces.filter { it.isNotEmpty() }
@@ -19,7 +19,7 @@ object TokenFactory {
                 }
 
                 val token = Token(type, piece, position)
-                container.addContainer(token)
+                container = container.addContainer(token)
 
                 // Actualizar posición
                 val lines = piece.split("\n")

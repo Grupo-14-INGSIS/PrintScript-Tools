@@ -30,8 +30,8 @@ class Grammar(private val version: String = "1.0") {
                         "",
                         tokens.get(1)!!.position,
                         listOf(
-                            varParse(tokens.sliceOne(1)),
-                            typeParse(tokens.sliceOne(3))
+                            varParse(tokens.take(1)),
+                            typeParse(tokens.take(3))
                         )
                     ),
                     expParse(tokens.slice(5))
@@ -171,7 +171,7 @@ class Grammar(private val version: String = "1.0") {
             tokens.first()!!.content,
             tokens.first()!!.position,
             listOf(
-                varParse(tokens.sliceOne(0)), // IDENTIFIER
+                varParse(tokens.take(0)), // IDENTIFIER
                 expParse(tokens.slice(3, tokens.size() - 1)) // PARAMETERS
             )
         )

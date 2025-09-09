@@ -1,24 +1,32 @@
 package container.src.main.kotlin
 
 import token.src.main.kotlin.Token
-import tokendata.src.main.kotlin.DataType
 
-class Container {
+// Inmutable class
+class Container(
+    val container: List<Token> = listOf()
+) {
 
-    val container = mutableListOf<Token>() // la puedo hacer immutable? -> Si le haces .add(), creo que no puede ser inmutable
-
-    fun addContainer(token: Token) {
-        container.add(token)
+    fun addContainer(token: Token): Container {
+        val newContainer = mutableListOf<Token>()
+        newContainer.addAll(container)
+        newContainer.add(token)
+        return Container(newContainer)
     }
 
-    fun addAll(contents: List<Token>) {
-        container.addAll(contents)
+    fun addAll(contents: List<Token>): Container {
+        val newContainer = mutableListOf<Token>()
+        newContainer.addAll(container)
+        newContainer.addAll(contents)
+        return Container(newContainer)
     }
 
-    fun addAt(token: Token, index: Int): Boolean {
-        if (0 > index || index > container.size) return false
-        container.add(index, token)
-        return true
+    fun addAt(token: Token, index: Int): Container {
+        val realIndex = if (index < 0) 0 else if (size() < index) size() else index
+        val newContainer = mutableListOf<Token>()
+        newContainer.addAll(container)
+        newContainer.add(realIndex, token)
+        return Container(newContainer)
     }
 
     fun get(index: Int): Token? {
@@ -29,11 +37,14 @@ class Container {
         }
     }
 
-    fun remove(index: Int): Token? {
-        return if (index in 0 until size()) {
-            container.removeAt(index)
+    fun remove(index: Int): RemoveResponse {
+        if (index in 0 until size()) {
+            val newContainer = mutableListOf<Token>()
+            newContainer.addAll(container)
+            val deletedToken = newContainer.removeAt(index)
+            return RemoveResponse(deletedToken, Container(newContainer))
         } else {
-            null
+            return RemoveResponse(null, this)
         }
     }
 
@@ -45,7 +56,7 @@ class Container {
         return if (container.isNotEmpty()) container.last() else null
     }
 
-    fun sliceOne(at: Int): Container {
+    fun take(at: Int): Container {
         if (at < 0 || at >= size()) return Container()
         val output = Container()
         output.addContainer(get(at)!!)
@@ -65,25 +76,11 @@ class Container {
         return output
     }
 
-    fun copy(): Container {
-        val output = Container()
-        output.addAll(container)
-        return output
-    }
-
     fun size(): Int {
         return container.size
     }
 
     fun isEmpty(): Boolean {
         return size() == 0
-    }
-
-    fun checkIs(tokens: List<DataType>): Boolean {
-        if (size() != tokens.size) return false
-        for (i in 0 until size()) {
-            if (get(i)!!.type == tokens[i]) return false
-        }
-        return true
     }
 }

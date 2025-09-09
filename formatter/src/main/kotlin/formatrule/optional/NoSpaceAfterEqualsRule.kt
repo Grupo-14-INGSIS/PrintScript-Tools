@@ -13,7 +13,7 @@ class NoSpaceAfterEqualsRule : FormatRule {
     override fun format(source: Container): Container {
         var token: Token?
         var next: Token?
-        val tokens = source.copy()
+        var tokens = source
         var i = 0
         while (i < tokens.size()) {
             token = tokens.get(i)
@@ -26,7 +26,9 @@ class NoSpaceAfterEqualsRule : FormatRule {
                 if (next == null) {
                     break // End of tokens
                 } else if (next.type == space) {
-                    if (tokens.remove(i + 1) == null) break
+                    val response = tokens.remove(i + 1)
+                    tokens = response.container
+                    if (response.token == null) break
                 } else {
                     i++
                 }

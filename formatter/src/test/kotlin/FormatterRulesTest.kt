@@ -14,8 +14,8 @@ import token.src.main.kotlin.Token
 // Helpers para crear tokens y containers
 fun token(type: DataType, content: String) = Token(type, content, Position(0, 0))
 fun containerOf(vararg tokens: Token): Container {
-    val c = Container()
-    c.addAll(tokens.toList())
+    var c = Container()
+    c = c.addAll(tokens.toList())
     return c
 }
 
@@ -81,13 +81,13 @@ class FormatterRulesTest {
 
     @Test
     fun `Container basic operations work`() {
-        val c = Container()
+        var c = Container()
         val t1 = token(DataType.IDENTIFIER, "x")
         val t2 = token(DataType.NUMBER_LITERAL, "42")
 
         assertTrue(c.isEmpty())
-        c.addContainer(t1)
-        c.addContainer(t2)
+        c = c.addContainer(t1)
+        c = c.addContainer(t2)
         assertEquals(2, c.size())
         assertEquals("x", c.first()!!.content)
         assertEquals("42", c.last()!!.content)
@@ -95,8 +95,5 @@ class FormatterRulesTest {
         val slice = c.slice(0, 1)
         assertEquals(1, slice.size())
         assertEquals("x", slice.first()!!.content)
-
-        val copy = c.copy()
-        assertEquals(c.size(), copy.size())
     }
 }

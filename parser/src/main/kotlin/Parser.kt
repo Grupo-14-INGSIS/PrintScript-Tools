@@ -16,12 +16,12 @@ class Parser(
     }
 
     private fun format(): Container {
-        val output = Container()
+        var output = Container()
         val space = DataType.SPACE
         val semicolon = DataType.SEMICOLON
         for (i in 0 until tokens.size()) {
             if (tokens.get(i)!!.type != space && tokens.get(i)!!.type != semicolon) {
-                output.addContainer(tokens.get(i)!!)
+                output = output.addContainer(tokens.get(i)!!)
             }
         }
         return output
