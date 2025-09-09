@@ -1,5 +1,6 @@
 package src.main.model.tools.cli.cli
 
+import MultiStepProgress
 import ast.src.main.kotlin.ASTNode
 import container.src.main.kotlin.Container
 import parser.src.main.kotlin.Parser
@@ -34,33 +35,41 @@ class ExecutionCommand : Command {
         val source = file.readText()
         println("Starting execution of '$sourceFile' with PrintScript $version")
 
-        /*
-        No debieran haber salidas sin error, ya que de lo contrario
-        se mezclarían con la ejecución del código
-         */
+        val progress = MultiStepProgress()
+        progress.initialize(4)
 
         try {
-            // Paso 1: Parsear a AST
+            // Paso 1: Análisis léxico
+            val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
             lexer.split()
-            val tokens: Container = lexer.createToken(lexer.list)
+            lexerStep.complete("Lexical analysis completed")
 
-            // Paso 2: analisis sintactivo
+            // Paso 2: Generación de tokens
+            val tokenStep = progress.startStep("Generating tokens")
+            val tokens: Container = lexer.createToken(lexer.list)
+            tokenStep.complete("${tokens.size()} tokens generated")
+
+            // Paso 3: Análisis sintáctico
+            val parserStep = progress.startStep("Building Abstract Syntax Tree")
             val parser = Parser(tokens)
             val ast: ASTNode = parser.parse()
+            parserStep.complete("AST built successfully")
 
-            // Paso 3
+            // Paso 4: Ejecución
+            val executionStep = progress.startStep("Executing program")
             val inputProvider = ConsoleInputProvider()
             val interpreter = Interpreter(version, inputProvider)
-
             executeAST(interpreter, ast)
+            executionStep.complete("Program executed successfully")
 
-            println("Execution completed successfully")
+            progress.complete()
         } catch (e: Exception) {
             println("Error during execution: ${e.message}")
             e.printStackTrace()
         }
     }
+
 
     private fun executeAST(interpreter: Interpreter, ast: ASTNode) {
         val queue = ArrayDeque<ASTNode>()

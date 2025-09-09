@@ -7,8 +7,11 @@ inmutabilidad
 mostrar % avance del formatter
 garantizar retrocompatibilidad
 cli que lee desde la terminal
+REVISAR ENTREGABLES
 
 dudas
 
+
+FALLA CI/CD
 printscript tck queda como un modulo?
 le aplico coverage y tests?

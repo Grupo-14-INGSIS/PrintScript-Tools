@@ -1,5 +1,6 @@
 package src.main.model.tools.cli.cli
 
+import MultiStepProgress
 import ast.src.main.kotlin.ASTNode
 import container.src.main.kotlin.Container
 import linter.LintError
@@ -27,44 +28,63 @@ class AnalyzerCommand : Command {
             return
         }
 
+        val sourceFileObj = File(sourceFile)
+        val configFileObj = File(configFile)
+
+        if (!sourceFileObj.exists()) {
+            println("Error: The source file '$sourceFile' does not exist.")
+            return
+        }
+
+        if (!configFileObj.exists()) {
+            println("Error: The configuration file '$configFile' does not exist.")
+            return
+        }
+
+        val source = sourceFileObj.readText()
+        println("Starting analysis of '$sourceFile' (PrintScript $version)")
+
+        val progress = MultiStepProgress()
+        progress.initialize(5) // lexer, tokens, parser, load rules, analyze
+
         try {
-            val sourceFileObj = File(sourceFile)
-            val configFileObj = File(configFile)
-
-            if (!sourceFileObj.exists()) {
-                println("Error: The source file '$sourceFile' does not exist.")
-                return
-            }
-
-            if (!configFileObj.exists()) {
-                println("Error: The configuration file '$configFile' does not exist.")
-                return
-            }
-
-            val source = sourceFileObj.readText()
-            println("Starting formatting of '$sourceFile'.")
-
-            // Progreso: Análisis léxico y sintáctico
-            print("Building AST")
+            // Paso 1: Análisis léxico
+            val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
             lexer.split()
+            lexerStep.complete("Lexical analysis completed")
+
+            // Paso 2: Generación de tokens
+            val tokenStep = progress.startStep("Generating tokens")
             val tokens: Container = lexer.createToken(lexer.list)
+            tokenStep.complete("${tokens.size()} tokens generated")
+
+            // Paso 3: Análisis sintáctico
+            val parserStep = progress.startStep("Building Abstract Syntax Tree")
             val parser = Parser(tokens)
             val ast: ASTNode = parser.parse()
+            parserStep.complete("AST built successfully")
 
-            // Progreso: Cargando reglas de linting
-            print("Loading analysis rules.")
+            // Paso 4: Cargar reglas de análisis
+            val rulesStep = progress.startStep("Loading analysis rules")
             val lintRules: List<LintRule> = loadLintRules(configFile)
-            val linter = Linter(lintRules)
+            rulesStep.complete("${lintRules.size} rule(s) loaded")
 
-            print("Executing code analysis.")
+            // Paso 5: Ejecutar análisis
+            val analysisStep = progress.startStep("Executing static code analysis")
+            val linter = Linter(lintRules)
             val lintErrors: List<LintError> = linter.all(ast)
 
             if (lintErrors.isEmpty()) {
-                println("\nSUCCESS: No errors were found.")
+                analysisStep.complete("Analysis completed")
+                progress.complete()
+                println("\nSUCCESS: No issues were found")
             } else {
-                println("FAILED: ${lintErrors.size} error(s) were found:")
-                lintErrors.forEach { error -> println("* $error") }
+                analysisStep.complete("Analysis completed")
+                println("\nANALYSIS RESULTS: ${lintErrors.size} issue(s) found:")
+                lintErrors.forEach { error ->
+                    println("$error: $error")
+                }
             }
         } catch (e: Exception) {
             println("Error during analysis: ${e.message}")
