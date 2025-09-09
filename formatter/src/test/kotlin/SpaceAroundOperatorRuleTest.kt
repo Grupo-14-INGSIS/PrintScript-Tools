@@ -28,8 +28,8 @@ class SpaceAroundOperatorRuleTest {
 
     @Test
     fun `take() returns correct token`() {
-        val container = Container()
-        container.addContainer(token(DataType.IDENTIFIER, "x", 2, 5))
+        var container = Container()
+        container = container.addContainer(token(DataType.IDENTIFIER, "x", 2, 5))
         val slice = container.take(0)
         assertEquals(1, slice.size())
         assertEquals("x", slice.get(0)?.content)
