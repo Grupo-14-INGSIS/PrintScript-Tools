@@ -7,6 +7,8 @@ garantizar retrocompatibilidad
 cli que lee desde la terminal
 inmutabilidad
 REVISAR ENTREGABLES
+asegurar el token
+PASARLES EL PRE COMMIT
 
 dudas
 
@@ -15,3 +17,4 @@ FALLA CI/CD (tiene que correr sobre printscript/tck?)
 printscript tck queda como un modulo? no
 le aplico coverage y tests? no
 tenemos que usar una libreria para leer de la terminal?
+que pasa con la lsita mutable del lexer

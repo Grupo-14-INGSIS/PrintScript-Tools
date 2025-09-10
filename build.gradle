@@ -1,6 +1,3 @@
-plugins {
-    id 'jacoco'
-}
 //aplico el plugin de jacoco
 
 //saco all projects maven porque ya esta configurado en myPlugin-conventions
