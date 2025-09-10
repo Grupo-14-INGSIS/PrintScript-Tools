@@ -2,8 +2,6 @@ plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
-group = 'org.example'
-version = 'unspecified'
 
 repositories { //defindo de donde puedo consumir dependencias
     mavenCentral()
