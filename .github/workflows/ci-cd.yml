@@ -64,6 +64,15 @@ jobs:
       - name: Build
         run: ./gradlew build
 
+      - name: Set Gradle publishing secrets
+        run: |
+            echo "GITHUB_USER=${{ secrets.MY_USER }}" >> $GITHUB_ENV
+            echo "GITHUB_TOKEN=${{ secrets.MY_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Publish to GitHub Packages
+        if: github.ref == 'refs/heads/main'
+        run: ./gradlew publish --no-configuration-cache
+
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish --no-configuration-cache
