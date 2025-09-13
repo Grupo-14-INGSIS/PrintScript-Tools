@@ -1,25 +1,56 @@
-//aplico el plugin de jacoco
+// ---------------------------------------------------
+// Task única para instalar el pre-commit hook
+// ---------------------------------------------------
+def srcHookPath = "${rootDir}/.githooks/pre-commit"
+def hookFilePath = "${rootDir}/.git/hooks/pre-commit"
 
-//saco all projects maven porque ya esta configurado en myPlugin-conventions
+tasks.register("installGitHook") {
+    def srcHook = file(srcHookPath)
+    def hookFile = file(hookFilePath)
 
-subprojects { //configura todos los proyectos de forma homogenea
+    outputs.file(hookFile)
+
+    doLast {
+        if (!srcHook.exists()) {
+            println "❌ No se encontró el hook en .githooks/pre-commit"
+            return
+        }
+
+        hookFile.parentFile.mkdirs()
+        hookFile.text = srcHook.text
+        hookFile.setExecutable(true)
+        println "✅ Pre-commit hook instalado/actualizado en .git/hooks/"
+    }
+}
+
+// ---------------------------------------------------
+// Configuración común para todos los subproyectos
+// ---------------------------------------------------
+subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
 
-    dependencies { //dependencias comunes para todos los subproyectos
+    dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib"
         testImplementation "org.jetbrains.kotlin:kotlin-test"
         testImplementation "org.junit.jupiter:junit-jupiter:5.9.2"
         testImplementation "io.mockk:mockk:1.13.7"
     }
 
-    test { //configura tests
+    compileKotlin {
+        kotlinOptions { jvmTarget = "21" }
+    }
+    compileTestKotlin {
+        kotlinOptions { jvmTarget = "21" }
+    }
+
+    test {
         useJUnitPlatform()
-        finalizedBy jacocoTestReport // Genera reporte después de tests
+        finalizedBy jacocoTestReport
     }
 
     jacocoTestReport {
-        dependsOn test // Asegura que los tests se ejecuten primero
+        dependsOn test
         reports {
             xml.required = true
             html.required = true
@@ -30,46 +61,20 @@ subprojects { //configura todos los proyectos de forma homogenea
         dependsOn jacocoTestReport
         violationRules {
             rule {
-                limit {
-                    minimum = 0.80
-                }
+                limit { minimum = 0.80 }
             }
         }
     }
 
-    compileKotlin { //compila el codigo, usa jvm 21 habilitando nuevas caracteristicas
-        kotlinOptions {
-            jvmTarget = "21"
-        }
+    // Vincular instalación del hook a los tests de cada subproyecto
+    tasks.named("test") {
+        dependsOn(rootProject.tasks.named("installGitHook"))
     }
+}
 
-    compileTestKotlin { //lo mismo del anterior, pero para tests
-        kotlinOptions {
-            jvmTarget = "21"
-        }
-    }
-
-    tasks.register("installGitHook"){
-        doLast{
-            def hooksDir = file("${rootDir}/.git/hooks")
-            def hookFile = file("${hooksDir}/pre-commit")
-            def srcHook = file("${rootDir}/.githooks/pre-commit")
-
-            if (!srcHook.exists()){
-                println"There is no hook in .githooks/pre-commit"
-                return
-            }
-            hooksDir.mkdirs()
-            srcHook.withInputStream { ins ->
-                hookFile.withOutputStream { os-> os << ins}
-            }
-            hookFile.setExecutable(true)
-            println "Pre-commit hook was installed?updated in .git/hooks/"
-        }
-    }
-    subprojects{
-        tasks.named("test"){
-            dependsOn(rootProject.tasks.named("installGitHook"))
-        }
-    }
+// ---------------------------------------------------
+// También la task de test de la raíz, si existe
+// ---------------------------------------------------
+tasks.matching { it.name == "test" }.configureEach {
+    dependsOn(tasks.named("installGitHook"))
 }
