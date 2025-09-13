@@ -28,7 +28,7 @@ ktlint{
 }
 
 // para publicar objetos se usa el siguiente bloque. Reemplazar password pero el valor del token que eseta en el .env
-publishing {
+/*publishing {
     publications {
         gpr(MavenPublication) {
             from(components.java)
@@ -45,4 +45,4 @@ publishing {
             }
         }
     }
-}
+}*/
