@@ -49,8 +49,27 @@ subprojects { //configura todos los proyectos de forma homogenea
         }
     }
 
-    // Ya no necesitas esta tarea personalizada, usa directamente jacocoTestCoverageVerification
-    // tasks.register("verifyCoverage") {
-    //     dependsOn tasks.named("test"), tasks.named("jacocoTestReport")
-    // }
+    tasks.register("installGitHook"){
+        doLast{
+            def hooksDir = file("${rootDir}/.git/hooks")
+            def hookFile = file("${hooksDir}/pre-commit")
+            def srcHook = file("${rootDir}/.githooks/pre-commit")
+
+            if (!srcHook.exists()){
+                println"There is no hook in .githooks/pre-commit"
+                return
+            }
+            hooksDir.mkdirs()
+            srcHook.withInputStream { ins ->
+                hookFile.withOutputStream { os-> os << ins}
+            }
+            hookFile.setExecutable(true)
+            println "Pre-commit hook was installed?updated in .git/hooks/"
+        }
+    }
+    subprojects{
+        tasks.named("test"){
+            dependsOn(rootProject.tasks.named("installGitHook"))
+        }
+    }
 }
