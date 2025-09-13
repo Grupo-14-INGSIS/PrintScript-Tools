@@ -20,14 +20,14 @@ test {
 }
 
 tasks.named("build") {
-    dependsOn "ktlintCheck", "test" //no pongo el de formatt pq cambiaria el archivo y no quier que lo haga aca.  Lo corro automatico, pero desde la terminal.
+    dependsOn "ktlintCheck", "test" //no pongo el de formatt pq cambiaria el archivo y no quier que lo haga aca. Lo corro automatico, pero desde la terminal.
 }
 
 ktlint{
     additionalEditorconfigFile = file("$rootDir/config/.editorConfig") // con esto tenemos las reglas custom
 }
 
-//cargo las variables automaticamente desde el env
+// Cargo las variables automáticamente desde el .env (local)
 def dotenvFile = file("$rootDir/.env")
 def dotenvProps = new Properties()
 if (dotenvFile.exists()) {
@@ -42,7 +42,7 @@ if (dotenvFile.exists()) {
     }
 }
 
-// para publicar objetos se usa el siguiente bloque. Reemplazar password pero el valor del token que eseta en el .env
+// Para publicar objetos
 publishing {
     publications {
         gpr(MavenPublication) {
@@ -55,8 +55,9 @@ publishing {
             name = 'GitHubPackages'
             url = uri('https://maven.pkg.github.com/Grupo-14-INGSIS/PrintScript-Tools')
             credentials {
-                username = dotenvProps.getProperty("GITHUB_USER") ?: ""
-                password = dotenvProps.getProperty("GITHUB_TOKEN") ?: ""
+                // Primero intenta leer del entorno (CI/CD), si no existe usa el .env local
+                username = System.getenv("GITHUB_USER") ?: dotenvProps.getProperty("GITHUB_USER") ?: ""
+                password = System.getenv("GITHUB_TOKEN") ?: dotenvProps.getProperty("GITHUB_TOKEN") ?: ""
             }
         }
     }
