@@ -1,6 +1,3 @@
-// ---------------------------------------------------
-// Task única para instalar el pre-commit hook
-// ---------------------------------------------------
 def srcHookPath = "${rootDir}/.githooks/pre-commit"
 def hookFilePath = "${rootDir}/.git/hooks/pre-commit"
 
@@ -12,20 +9,18 @@ tasks.register("installGitHook") {
 
     doLast {
         if (!srcHook.exists()) {
-            println "❌ No se encontró el hook en .githooks/pre-commit"
+            println "No hook found in .githooks/pre-commit"
             return
         }
 
         hookFile.parentFile.mkdirs()
         hookFile.text = srcHook.text
         hookFile.setExecutable(true)
-        println "✅ Pre-commit hook instalado/actualizado en .git/hooks/"
+        println "Pre-commit was installed/updated in .git/hooks/"
     }
 }
 
-// ---------------------------------------------------
-// Configuración común para todos los subproyectos
-// ---------------------------------------------------
+
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
@@ -66,15 +61,11 @@ subprojects {
         }
     }
 
-    // Vincular instalación del hook a los tests de cada subproyecto
     tasks.named("test") {
         dependsOn(rootProject.tasks.named("installGitHook"))
     }
 }
 
-// ---------------------------------------------------
-// También la task de test de la raíz, si existe
-// ---------------------------------------------------
 tasks.matching { it.name == "test" }.configureEach {
     dependsOn(tasks.named("installGitHook"))
 }
