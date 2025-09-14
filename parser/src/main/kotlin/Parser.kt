@@ -5,10 +5,11 @@ import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 
 class Parser(
-    private var tokens: Container
+    private var tokens: Container,
+    version: String = "1.0" // es redundante poner private val
 ) {
 
-    private val grammar = Grammar()
+    private val grammar = Grammar(version)
 
     fun parse(): ASTNode {
         val line: Container = format()
