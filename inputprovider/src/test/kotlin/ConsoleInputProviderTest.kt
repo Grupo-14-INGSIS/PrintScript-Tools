@@ -1,8 +1,9 @@
-package cli.src.test.kotlin
+package inputprovider.src.test.kotlin
 
+import org.junit.jupiter.api.Assertions
+import inputprovider.src.main.kotlin.ConsoleInputProvider
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
-import cli.src.main.kotlin.ConsoleInputProvider
 import java.io.ByteArrayInputStream
 
 class ConsoleInputProviderTest {
@@ -16,7 +17,7 @@ class ConsoleInputProviderTest {
         val provider = ConsoleInputProvider()
         val result = provider.readInput("Enter name: ")
 
-        assertEquals("Larisa", result)
+        Assertions.assertEquals("Larisa", result)
     }
 
     @Test
@@ -24,7 +25,7 @@ class ConsoleInputProviderTest {
         val provider = ConsoleInputProvider()
         val value = provider.readEnv("PATH") // o cualquier variable conocida
 
-        assertNotNull(value)
+        Assertions.assertNotNull(value)
         assertTrue(value!!.isNotEmpty()) // validación genérica
     }
 }

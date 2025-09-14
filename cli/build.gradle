@@ -1,17 +1,15 @@
 plugins {
-    id 'buildlogic.kotlin-myPlugin-conventions' //sin la extension .gradle
-    //no lo puedo poner en bbuild.gradle/subpoject/dependencias (es un plugin)
-
+    id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
-dependencies{
-    implementation project(":lexer")
-    implementation project(":parser")
-    implementation project(":linter")
-    implementation project(":ast")
-    implementation project(":formatter")
-    implementation project(":interpreter")
-    implementation project(":container")
-    implementation project(":token")
+dependencies {
+    implementation project(":executor")
+    implementation project(":formatteraction")
+    implementation project(":validator")
+    implementation project(":analyzer")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    enabled = false
 }

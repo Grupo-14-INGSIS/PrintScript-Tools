@@ -4,11 +4,10 @@ plugins {
 }
 
 dependencies {
-    implementation project(":parser")
-    implementation project(":lexer")
     implementation project(":ast")
     implementation project(":tokendata")
     implementation project(":token")
     implementation project(":container")
+    implementation project(":inputprovider")
 }
 

@@ -1,0 +1,12 @@
+plugins {
+    id 'buildlogic.kotlin-myPlugin-conventions' // sin versión
+}
+
+dependencies{
+    implementation project(":progress")
+    implementation project(":container")
+    implementation project(":ast")
+    implementation project(":lexer")
+    implementation project(":parser")
+    implementation project(":linter")
+}

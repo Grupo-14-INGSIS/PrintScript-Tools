@@ -1,7 +1,7 @@
-package cli.src.test.kotlin
+package progress.src.test.kotlin
 
-import cli.src.main.kotlin.MultiStepProgress
-import org.junit.jupiter.api.Assertions.assertNotNull
+import progress.src.main.kotlin.MultiStepProgress
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import java.io.ByteArrayOutputStream
@@ -30,7 +30,7 @@ class MultiStepProgressTest {
         // Then
         assertTrue(result)
         val output = outputStream.toString()
-        assertTrue(output.contains("Starting process..."))
+        Assertions.assertTrue(output.contains("Starting process..."))
     }
 
     @Test
@@ -43,11 +43,11 @@ class MultiStepProgressTest {
         val indicator2 = multiStepProgress.startStep("Second step")
 
         // Then
-        assertNotNull(indicator1)
-        assertNotNull(indicator2)
+        Assertions.assertNotNull(indicator1)
+        Assertions.assertNotNull(indicator2)
         val output = outputStream.toString()
-        assertTrue(output.contains("[1/3] First step"))
-        assertTrue(output.contains("[2/3] Second step"))
+        Assertions.assertTrue(output.contains("[1/3] First step"))
+        Assertions.assertTrue(output.contains("[2/3] Second step"))
     }
 
     @Test
@@ -61,7 +61,7 @@ class MultiStepProgressTest {
         // Then
         assertTrue(result)
         val output = outputStream.toString()
-        assertTrue(output.contains("Process completed successfully"))
+        Assertions.assertTrue(output.contains("Process completed successfully"))
     }
 
     @Test
@@ -78,9 +78,9 @@ class MultiStepProgressTest {
         // Then
         val output = outputStream.toString()
 
-        assertTrue(output.contains("[1/4] Step one"))
-        assertTrue(output.contains("[2/4] Step two"))
-        assertTrue(output.contains("[3/4] Step three"))
-        assertTrue(output.contains("[4/4] Step four"))
+        Assertions.assertTrue(output.contains("[1/4] Step one"))
+        Assertions.assertTrue(output.contains("[2/4] Step two"))
+        Assertions.assertTrue(output.contains("[3/4] Step three"))
+        Assertions.assertTrue(output.contains("[4/4] Step four"))
     }
 }

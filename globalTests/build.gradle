@@ -7,5 +7,8 @@ dependencies {
     implementation(project(":container"))
     implementation(project(":token"))
     implementation(project(":tokendata"))
+    implementation(project(":lexer"))
+    implementation(project(":parser"))
+    implementation(project(":interpreter"))
     implementation("org.yaml:snakeyaml:2.0")
 }

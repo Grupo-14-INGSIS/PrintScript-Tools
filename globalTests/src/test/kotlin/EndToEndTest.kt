@@ -1,4 +1,4 @@
-package interpreter.src.test.kotlin
+package globaltests.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.*
 import tokendata.src.main.kotlin.DataType

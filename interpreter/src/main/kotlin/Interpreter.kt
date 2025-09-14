@@ -1,6 +1,7 @@
 package interpreter.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import inputprovider.src.main.kotlin.InputProvider
 
 class Interpreter(
     private val version: String = "1.0",
@@ -86,6 +87,38 @@ class Interpreter(
             "1.0" -> action in v10Actions
             "1.1" -> action in v10Actions || action in v11OnlyActions
             else -> false
+        }
+    }
+
+    fun executeAST(ast: ASTNode) {
+        val queue = ArrayDeque<ASTNode>()
+        queue.add(ast)
+
+        while (queue.isNotEmpty()) {
+            val currentNode = queue.removeFirst()
+
+            // que accion conlleva el nodo
+            val action = try {
+                determineAction(currentNode)
+            } catch (e: Exception) {
+                println("Unknown action for token '${currentNode.content}': ${e.message}")
+                continue
+            }
+
+            // llevo a cabo esa accion
+            try {
+                val result = interpret(currentNode, action)
+                if (result != null) {
+                    println("Result of '${action.name}': $result")
+                }
+            } catch (e: Exception) {
+                println("Error interpreting node '${currentNode.content}': ${e.message}")
+            }
+
+            // si existen hijos -> encolarlso
+            currentNode.children.forEach { child ->
+                queue.add(child)
+            }
         }
     }
 }

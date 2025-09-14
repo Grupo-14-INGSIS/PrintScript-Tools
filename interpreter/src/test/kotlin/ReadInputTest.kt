@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import interpreter.src.main.kotlin.ActionType
 import ast.src.main.kotlin.ASTNode
-import interpreter.src.main.kotlin.InputProvider
+import inputprovider.src.main.kotlin.InputProvider
 import interpreter.src.main.kotlin.ReadInput
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position

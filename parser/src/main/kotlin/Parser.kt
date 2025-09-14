@@ -5,7 +5,7 @@ import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 
 class Parser(
-    private var tokens: Container
+    private val tokens: Container
 ) {
 
     private val grammar = Grammar()

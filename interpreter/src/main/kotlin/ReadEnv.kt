@@ -1,6 +1,7 @@
 package interpreter.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import inputprovider.src.main.kotlin.InputProvider
 
 class ReadEnv(private val inputProvider: InputProvider) : ActionType {
     override fun interpret(node: ASTNode): Any {

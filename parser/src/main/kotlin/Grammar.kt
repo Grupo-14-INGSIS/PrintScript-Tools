@@ -165,27 +165,6 @@ class Grammar(private val version: String = "1.0") {
             )
     }
 
-    fun funcallParse(tokens: Container): ASTNode {
-        return ASTNode(
-            DataType.FUNCTION_CALL,
-            tokens.first()!!.content,
-            tokens.first()!!.position,
-            listOf(
-                varParse(tokens.take(0)), // IDENTIFIER
-                expParse(tokens.slice(3, tokens.size() - 1)) // PARAMETERS
-            )
-        )
-    }
-
-    fun funParse(tokens: Container): ASTNode {
-        return ASTNode(
-            tokens.first()!!.type,
-            tokens.first()!!.content,
-            tokens.first()!!.position,
-            listOf()
-        )
-    }
-
     fun litParse(tokens: Container): ASTNode {
         return ASTNode(
             tokens.first()!!.type,

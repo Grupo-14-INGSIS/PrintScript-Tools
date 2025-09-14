@@ -1,4 +1,4 @@
-package cli.src.main.kotlin
+package progress.src.main.kotlin
 
 class MultiStepProgress {
 

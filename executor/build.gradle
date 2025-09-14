@@ -1,0 +1,14 @@
+plugins {
+    id 'buildlogic.kotlin-myPlugin-conventions'
+}
+
+dependencies{
+    implementation project(":lexer")
+    implementation project(":parser")
+    implementation project(":interpreter")
+    implementation project(":token")
+    implementation project(":container")
+    implementation project(":ast")
+    implementation project(":progress")
+    implementation project(":inputprovider")
+}
