@@ -54,7 +54,7 @@ publishing {
     repositories {
         maven {
             name = 'GitHubPackages'
-            url = uri('https://maven.pkg.github.com/Grupo-14-INGSIS/PrintScript-Tools')
+            url = 'https://maven.pkg.github.com/Grupo-14-INGSIS/PrintScript-Tools'
             credentials {
                 // Primero intenta leer del entorno (CI/CD), si no existe usa el .env local
                 username = System.getenv("GITHUB_USER") ?: dotenvProps.getProperty("GITHUB_USER") ?: ""
