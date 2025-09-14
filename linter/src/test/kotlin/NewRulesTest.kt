@@ -7,7 +7,7 @@ import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 
 import org.junit.jupiter.api.Assertions.assertTrue
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class NewRulesTest {
     @Test

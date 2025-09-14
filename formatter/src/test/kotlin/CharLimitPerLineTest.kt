@@ -7,7 +7,7 @@ import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.optional.CharLimitPerLine
 import formatter.src.main.kotlin.formatrule.optional.ClassNameCamelCaseRule
 import org.junit.jupiter.api.Assertions.assertTrue
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class CharLimitPerLineTest {
     @Test

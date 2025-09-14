@@ -2,10 +2,11 @@ package cli.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.assertTrue
 import cli.src.main.kotlin.ExecutionCommand
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import kotlin.test.Test
+import java.util.Collections.emptyList
 
 class ExecutionCommandTest {
     @Test

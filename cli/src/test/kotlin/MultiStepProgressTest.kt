@@ -4,9 +4,9 @@ import cli.src.main.kotlin.MultiStepProgress
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import kotlin.test.Test
 
 class MultiStepProgressTest {
 
