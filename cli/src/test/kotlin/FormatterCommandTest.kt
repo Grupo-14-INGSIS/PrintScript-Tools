@@ -2,10 +2,10 @@ package cli.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.assertTrue
 import cli.src.main.kotlin.FormatterCommand
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import kotlin.test.Test
 
 class FormatterCommandTest {
     @Test

@@ -5,77 +5,78 @@ import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 
-class PrattParser {
+class PrattParser(private val features: VersionFeatures) {
 
     private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
+    private val tokenFactory = PrattTokenFactory(features)
 
     fun arithParse(tokens: Container): ASTNode {
-        val symbols: MutableList<PrattToken> = prattify(tokens)
-        var nextOperator: Int
-        var result: Boolean
-        while (symbols.size > 1) {
-            nextOperator = highestPrecedIndex(symbols)
-            if (nextOperator == -1) return invalid
-            result = associate(symbols, nextOperator)
-            if (!result) return invalid
-        }
-        return prattToAST(symbols[0])
+        val symbols: List<PrattToken> = prattify(tokens)
+        val result = processTokens(symbols)
+        return if (result.size == 1) prattToAST(result[0]) else invalid
     }
 
-    // Turns a Container into a list of PrattToken objects
-    private fun prattify(tokens: Container): MutableList<PrattToken> {
-        val output: MutableList<PrattToken> = mutableListOf()
-        for (i in 0 until tokens.size()) {
-            output.add(PrattToken(tokens.get(i)!!))
-        }
-        return output
+    private fun processTokens(symbols: List<PrattToken>): List<PrattToken> {
+        if (symbols.size <= 1) return symbols
+
+        val nextOperator = highestPrecedIndex(symbols)
+        if (nextOperator == -1) return symbols
+
+        val newSymbols = associateOperation(symbols, nextOperator)
+        return processTokens(newSymbols) // ✅ Recursión inmutable
     }
 
-    // Searches for symbol with the highest precedence
+    private fun associateOperation(symbols: List<PrattToken>, operator: Int): List<PrattToken> {
+        if (operator - 1 < 0 || operator + 1 >= symbols.size) return symbols
+
+        val left = symbols[operator - 1]
+        val right = symbols[operator + 1]
+        val operatorToken = symbols[operator]
+
+        val associatedToken = operatorToken.associate(listOf(left, right))
+
+        val newList = mutableListOf<PrattToken>()
+        newList.addAll(symbols.subList(0, operator - 1)) // Antes del operador
+        newList.add(associatedToken) // Token asociado
+        newList.addAll(symbols.subList(operator + 2, symbols.size)) // Después
+
+        return newList.toList()
+    }
+
+    private fun prattify(tokens: Container): List<PrattToken> {
+        return (0 until tokens.size()).map { i ->
+            tokenFactory.createPrattToken(tokens.get(i)!!)
+        }
+    }
+
     private fun highestPrecedIndex(symbols: List<PrattToken>): Int {
-        var output: Int = -1 // Index of highest precedence
-        var highestPrecedence: Int = symbols[0].precedence() // Highest precedence value
-        var token: PrattToken
+        var output = -1
+        var highestPrecedence = -1
+
         for (i in symbols.indices) {
-            token = symbols[i]
-            if (token.precedence() > highestPrecedence) {
-                highestPrecedence = token.precedence()
-                output = i
-            } else if (token.precedence() == highestPrecedence) {
-                if (token.associativity() == Association.RIGHT) {
+            val token = symbols[i]
+            when {
+                token.precedence() > highestPrecedence -> {
+                    highestPrecedence = token.precedence()
                     output = i
-                } // else keep left association
+                }
+                token.precedence() == highestPrecedence &&
+                    token.associativity() == Association.RIGHT -> {
+                    output = i
+                }
             }
         }
         return output
     }
 
-    // Solves association for a specific operator
-    private fun associate(symbols: MutableList<PrattToken>, operator: Int): Boolean {
-        if (operator - 1 < 0 || operator + 1 >= symbols.size) return false
-        val left = symbols[operator - 1]
-        val right = symbols[operator + 1]
-        symbols[operator].associate(listOf(left, right))
-        symbols.removeAt(operator + 1)
-        symbols.removeAt(operator - 1)
-        return true
-    }
-
-    // Takes a pratt token tree and turns it into an AST node tree
     private fun prattToAST(symbol: PrattToken): ASTNode {
-        val children: MutableList<ASTNode> = mutableListOf()
-        if (symbol.children(0) != null) {
-            children.add(prattToAST(symbol.children(0)!!))
-        }
-        if (symbol.children(1) != null) {
-            children.add(prattToAST(symbol.children(1)!!))
-        }
-        val output = ASTNode(
+        val children = symbol.allChildren().map { prattToAST(it) }
+
+        return ASTNode(
             symbol.token().type,
             symbol.token().content,
             symbol.token().position,
             children
         )
-        return output
     }
 }

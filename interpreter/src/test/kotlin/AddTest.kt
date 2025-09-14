@@ -5,7 +5,7 @@ import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Add
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class AddTest {
     @Test

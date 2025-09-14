@@ -5,9 +5,9 @@ import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Print
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import kotlin.test.Test
 
 class PrintTest {
     @Test

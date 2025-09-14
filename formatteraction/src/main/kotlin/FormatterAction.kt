@@ -1,10 +1,11 @@
 package formatteraction.src.main.kotlin
 
 import container.src.main.kotlin.Container
-import lexer.src.main.kotlin.Lexer
 import formatter.src.main.kotlin.Formatter
+import lexer.src.main.kotlin.Lexer
 import formatter.src.main.kotlin.formatrule.FormatRule
 import progress.src.main.kotlin.MultiStepProgress
+
 import java.io.File
 import java.io.FileWriter
 import java.net.URL
@@ -59,11 +60,11 @@ class FormatterAction {
 
             // Paso 3: Formatear código
             val formatStep = progress.startStep("Applying formatting rules")
-            var percentageCompleted: Int
             val lexer = Lexer.from(source)
             lexer.split()
             var tokens: Container = lexer.createToken(lexer.list)
             val formatter = Formatter()
+            var percentageCompleted: Int
             val rules: List<FormatRule> = formatter.loadRules(configFileObj)
             for (i in 0 until rules.size) {
                 tokens = formatter.executeOne(tokens, rules[i])
@@ -91,7 +92,7 @@ class FormatterAction {
             }
             println()
             println("=".repeat(50)) // no funciona el * como en python para repetri un string
-        } catch (e: kotlin.Exception) {
+        } catch (e: Exception) {
             println("Error during formatting: ${e.message}")
             e.printStackTrace()
         }

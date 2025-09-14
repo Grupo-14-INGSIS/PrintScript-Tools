@@ -4,7 +4,7 @@ import container.src.main.kotlin.Container
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class CharLimitPerLine(private val maxLength: Int = 140) : FormatRule {
+class CharLimitPerLineRule(private val maxLength: Int = 140) : FormatRule {
 
     override fun format(source: Container): Container {
         var output = Container()

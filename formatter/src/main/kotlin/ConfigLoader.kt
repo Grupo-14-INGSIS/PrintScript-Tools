@@ -3,76 +3,93 @@ package formatter.src.main.kotlin
 import formatter.src.main.kotlin.formatrule.FormatRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceBetweenTokensRule
+import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRule
+import formatter.src.main.kotlin.formatrule.mandatory.IfBraceOnSameLineRule
+import formatter.src.main.kotlin.formatrule.optional.CharLimitPerLineRule
+import formatter.src.main.kotlin.formatrule.optional.ClassNameCamelCaseRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
+import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
+import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
 class ConfigLoader(
-    val configFile: String
+    private val configFile: String
 ) {
 
-    /*
-     Non-configurable rules:
+    fun loadConfig(version: String = "1.0"): List<FormatRule> {
+        val configurableRules = createConfigurableRules(readConfig())
+        val mandatoryRules = createMandatoryRules(version)
 
-     * SpaceBetweenTokens
-       - Max 1 space between non-space tokens
-     * LineBreakAfterSemicolon
-       - No one-liners
-     * SpaceAroundOperator
-       - Every operator (+, -, *, /, =, etc.) must be around spaces
-     */
-
-    fun loadConfig(): List<FormatRule> {
-        val output = mutableListOf<FormatRule>()
-        val optionalRules = readConfig()
-        output.addAll(createConfigurableRules(optionalRules))
-        output.addAll(createMandatoryRules())
-        return output
+        return (configurableRules + mandatoryRules).toList()
     }
 
-    fun createMandatoryRules(): List<FormatRule> {
-        val output = mutableListOf<FormatRule>()
-        output.add(SpaceAroundOperatorRule())
-        output.add(SpaceBetweenTokensRule())
-        return output
+    internal fun createMandatoryRules(version: String = "1.0"): List<FormatRule> {
+        val baseRules = listOf(
+            SpaceAroundOperatorRule(),
+            SpaceBetweenTokensRule(),
+            LineBreakAfterSemicolonRule(),
+            IfBraceOnSameLineRule()
+        )
+
+        return when (version) {
+            "1.0" -> baseRules
+            "1.1" -> baseRules + listOf(
+                IfBraceOnSameLineRule()
+            )
+            else -> baseRules // Versión desconocida = usar base
+        }
     }
 
-    fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
-        val output = mutableListOf<FormatRule>()
-        for (rule in rules.keys) {
-            when (rule) {
-                "NoSpaceBeforeColon" -> output.add(NoSpaceBeforeColonRule())
-                "NoSpaceAfterColon" -> output.add(NoSpaceAfterColonRule())
-                "NoSpaceBeforeEquals" -> output.add(NoSpaceBeforeEqualsRule())
-                "NoSpaceAfterEquals" -> output.add(NoSpaceAfterEqualsRule())
 
-                // "lineBreakBeforePrint" -> output.add(LineBreakBeforePrint(rules[rule]))
+
+    internal fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
+        return buildList {
+            for ((ruleName, ruleValue) in rules) {
+                val rule = when (ruleName) {
+                    "NoSpaceBeforeColon" -> NoSpaceBeforeColonRule()
+                    "NoSpaceAfterColon" -> NoSpaceAfterColonRule()
+                    "NoSpaceBeforeEquals" -> NoSpaceBeforeEqualsRule()
+                    "NoSpaceAfterEquals" -> NoSpaceAfterEqualsRule()
+                    "CharLimitPerLine" -> CharLimitPerLineRule()
+                    "ClassNameCamel" -> ClassNameCamelCaseRule()
+                    "lineBreakBeforePrint" -> {
+                        val count = (ruleValue as? Number)?.toInt() ?: 1
+                        LineBreakBeforePrintRule(count)
+                    }
+                    "indentSize" -> {
+                        val size = (ruleValue as? Number)?.toInt() ?: 2
+                        IndentationRule(size)
+                    }
+                    else -> null
+                }
+                rule?.let { add(it) }
             }
         }
-        return output
     }
 
-    fun readConfig(): Map<String, Any> {
-        val output = mutableMapOf<String, Any>()
+    internal fun readConfig(): Map<String, Any> {
         val yaml = Yaml()
         val data = yaml.load<Map<String, Any>>(File(configFile).readText())
-        val rules = data["rules"] as Map<String, Any>
-        val switchRules: Map<String, Boolean> = rules["switch"] as Map<String, Boolean>
-        val valueRules: Map<String, Any> = rules["setValue"] as Map<String, Any>
+        val rules = data["rules"] as? Map<String, Any> ?: return emptyMap()
 
-        for (rule in switchRules.keys) {
-            if (switchRules[rule] == true) {
-                output[rule] = true
+        return buildMap {
+            // Reglas de switch (boolean)
+            val switchRules = rules["switch"] as? Map<String, Boolean> ?: emptyMap()
+            for ((rule, enabled) in switchRules) {
+                if (enabled) {
+                    put(rule, true)
+                }
+            }
+
+            // Reglas con valores (number/string)
+            val valueRules = rules["setValue"] as? Map<String, Any> ?: emptyMap()
+            for ((rule, value) in valueRules) {
+                put(rule, value)
             }
         }
-
-        for (rule in valueRules.keys) {
-            output[rule] = valueRules[rule] as Any
-        }
-
-        return output
     }
 }

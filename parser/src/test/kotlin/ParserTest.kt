@@ -36,7 +36,7 @@ class ParserTest {
         val declaration: ASTNode = root.children[0]
 
         assertEquals(DataType.DECLARATION, root.type)
-        assertEquals(DataType.DECLARATION, declaration.type)
+        assertEquals(DataType.LET_KEYWORD, declaration.type)
         assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
         assertEquals(DataType.IDENTIFIER, declaration.children[0].type)
         assertEquals(DataType.NUMBER_TYPE, declaration.children[1].type)

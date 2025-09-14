@@ -8,28 +8,33 @@ class Interpreter(
     private val inputProvider: InputProvider? = null
 ) {
 
-    private val actionHandlers = mutableMapOf<Actions, ActionType>().apply {
+    private val actionHandlers: Map<Actions, ActionType> = run {
         // PrintScript 1.0 handlers
-        put(Actions.ADD, Add)
-        put(Actions.SUBTRACT, Subtract)
-        put(Actions.MULTIPLY, Multiply)
-        put(Actions.DIVIDE, Divide)
-        put(Actions.ASSIGNMENT_TO_EXISTING_VAR, AssignmentToExistingVar)
-        put(Actions.PRINT, Print)
-        put(Actions.VAR_DECLARATION, VarDeclaration)
-        put(Actions.VAR_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
+        val v10 = mapOf(
+            Actions.ADD to Add,
+            Actions.SUBTRACT to Subtract,
+            Actions.MULTIPLY to Multiply,
+            Actions.DIVIDE to Divide,
+            Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
+            Actions.PRINT to Print,
+            Actions.VAR_DECLARATION to VarDeclaration,
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment
+        )
 
-        // PrintScript 1.1 handlers (solo si la versión es 1.1)
         if (version == "1.1") {
-            inputProvider?.let { ReadInput(it) }?.let { put(Actions.READ_INPUT, it) }
-            inputProvider?.let { ReadEnv(it) }?.let { put(Actions.READ_ENV, it) }
-            put(Actions.IF_STATEMENT, IfStatement(this@Interpreter))
-            // Agregar más handlers según necesites
+            val v11 = buildMap<Actions, ActionType> {
+                inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
+                inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
+                put(Actions.IF_STATEMENT, IfStatement(this@Interpreter))
+                // acá podés seguir sumando más si aparecen
+            }
+            v10 + v11
+        } else {
+            v10
         }
     }
 
     fun interpret(node: ASTNode, action: Actions): Any? {
-        // Validar que la acción sea compatible con la versión
         if (!isActionSupportedInVersion(action, version)) {
             throw IllegalArgumentException(
                 "Action $action is not supported in PrintScript version $version"
@@ -47,8 +52,8 @@ class Interpreter(
         }
     }
 
-    fun determineAction(node: ASTNode): Actions {
-        return when (node.content) {
+    fun determineAction(node: ASTNode): Actions =
+        when (node.content) {
             "+" -> Actions.ADD
             "-" -> Actions.SUBTRACT
             "*" -> Actions.MULTIPLY
@@ -61,7 +66,6 @@ class Interpreter(
             "readEnv" -> Actions.READ_ENV
             else -> throw IllegalArgumentException("Unknown action for token: '${node.content}'")
         }
-    }
 
     private fun isActionSupportedInVersion(action: Actions, version: String): Boolean {
         val v10Actions = setOf(
