@@ -61,8 +61,8 @@ class FormatterCommand : Command {
             val formatter = Formatter(source, configFileObj)
             var percentageCompleted: Int
             val setup: FormatterSetup = formatter.setup()
-            var tokens: Container = setup.tokens
-            val rules: List<FormatRule> = setup.rules
+            var tokens: Container = setup.getTokens()
+            val rules: List<FormatRule> = setup.getRules()
             for (i in 0 until rules.size) {
                 tokens = formatter.execute(tokens, rules[i])
                 percentageCompleted = i * 100 / rules.size

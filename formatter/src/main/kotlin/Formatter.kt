@@ -26,8 +26,8 @@ class Formatter(
 
     fun execute(): Container {
         val setup = setup()
-        var tokens: Container = setup.tokens
-        for (rule: FormatRule in setup.rules) {
+        var tokens: Container = setup.getTokens() // ya no puedo acceder directo
+        for (rule: FormatRule in setup.getRules()) {
             tokens = execute(tokens, rule)
         }
         return tokens

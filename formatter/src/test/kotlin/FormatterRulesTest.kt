@@ -76,7 +76,7 @@ class FormatterRulesTest {
 
         assertTrue(names.contains("SpaceAroundOperatorRule"))
         assertTrue(names.contains("SpaceBetweenTokensRule"))
-        assertEquals(2, mandatory.size)
+        assertEquals(4, mandatory.size) // ahora hay nuevas reglas
     }
 
     @Test

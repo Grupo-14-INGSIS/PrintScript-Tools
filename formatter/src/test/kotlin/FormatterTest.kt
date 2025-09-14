@@ -28,7 +28,8 @@ class FormatterTest {
             DataType.SPACE,
             DataType.STRING_LITERAL,
             DataType.SPACE,
-            DataType.SEMICOLON
+            DataType.SEMICOLON,
+            DataType.LINE_BREAK
         )
         val actual = formatter.execute()
         assertEquals(types.size, actual.size())
@@ -51,7 +52,8 @@ class FormatterTest {
             DataType.NUMBER_TYPE,
             DataType.ASSIGNATION,
             DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+            DataType.SEMICOLON,
+            DataType.LINE_BREAK
         )
         val actual: Container = formatter.execute()
         assertEquals(types.size, actual.size())
