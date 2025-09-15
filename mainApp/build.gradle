@@ -1,21 +1,27 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
+    id 'buildlogic.kotlin-myPlugin-conventions'
+    id 'application'
 }
 
-group = 'org.example'
-version = 'unspecified'
 
-repositories {
-    mavenCentral()
+application{
+    mainClass = 'MainKt'
 }
 
 dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    implementation 'info.picocli:picocli:4.7.7'
+    implementation "info.picocli:picocli-shell-jline3:4.7.7"
+
+    implementation "org.jline:jline:3.26.2"
 }
 
-test {
-    useJUnitPlatform()
+tasks.named('run', JavaExec) {
+    // conecta System.in del proceso Gradle al proceso Java que ejecuta tu Main
+    standardInput = System.in
 }
+
 kotlin {
     jvmToolchain(21)
 }
