@@ -13,29 +13,30 @@ object TokenFactory {
         pieces.filter { it.isNotEmpty() }
             .forEach { piece ->
                 val type = when (piece) {
-                    " ", "\t", "\r", "\n" -> DataType.SPACE
+                    " ", "\n" -> DataType.SPACE
                     else -> TokenMap.classifyTokenMap(piece, version)
                         ?: TokenPattern.classifyTokenPattern(piece)
                 }
 
-                val token = Token(type, piece, position)
-                container = container.addContainer(token)
+                if (type != null) {
+                    val token = Token(type, piece, position)
+                    container = container.addContainer(token)
 
-                // Actualizar posición
-                val lines = piece.split("\n")
-                position = if (lines.size > 1) {
-                    Position(
-                        line = position.line + lines.size - 1,
-                        column = lines.last().length
-                    )
-                } else {
-                    Position(
-                        line = position.line,
-                        column = position.column + piece.length
-                    )
+                    // Actualizar posición
+                    val lines = piece.split("\n")
+                    position = if (lines.size > 1) {
+                        Position(
+                            line = position.line + lines.size - 1,
+                            column = lines.last().length
+                        )
+                    } else {
+                        Position(
+                            line = position.line,
+                            column = position.column + piece.length
+                        )
+                    }
                 }
             }
-
         return container
     }
 }
