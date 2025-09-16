@@ -94,6 +94,7 @@ class Analyzer {
             println("Error during analysis: ${e.message}")
             e.printStackTrace()
         }
+        // Comment
     }
 
     private fun loadLintRules(configFile: String): List<LintRule> {
