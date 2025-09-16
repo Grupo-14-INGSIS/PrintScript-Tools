@@ -87,14 +87,12 @@ class FormatterAction {
             progress.complete()
             println("\nFormatted code:")
             println("=".repeat(50))
-            for (i in 0 until tokens.size()) {
-                print(tokens.get(i)!!.content)
-            }
             println()
             println("=".repeat(50)) // no funciona el * como en python para repetri un string
         } catch (e: Exception) {
             println("Error during formatting: ${e.message}")
             e.printStackTrace()
         }
+        return
     }
 }
