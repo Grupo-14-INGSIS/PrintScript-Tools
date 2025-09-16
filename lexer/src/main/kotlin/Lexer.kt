@@ -25,13 +25,13 @@ class Lexer(val source: CharSource) {
         return finalizeParsing(state)
     }
 
-    private fun classifier(char: Char, state: LexerState): LexerState {
+    fun classifier(char: Char, state: LexerState): LexerState {
         val type = CharacterClassifier.classify(char)
         val handler = CharacterHandlerFactory.getHandler(type)
         return handler.handle(char, state)
     }
 
-    private fun finalizeParsing(state: LexerState) {
+     fun finalizeParsing(state: LexerState) {
         val allPieces = if (state.currentPiece.isNotEmpty()) {
             state.pieces + state.currentPiece
         } else {
