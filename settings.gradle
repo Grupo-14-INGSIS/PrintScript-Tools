@@ -23,7 +23,7 @@ include 'ast', 'container', 'token', 'tokendata'
 include 'parser', 'interpreter', 'lexer', 'formatter', 'linter', 'progress', 'inputprovider'
 
 // Integrators
-include 'analyzer', 'executor', 'formatteraction', 'validator'
+include 'analyzer', 'executor', 'formatteraction'
 include 'cli'
 
 include 'mainApp'

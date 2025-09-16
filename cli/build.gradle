@@ -5,7 +5,6 @@ plugins {
 dependencies {
     implementation project(":executor")
     implementation project(":formatteraction")
-    implementation project(":validator")
     implementation project(":analyzer")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
