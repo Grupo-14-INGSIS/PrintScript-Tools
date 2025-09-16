@@ -4,7 +4,7 @@ class ConfigFactory {
     fun createConfig(yamlMap: Map<String, Any>): LinterConfig {
         val rulesMap = yamlMap["rules"] as? Map<String, Any> ?: emptyMap()
 
-        val identifierConfig = (rulesMap["identifierNaming"] as? Map<String, Any>)?.let {
+        val identifierConfig = (rulesMap["identifier_format"] as? Map<String, Any>)?.let {
             IdentifierNamingConfig(it["style"] as? String ?: "camelCase")
         }
 
@@ -14,7 +14,7 @@ class ConfigFactory {
 
         return LinterConfig(
             rules = RulesConfig(
-                identifierNaming = identifierConfig,
+                identifier_format = identifierConfig,
                 printlnArg = printlnConfig
             )
         )

@@ -31,7 +31,7 @@ class Lexer(val source: CharSource) {
         return handler.handle(char, state)
     }
 
-     fun finalizeParsing(state: LexerState) {
+    fun finalizeParsing(state: LexerState) {
         val allPieces = if (state.currentPiece.isNotEmpty()) {
             state.pieces + state.currentPiece
         } else {

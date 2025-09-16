@@ -17,15 +17,15 @@ class ConfigFactoryTest {
     fun `createConfig should handle complete configuration`() {
         val yamlMap = mapOf(
             "rules" to mapOf(
-                "identifierNaming" to mapOf("style" to "snake_case"),
+                "identifier_format" to mapOf("style" to "snake_case"),
                 "printlnArg" to mapOf("enabled" to false)
             )
         )
 
         val config = factory.createConfig(yamlMap)
 
-        assertNotNull(config.rules.identifierNaming)
-        assertEquals("snake_case", config.rules.identifierNaming?.style)
+        assertNotNull(config.rules.identifier_format)
+        assertEquals("snake_case", config.rules.identifier_format?.style)
         assertNotNull(config.rules.printlnArg)
         assertEquals(false, config.rules.printlnArg?.enabled)
     }
@@ -34,15 +34,15 @@ class ConfigFactoryTest {
     fun `createConfig should use defaults when values missing`() {
         val yamlMap = mapOf(
             "rules" to mapOf(
-                "identifierNaming" to emptyMap<String, Any>(),
+                "identifier_format" to emptyMap<String, Any>(),
                 "printlnArg" to emptyMap<String, Any>()
             )
         )
 
         val config = factory.createConfig(yamlMap)
 
-        assertNotNull(config.rules.identifierNaming)
-        assertEquals("camelCase", config.rules.identifierNaming?.style)
+        assertNotNull(config.rules.identifier_format)
+        assertEquals("camelCase", config.rules.identifier_format?.style)
         assertNotNull(config.rules.printlnArg)
         assertEquals(true, config.rules.printlnArg?.enabled)
     }
@@ -53,7 +53,7 @@ class ConfigFactoryTest {
 
         val config = factory.createConfig(yamlMap)
 
-        assertNull(config.rules.identifierNaming)
+        assertNull(config.rules.identifier_format)
         assertNull(config.rules.printlnArg)
     }
 
@@ -63,7 +63,7 @@ class ConfigFactoryTest {
 
         val config = factory.createConfig(yamlMap)
 
-        assertNull(config.rules.identifierNaming)
+        assertNull(config.rules.identifier_format)
         assertNull(config.rules.printlnArg)
     }
 
@@ -71,14 +71,14 @@ class ConfigFactoryTest {
     fun `createConfig should handle partial configuration`() {
         val yamlMap = mapOf(
             "rules" to mapOf(
-                "identifierNaming" to mapOf("style" to "camelCase")
+                "identifier_format" to mapOf("style" to "camelCase")
             )
         )
 
         val config = factory.createConfig(yamlMap)
 
-        assertNotNull(config.rules.identifierNaming)
-        assertEquals("camelCase", config.rules.identifierNaming?.style)
+        assertNotNull(config.rules.identifier_format)
+        assertEquals("camelCase", config.rules.identifier_format?.style)
         assertNull(config.rules.printlnArg)
     }
 }

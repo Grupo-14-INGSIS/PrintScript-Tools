@@ -35,7 +35,7 @@ class ConfigDataClassesTest {
     @Test
     fun `RulesConfig should have null defaults`() {
         val config = RulesConfig()
-        assertNull(config.identifierNaming)
+        assertNull(config.identifier_format)
         assertNull(config.printlnArg)
     }
 
@@ -45,7 +45,7 @@ class ConfigDataClassesTest {
         val printlnConfig = PrintLnConfig(false)
         val config = RulesConfig(identifierConfig, printlnConfig)
 
-        assertEquals(identifierConfig, config.identifierNaming)
+        assertEquals(identifierConfig, config.identifier_format)
         assertEquals(printlnConfig, config.printlnArg)
     }
 }

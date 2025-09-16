@@ -105,7 +105,7 @@ class Analyzer {
 
         val rules = mutableListOf<LintRule>()
 
-        config.rules.identifierNaming?.let {
+        config.rules.identifier_format?.let {
             rules += IdentifierNamingRule(it.style)
         }
 

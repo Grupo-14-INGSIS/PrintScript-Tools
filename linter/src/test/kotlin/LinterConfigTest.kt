@@ -17,7 +17,7 @@ class LinterConfigTest {
         val linterConfig = LinterConfig(rulesConfig)
 
         assertEquals(rulesConfig, linterConfig.rules)
-        assertEquals(identifierConfig, linterConfig.rules.identifierNaming)
+        assertEquals(identifierConfig, linterConfig.rules.identifier_format)
         assertEquals(printlnConfig, linterConfig.rules.printlnArg)
     }
 }
