@@ -5,7 +5,6 @@ import picocli.CommandLine.Command
 import cli.src.main.kotlin.Cli
 import cli.src.main.kotlin.ExecutionCommand
 import cli.src.main.kotlin.FormatterCommand
-import cli.src.main.kotlin.ValidationCommand
 
 // Guardar cambios con ./gradlew :mainApp:installDist
 
@@ -23,7 +22,6 @@ class RootCommand : Runnable {
         mapOf(
             "formatter" to FormatterCommand(),
             "analyzer" to AnalyzerCommand(),
-            "validation" to ValidationCommand(),
             "execution" to ExecutionCommand()
         )
     )
