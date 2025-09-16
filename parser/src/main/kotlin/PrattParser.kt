@@ -23,6 +23,17 @@ class PrattParser(private val features: VersionFeatures) {
         if (nextOperator == -1) return symbols
 
         val newSymbols = associateOperation(symbols, nextOperator)
+
+        /*
+        if (newSymbols.size >= symbols.size) {
+            println("ERROR: La lista no se redujo! Posible bucle infinito")
+            println("Original: ${symbols.map { it.token().content }}")
+            println("Nueva: ${newSymbols.map { it.token().content }}")
+            return symbols // Evitar recursión infinita
+        }
+
+         */
+
         return processTokens(newSymbols) // ✅ Recursión inmutable
     }
 
@@ -36,12 +47,21 @@ class PrattParser(private val features: VersionFeatures) {
         val associatedToken = operatorToken.associate(listOf(left, right))
 
         val newList = mutableListOf<PrattToken>()
+        newList.addAll(symbols)
+        newList[operator] = associatedToken
+
+        newList.removeAt(operator + 1)
+        newList.removeAt(operator - 1)
+
+        /*
         newList.addAll(symbols.subList(0, operator - 1)) // Antes del operador
         newList.add(associatedToken) // Token asociado
         newList.addAll(symbols.subList(operator + 2, symbols.size)) // Después
+         */
 
-        return newList.toList()
+        return newList
     }
+
 
     private fun prattify(tokens: Container): List<PrattToken> {
         return (0 until tokens.size()).map { i ->

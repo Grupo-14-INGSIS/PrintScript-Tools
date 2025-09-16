@@ -7,7 +7,6 @@ object Main {
             mapOf(
                 "formatter" to FormatterCommand(),
                 "analyzer" to AnalyzerCommand(),
-                "validation" to ValidationCommand(),
                 "execution" to ExecutionCommand()
             )
         )

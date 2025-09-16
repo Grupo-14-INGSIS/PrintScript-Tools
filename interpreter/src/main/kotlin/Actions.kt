@@ -9,6 +9,7 @@ enum class Actions {
     SUBTRACT,
     VAR_DECLARATION,
     VAR_DECLARATION_AND_ASSIGNMENT,
+    LITERAL,
 
     // v1.1
     CONST_DECLARATION,
@@ -17,5 +18,8 @@ enum class Actions {
     ELSE_STATEMENT,
     READ_INPUT,
     READ_ENV,
-    BOOLEAN_OPERATION
+    BOOLEAN_OPERATION,
+
+    // MISC
+    NULL
 }

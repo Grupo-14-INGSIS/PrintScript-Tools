@@ -17,13 +17,13 @@ plugins {
 rootProject.name = 'IngsisTP'
 
 // Data
-include 'ast', 'container', 'token', 'tokendata', 'reskey'
+include 'ast', 'container', 'token', 'tokendata'
 
 // Tools
 include 'parser', 'interpreter', 'lexer', 'formatter', 'linter', 'progress', 'inputprovider'
 
 // Integrators
-include 'analyzer', 'executor', 'formatteraction', 'validator'
+include 'analyzer', 'executor', 'formatteraction'
 include 'cli'
 
 include 'mainApp'

@@ -27,4 +27,44 @@ class AddTest {
         val result = Add.interpret(parent)
         assertEquals("hola3", result)
     }
+
+    @Test
+    fun `token no numérico ambiguo devuelve concatenación`() {
+        val left = ASTNode(DataType.STRING_LITERAL, "3a", Position(1, 1), emptyList())
+        val right = ASTNode(DataType.NUMBER_LITERAL, "7", Position(1, 2), emptyList())
+        val parent = ASTNode(DataType.ADDITION, "+", Position(1, 0), listOf(left, right))
+
+        val result = Add.interpret(parent)
+        assertEquals("3a7", result)
+    }
+
+    @Test
+    fun `ambos tokens vacíos devuelve string vacío`() {
+        val left = ASTNode(DataType.STRING_LITERAL, "", Position(1, 1), emptyList())
+        val right = ASTNode(DataType.STRING_LITERAL, "", Position(1, 2), emptyList())
+        val parent = ASTNode(DataType.ADDITION, "+", Position(1, 0), listOf(left, right))
+
+        val result = Add.interpret(parent)
+        assertEquals("", result)
+    }
+
+    @Test
+    fun `token vacío más número devuelve concatenación`() {
+        val left = ASTNode(DataType.STRING_LITERAL, "", Position(1, 1), emptyList())
+        val right = ASTNode(DataType.NUMBER_LITERAL, "42", Position(1, 2), emptyList())
+        val parent = ASTNode(DataType.ADDITION, "+", Position(1, 0), listOf(left, right))
+
+        val result = Add.interpret(parent)
+        assertEquals("42", result)
+    }
+
+    @Test
+    fun `suma dos strings devuelve concatenación`() {
+        val left = ASTNode(DataType.STRING_LITERAL, "foo", Position(1, 1), emptyList())
+        val right = ASTNode(DataType.STRING_LITERAL, "bar", Position(1, 2), emptyList())
+        val parent = ASTNode(DataType.ADDITION, "+", Position(1, 0), listOf(left, right))
+
+        val result = Add.interpret(parent)
+        assertEquals("foobar", result)
+    }
 }

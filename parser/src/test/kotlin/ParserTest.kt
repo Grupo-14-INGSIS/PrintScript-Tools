@@ -12,6 +12,31 @@ import parser.src.main.kotlin.Parser
 class ParserTest {
 
     @Test
+    fun newParserTest() {
+        var container = Container()
+        val sentence = listOf("println", "(", "5", "+", "3", ")", ";")
+        val dataTypes = listOf(
+            DataType.PRINTLN,
+            DataType.OPEN_PARENTHESIS,
+            DataType.NUMBER_LITERAL,
+            DataType.ADDITION,
+            DataType.NUMBER_LITERAL,
+            DataType.CLOSE_PARENTHESIS,
+            DataType.SEMICOLON
+        )
+        for (i in sentence.indices) {
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+        }
+        val parser = Parser(container)
+        val root = parser.parse()
+
+        assertEquals(DataType.PRINTLN, root.type)
+        assertEquals(DataType.ADDITION, root.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[1].type)
+    }
+
+    @Test
     fun basicAssignationTest() {
         var container = Container()
         val sentence = listOf("let", " ", "myVar", ":", " ", "number", " ", "=", " ", "14", ";")

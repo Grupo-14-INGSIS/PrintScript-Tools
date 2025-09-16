@@ -2,6 +2,7 @@ package interpreter.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
 import inputprovider.src.main.kotlin.InputProvider
+import tokendata.src.main.kotlin.DataType
 
 class Interpreter(
     private val version: String = "1.0",
@@ -18,7 +19,8 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
             Actions.PRINT to Print,
             Actions.VAR_DECLARATION to VarDeclaration,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
+            Actions.LITERAL to Literal
         )
 
         if (version == "1.1") {
@@ -52,20 +54,28 @@ class Interpreter(
         }
     }
 
-    fun determineAction(node: ASTNode): Actions =
-        when (node.content) {
-            "+" -> Actions.ADD
-            "-" -> Actions.SUBTRACT
-            "*" -> Actions.MULTIPLY
-            "/" -> Actions.DIVIDE
-            "print" -> Actions.PRINT
-            "var" -> Actions.VAR_DECLARATION
-            "=" -> Actions.VAR_DECLARATION_AND_ASSIGNMENT
-            "if" -> Actions.IF_STATEMENT
-            "readInput" -> Actions.READ_INPUT
-            "readEnv" -> Actions.READ_ENV
-            else -> throw IllegalArgumentException("Unknown action for token: '${node.content}'")
+    fun determineAction(node: ASTNode): Actions {
+        if (node.type == DataType.NUMBER_LITERAL ||
+            node.type == DataType.STRING_LITERAL ||
+            node.type == DataType.BOOLEAN_LITERAL
+        ) {
+            return Actions.LITERAL
+        } else {
+            return when (node.content) {
+                "+" -> Actions.ADD
+                "-" -> Actions.SUBTRACT
+                "*" -> Actions.MULTIPLY
+                "/" -> Actions.DIVIDE
+                "println" -> Actions.PRINT
+                "var" -> Actions.VAR_DECLARATION
+                "=" -> Actions.VAR_DECLARATION_AND_ASSIGNMENT
+                "if" -> Actions.IF_STATEMENT
+                "readInput" -> Actions.READ_INPUT
+                "readEnv" -> Actions.READ_ENV
+                else -> throw IllegalArgumentException("Unknown action for token: '${node.content}'")
+            }
         }
+    }
 
     private fun isActionSupportedInVersion(action: Actions, version: String): Boolean {
         val v10Actions = setOf(
@@ -76,7 +86,8 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR,
             Actions.PRINT,
             Actions.VAR_DECLARATION,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT,
+            Actions.LITERAL
         )
 
         val v11OnlyActions = setOf(

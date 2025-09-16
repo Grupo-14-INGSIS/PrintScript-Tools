@@ -26,7 +26,7 @@ class InterpreterTest {
     fun `determineAction keywords`() {
         val interpreter = Interpreter("1.1")
 
-        assertEquals(Actions.PRINT, interpreter.determineAction(node("print")))
+        assertEquals(Actions.PRINT, interpreter.determineAction(node("println")))
         assertEquals(Actions.VAR_DECLARATION, interpreter.determineAction(node("var")))
         assertEquals(Actions.VAR_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("=")))
         assertEquals(Actions.IF_STATEMENT, interpreter.determineAction(node("if")))
