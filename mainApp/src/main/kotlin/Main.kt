@@ -9,7 +9,7 @@ import cli.src.main.kotlin.ValidationCommand
 
 // Guardar cambios con ./gradlew :mainApp:installDist
 
-// Ejecutar con mainApp\build\install\mainApp\bin\mainApp.bat
+// Ejecutar con .\mainApp\build\install\mainApp\bin\mainApp.bat
 
 
 @Command(

@@ -3,7 +3,7 @@ package lexer.src.main.kotlin
 import container.src.main.kotlin.Container
 import java.io.File
 
-class Lexer(private val source: CharSource) {
+class Lexer(val source: CharSource) {
 
     var list = listOf<String>()
 
