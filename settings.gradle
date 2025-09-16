@@ -26,4 +26,3 @@ include 'parser', 'interpreter', 'lexer', 'formatter', 'linter', 'progress', 'in
 include 'analyzer', 'executor', 'formatteraction'
 include 'cli'
 
-include 'mainApp'
