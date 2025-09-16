@@ -40,11 +40,23 @@ class Container(
     fun remove(index: Int): RemoveResponse {
         if (index in 0 until size()) {
             val newContainer = mutableListOf<Token>()
-            newContainer.addAll(container)
-            val deletedToken = newContainer.removeAt(index)
-            return RemoveResponse(deletedToken, Container(newContainer))
+            newContainer.addAll(
+                container
+            )
+            val deletedToken = newContainer.removeAt(
+                index
+            )
+            return RemoveResponse(
+                deletedToken,
+                Container(
+                    newContainer
+                )
+            )
         } else {
-            return RemoveResponse(null, this)
+            return RemoveResponse(
+                null,
+                this
+            )
         }
     }
 

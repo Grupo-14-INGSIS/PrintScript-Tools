@@ -8,8 +8,14 @@ class IndentationRuleTest {
     @Test
     fun `ignores line break at the end of file`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.LINE_BREAK, "\n")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.LINE_BREAK,
+                "\n"
+            )
         )
 
         val rule = IndentationRule(indentSize = 2)
@@ -22,9 +28,18 @@ class IndentationRuleTest {
     @Test
     fun `does not break tokens without line breaks`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.SPACE, " "),
-            token(DataType.IDENTIFIER, "y")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.SPACE,
+                " "
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "y"
+            )
         )
 
         val rule = IndentationRule(indentSize = 2)

@@ -16,7 +16,9 @@ class LineBreakBeforePrintRuleTest {
     private fun containerOf(vararg tokens: Token): Container {
         var c = Container()
         for (t in tokens) {
-            c = c.addContainer(t)
+            c = c.addContainer(
+                t
+            )
         }
         return c
     }
@@ -24,8 +26,14 @@ class LineBreakBeforePrintRuleTest {
     @Test
     fun `adds missing line break before println`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.IDENTIFIER, "println")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "println"
+            )
         )
 
         val rule = LineBreakBeforePrintRule(lineBreakCount = 1)
@@ -39,9 +47,18 @@ class LineBreakBeforePrintRuleTest {
     @Test
     fun `keeps correct line breaks if already present`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.LINE_BREAK, "\n"),
-            token(DataType.IDENTIFIER, "println")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.LINE_BREAK,
+                "\n"
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "println"
+            )
         )
 
         val rule = LineBreakBeforePrintRule(lineBreakCount = 1)
@@ -54,8 +71,14 @@ class LineBreakBeforePrintRuleTest {
     @Test
     fun `adds multiple line breaks before println`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.IDENTIFIER, "println")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "println"
+            )
         )
 
         val rule = LineBreakBeforePrintRule(lineBreakCount = 2)
@@ -70,10 +93,22 @@ class LineBreakBeforePrintRuleTest {
     @Test
     fun `removes extra line breaks before println`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.LINE_BREAK, "\n"),
-            token(DataType.LINE_BREAK, "\n"),
-            token(DataType.IDENTIFIER, "println")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.LINE_BREAK,
+                "\n"
+            ),
+            token(
+                DataType.LINE_BREAK,
+                "\n"
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "println"
+            )
         )
 
         val rule = LineBreakBeforePrintRule(lineBreakCount = 1)
@@ -89,9 +124,18 @@ class LineBreakBeforePrintRuleTest {
     @Test
     fun `does nothing when no println present`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.LINE_BREAK, "\n"),
-            token(DataType.IDENTIFIER, "y")
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.LINE_BREAK,
+                "\n"
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "y"
+            )
         )
 
         val rule = LineBreakBeforePrintRule(lineBreakCount = 1)

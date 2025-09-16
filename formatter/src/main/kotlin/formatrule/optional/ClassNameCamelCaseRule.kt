@@ -12,7 +12,10 @@ class ClassNameCamelCaseRule : FormatRule {
         for (token in source.container) {
             if (token.type == DataType.IDENTIFIER) {
                 val name = token.content
-                if (!isCamelCase(name)) {
+                if (!isCamelCase(
+                        name
+                    )
+                ) {
                     output = output.addContainer(
                         Token(
                             type = null,
@@ -22,7 +25,9 @@ class ClassNameCamelCaseRule : FormatRule {
                     )
                 }
             }
-            output = output.addContainer(token)
+            output = output.addContainer(
+                token
+            )
         }
 
         return output

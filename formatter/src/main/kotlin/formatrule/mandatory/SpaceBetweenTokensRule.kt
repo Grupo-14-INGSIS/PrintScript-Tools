@@ -16,7 +16,9 @@ class SpaceBetweenTokensRule : FormatRule {
         var tokens = source
         var i = 0
         while (i < tokens.size()) {
-            firstToken = tokens.get(i)
+            firstToken = tokens.get(
+                i
+            )
             if (firstToken == null) break
             /*
              * Keep every non-space token
@@ -26,11 +28,15 @@ class SpaceBetweenTokensRule : FormatRule {
              * Continue only if the next token is a non-space token
              */
             if (firstToken.type == space) {
-                secondToken = tokens.get(i + 1)
+                secondToken = tokens.get(
+                    i + 1
+                )
                 if (secondToken == null) {
                     break // End of tokens
                 } else if (secondToken.type == space) {
-                    val response = tokens.remove(i + 1)
+                    val response = tokens.remove(
+                        i + 1
+                    )
                     tokens = response.container
                     if (response.token == null) break
                 } else { // Non-space token after space -> continue

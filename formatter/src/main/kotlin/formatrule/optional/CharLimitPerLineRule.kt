@@ -13,12 +13,18 @@ class CharLimitPerLineRule(private val maxLength: Int = 140) : FormatRule {
         var lineNumber = 1
 
         for (token in source.container) {
-            val segments = token.content.split("\n")
+            val segments = token.content.split(
+                "\n"
+            )
 
             for ((i, segment) in segments.withIndex()) {
                 val segmentLength = segment.length
                 currentLineLength += segmentLength
-                currentLineTokens.add(token.copy(content = segment))
+                currentLineTokens.add(
+                    token.copy(
+                        content = segment
+                    )
+                )
 
                 if (i < segments.lastIndex) {
                     // Fin de línea detectado
@@ -31,8 +37,16 @@ class CharLimitPerLineRule(private val maxLength: Int = 140) : FormatRule {
                             )
                         )
                     }
-                    output = output.addAll(currentLineTokens)
-                    output = output.addContainer(Token(type = null, content = "\n", position = token.position))
+                    output = output.addAll(
+                        currentLineTokens
+                    )
+                    output = output.addContainer(
+                        Token(
+                            type = null,
+                            content = "\n",
+                            position = token.position
+                        )
+                    )
 
                     currentLineTokens.clear()
                     currentLineLength = 0
@@ -52,7 +66,9 @@ class CharLimitPerLineRule(private val maxLength: Int = 140) : FormatRule {
                     )
                 )
             }
-            output = output.addAll(currentLineTokens)
+            output = output.addAll(
+                currentLineTokens
+            )
         }
 
         return output

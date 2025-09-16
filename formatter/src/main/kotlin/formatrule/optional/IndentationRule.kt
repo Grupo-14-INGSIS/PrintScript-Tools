@@ -20,7 +20,9 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
         var atLineStart = true
 
         while (i < tokens.size()) {
-            val token = tokens.get(i) ?: break
+            val token = tokens.get(
+                i
+            ) ?: break
 
             when {
                 // Nueva línea - marcar que estamos al inicio
@@ -30,9 +32,16 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
 
                 // Llave de cierre - reducir indentación
                 token.type == closeBrace -> {
-                    indentLevel = maxOf(0, indentLevel - 1)
+                    indentLevel = maxOf(
+                        0,
+                        indentLevel - 1
+                    )
                     if (atLineStart) {
-                        tokens = addIndentation(tokens, i, indentLevel)
+                        tokens = addIndentation(
+                            tokens,
+                            i,
+                            indentLevel
+                        )
                         atLineStart = false
                     }
                 }
@@ -40,7 +49,11 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
                 // Llave de apertura - aumentar indentación para próxima línea
                 token.type == openBrace -> {
                     if (atLineStart) {
-                        tokens = addIndentation(tokens, i, indentLevel)
+                        tokens = addIndentation(
+                            tokens,
+                            i,
+                            indentLevel
+                        )
                         atLineStart = false
                     }
                     indentLevel++
@@ -48,7 +61,11 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
 
                 // Cualquier otro token no-espacio al inicio de línea
                 token.type != space && atLineStart -> {
-                    tokens = addIndentation(tokens, i, indentLevel)
+                    tokens = addIndentation(
+                        tokens,
+                        i,
+                        indentLevel
+                    )
                     atLineStart = false
                 }
 
@@ -56,13 +73,22 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
                 token.type == space && atLineStart -> {
                     // Remover espacios existentes al inicio de línea
                     var j = i
-                    while (j < tokens.size() && tokens.get(j)?.type == space) {
-                        val response = tokens.remove(j)
+                    while (j < tokens.size() && tokens.get(
+                            j
+                        )?.type == space
+                    ) {
+                        val response = tokens.remove(
+                            j
+                        )
                         tokens = response.container
                         if (response.token == null) break
                     }
                     // Agregar indentación correcta
-                    tokens = addIndentation(tokens, i, indentLevel)
+                    tokens = addIndentation(
+                        tokens,
+                        i,
+                        indentLevel
+                    )
                     atLineStart = false
                     continue // Saltar incremento de i
                 }
@@ -77,7 +103,17 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
     private fun addIndentation(tokens: Container, index: Int, level: Int): Container {
         val indentation = " ".repeat(indentSize * level)
         return if (indentation.isNotEmpty()) {
-            tokens.addAt(Token(space, indentation, Position(0, 0)), index)
+            tokens.addAt(
+                Token(
+                    space,
+                    indentation,
+                    Position(
+                        0,
+                        0
+                    )
+                ),
+                index
+            )
         } else {
             tokens
         }

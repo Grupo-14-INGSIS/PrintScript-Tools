@@ -16,17 +16,23 @@ class NoSpaceAfterEqualsRule : FormatRule {
         var tokens: Container = source
         var i = 0
         while (i < tokens.size()) {
-            token = tokens.get(i)
+            token = tokens.get(
+                i
+            )
             if (token == null) break
             /*
              * Delete every space after an equals token
              */
             if (token.type == equals) {
-                next = tokens.get(i + 1)
+                next = tokens.get(
+                    i + 1
+                )
                 if (next == null) {
                     break // End of tokens
                 } else if (next.type == space) {
-                    val response = tokens.remove(i + 1)
+                    val response = tokens.remove(
+                        i + 1
+                    )
                     tokens = response.container
                     if (response.token == null) break
                 } else {

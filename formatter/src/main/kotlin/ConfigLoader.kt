@@ -21,7 +21,9 @@ class ConfigLoader(
 ) {
 
     fun loadConfig(version: String = "1.0"): List<FormatRule> {
-        val configurableRules = createConfigurableRules(readConfig())
+        val configurableRules = createConfigurableRules(
+            readConfig()
+        )
         val mandatoryRules = createMandatoryRules(version)
 
         return (configurableRules + mandatoryRules).toList()
@@ -58,22 +60,32 @@ class ConfigLoader(
                     "ClassNameCamel" -> ClassNameCamelCaseRule()
                     "lineBreakBeforePrint" -> {
                         val count = (ruleValue as? Number)?.toInt() ?: 1
-                        LineBreakBeforePrintRule(count)
+                        LineBreakBeforePrintRule(
+                            count
+                        )
                     }
                     "indentSize" -> {
                         val size = (ruleValue as? Number)?.toInt() ?: 2
-                        IndentationRule(size)
+                        IndentationRule(
+                            size
+                        )
                     }
                     else -> null
                 }
-                rule?.let { add(it) }
+                rule?.let {
+                    add(
+                        it
+                    )
+                }
             }
         }
     }
 
     internal fun readConfig(): Map<String, Any> {
         val yaml = Yaml()
-        val data = yaml.load<Map<String, Any>>(File(configFile).readText())
+        val data = yaml.load<Map<String, Any>>(
+            File(configFile).readText()
+        )
         val rules = data["rules"] as? Map<String, Any> ?: return emptyMap()
 
         return buildMap {
@@ -81,14 +93,20 @@ class ConfigLoader(
             val switchRules = rules["switch"] as? Map<String, Boolean> ?: emptyMap()
             for ((rule, enabled) in switchRules) {
                 if (enabled) {
-                    put(rule, true)
+                    put(
+                        rule,
+                        true
+                    )
                 }
             }
 
             // Reglas con valores (number/string)
             val valueRules = rules["setValue"] as? Map<String, Any> ?: emptyMap()
             for ((rule, value) in valueRules) {
-                put(rule, value)
+                put(
+                    rule,
+                    value
+                )
             }
         }
     }

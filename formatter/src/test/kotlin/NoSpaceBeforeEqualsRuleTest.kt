@@ -19,9 +19,13 @@ class NoSpaceBeforeEqualsRuleTest {
     @Test
     fun `removes space before equals`() {
         var input = Container()
-        input = input.addContainer(token(DataType.IDENTIFIER, "x", 1, 0))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "x", 1, 0)
+        )
         input = input.addContainer(token(DataType.SPACE, " ", 1, 1))
-        input = input.addContainer(token(DataType.ASSIGNATION, "=", 1, 2))
+        input = input.addContainer(
+            token(DataType.ASSIGNATION, "=", 1, 2)
+        )
 
         val result = rule.format(input)
 
@@ -33,8 +37,12 @@ class NoSpaceBeforeEqualsRuleTest {
     @Test
     fun `does not remove non-space before equals`() {
         var input = Container()
-        input = input.addContainer(token(DataType.IDENTIFIER, "y", 2, 0))
-        input = input.addContainer(token(DataType.ASSIGNATION, "=", 2, 1))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "y", 2, 0)
+        )
+        input = input.addContainer(
+            token(DataType.ASSIGNATION, "=", 2, 1)
+        )
 
         val result = rule.format(input)
 
@@ -47,8 +55,12 @@ class NoSpaceBeforeEqualsRuleTest {
     fun `does not remove space not before equals`() {
         var input = Container()
         input = input.addContainer(token(DataType.SPACE, " ", 3, 0))
-        input = input.addContainer(token(DataType.IDENTIFIER, "a", 3, 1))
-        input = input.addContainer(token(DataType.ASSIGNATION, "=", 3, 2))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "a", 3, 1)
+        )
+        input = input.addContainer(
+            token(DataType.ASSIGNATION, "=", 3, 2)
+        )
 
         val result = rule.format(input)
 
@@ -61,7 +73,9 @@ class NoSpaceBeforeEqualsRuleTest {
     @Test
     fun `handles equals at start of input`() {
         var input = Container()
-        input = input.addContainer(token(DataType.ASSIGNATION, "=", 4, 0))
+        input = input.addContainer(
+            token(DataType.ASSIGNATION, "=", 4, 0)
+        )
 
         val result = rule.format(input)
 
@@ -72,9 +86,13 @@ class NoSpaceBeforeEqualsRuleTest {
     @Test
     fun `preserves token positions`() {
         var input = Container()
-        input = input.addContainer(token(DataType.IDENTIFIER, "z", 5, 0))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "z", 5, 0)
+        )
         input = input.addContainer(token(DataType.SPACE, " ", 5, 1))
-        input = input.addContainer(token(DataType.ASSIGNATION, "=", 5, 2))
+        input = input.addContainer(
+            token(DataType.ASSIGNATION, "=", 5, 2)
+        )
 
         val result = rule.format(input)
 

@@ -4,7 +4,9 @@ class Cli(private val commands: Map<String, Command>) {
 
     fun run(args: Array<String>) {
         if (args.isEmpty()) {
-            println("Must specify a command: formatter | analyzer | validation | execution")
+            println(
+                "Must specify a command: formatter | analyzer | validation | execution"
+            )
             return
         }
 
@@ -13,9 +15,13 @@ class Cli(private val commands: Map<String, Command>) {
 
         val command = commands[commandName]
         if (command != null) {
-            command.execute(commandArgs)
+            command.execute(
+                commandArgs
+            )
         } else {
-            println("Unknown command: $commandName")
+            println(
+                "Unknown command: $commandName"
+            )
         }
     }
 }

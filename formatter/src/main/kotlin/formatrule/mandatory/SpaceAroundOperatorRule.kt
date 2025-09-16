@@ -24,7 +24,9 @@ class SpaceAroundOperatorRule : FormatRule {
         var tokens = source
         var i = 0
         while (i < tokens.size()) {
-            token = tokens.get(i)
+            token = tokens.get(
+                i
+            )
             if (token == null) {
                 break
             } else if (token.type in operators) {
@@ -34,16 +36,40 @@ class SpaceAroundOperatorRule : FormatRule {
                  * This is the reason why there is a double i++ at the
                  * end of the `previous` insertion
                  */
-                next = tokens.get(i + 1)
+                next = tokens.get(
+                    i + 1
+                )
                 if (next != null) {
                     if (next.type != space) {
-                        tokens = tokens.addAt(Token(space, " ", Position(0, 0)), i + 1)
+                        tokens = tokens.addAt(
+                            Token(
+                                space,
+                                " ",
+                                Position(
+                                    0,
+                                    0
+                                )
+                            ),
+                            i + 1
+                        )
                     }
                 }
-                previous = tokens.get(i - 1)
+                previous = tokens.get(
+                    i - 1
+                )
                 if (previous != null) {
                     if (previous.type != space) {
-                        tokens = tokens.addAt(Token(space, " ", Position(0, 0)), i - 1)
+                        tokens = tokens.addAt(
+                            Token(
+                                space,
+                                " ",
+                                Position(
+                                    0,
+                                    0
+                                )
+                            ),
+                            i - 1
+                        )
                         i++
                     }
                 }

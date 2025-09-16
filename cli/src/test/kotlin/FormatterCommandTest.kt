@@ -17,8 +17,16 @@ class FormatterCommandTest {
         command.execute(listOf("onlySource.txt"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: Must specify the source file and the format configuration file."))
-        assertTrue(output.contains("Usage: formatter <source_file> <configuration_file> [version]"))
+        assertTrue(
+            output.contains(
+                "Error: Must specify the source file and the format configuration file."
+            )
+        )
+        assertTrue(
+            output.contains(
+                "Usage: formatter <source_file> <configuration_file> [version]"
+            )
+        )
     }
 
     @Test
@@ -30,7 +38,11 @@ class FormatterCommandTest {
         command.execute(listOf("source.txt", "config.yml", "2.0"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: Unsupported version. Only 1.0 is admitted."))
+        assertTrue(
+            output.contains(
+                "Error: Unsupported version. Only 1.0 is admitted."
+            )
+        )
     }
 
     @Test
@@ -40,15 +52,25 @@ class FormatterCommandTest {
         System.setOut(PrintStream(outputStream))
 
         val command = FormatterCommand()
-        command.execute(listOf("missing_source.txt", configFile.absolutePath))
+        command.execute(
+            listOf("missing_source.txt", configFile.absolutePath)
+        )
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: The source file 'missing_source.txt' does not exist."))
+        assertTrue(
+            output.contains(
+                "Error: The source file 'missing_source.txt' does not exist."
+            )
+        )
     }
 
     @Test
     fun `successful formatting prints completion`() {
-        val sourceFile = File.createTempFile("source", ".txt").apply { writeText("print(1)") }
+        val sourceFile = File.createTempFile("source", ".txt").apply {
+            writeText(
+                "print(1)"
+            )
+        }
         /*
         val configFile = File.createTempFile("config", ".yml").apply {
             writeText(

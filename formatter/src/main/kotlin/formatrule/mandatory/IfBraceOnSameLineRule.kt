@@ -19,7 +19,9 @@ class IfBraceOnSameLineRule : FormatRule {
         var i = 0
 
         while (i < tokens.size()) {
-            val token = tokens.get(i) ?: break
+            val token = tokens.get(
+                i
+            ) ?: break
 
             // Buscar "if"
             if (token.type == identifier && token.content == "if") {
@@ -29,7 +31,9 @@ class IfBraceOnSameLineRule : FormatRule {
                 var closeParenIndex = -1
 
                 while (j < tokens.size()) {
-                    val currentToken = tokens.get(j) ?: break
+                    val currentToken = tokens.get(
+                        j
+                    ) ?: break
                     val type = currentToken.type
 
                     if (type == DataType.OPEN_PARENTHESIS) {
@@ -51,7 +55,9 @@ class IfBraceOnSameLineRule : FormatRule {
                     j = closeParenIndex + 1
 
                     while (j < tokens.size()) {
-                        val currentToken = tokens.get(j) ?: break
+                        val currentToken = tokens.get(
+                            j
+                        ) ?: break
                         when (currentToken.type) {
                             openBrace -> {
                                 braceIndex = j
@@ -76,9 +82,13 @@ class IfBraceOnSameLineRule : FormatRule {
                         // Remover todos los saltos de línea y espacios entre ) y {
                         var k = closeParenIndex + 1
                         while (k < braceIndex) {
-                            val tokenToCheck = tokens.get(k) ?: break
+                            val tokenToCheck = tokens.get(
+                                k
+                            ) ?: break
                             if (tokenToCheck.type == lineBreak || tokenToCheck.type == space) {
-                                val response = tokens.remove(k)
+                                val response = tokens.remove(
+                                    k
+                                )
                                 tokens = response.container
                                 if (response.token == null) break
                                 braceIndex-- // Ajustar índice de la llave
@@ -89,7 +99,14 @@ class IfBraceOnSameLineRule : FormatRule {
 
                         // Agregar exactamente un espacio entre ) y {
                         tokens = tokens.addAt(
-                            Token(space, " ", Position(0, 0)),
+                            Token(
+                                space,
+                                " ",
+                                Position(
+                                    0,
+                                    0
+                                )
+                            ),
                             closeParenIndex + 1
                         )
                     }

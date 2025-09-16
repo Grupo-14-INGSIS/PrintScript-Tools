@@ -16,7 +16,9 @@ class LineBreakBeforePrintRule(private val lineBreakCount: Int) : FormatRule {
         var i = 0
 
         while (i < tokens.size()) {
-            val token = tokens.get(i) ?: break
+            val token = tokens.get(
+                i
+            ) ?: break
 
             // Buscar "println"
             if (token.type == identifier && token.content == "println") {
@@ -25,7 +27,9 @@ class LineBreakBeforePrintRule(private val lineBreakCount: Int) : FormatRule {
                 var j = i - 1
 
                 while (j >= 0) {
-                    val prevToken = tokens.get(j) ?: break
+                    val prevToken = tokens.get(
+                        j
+                    ) ?: break
                     if (prevToken.type == lineBreak) {
                         existingLineBreaks++
                         j--
@@ -39,18 +43,34 @@ class LineBreakBeforePrintRule(private val lineBreakCount: Int) : FormatRule {
 
                 if (neededLineBreaks > 0) {
                     // Agregar saltos de línea faltantes
-                    repeat(neededLineBreaks) {
+                    repeat(
+                        neededLineBreaks
+                    ) {
                         tokens = tokens.addAt(
-                            Token(lineBreak, "\n", Position(0, 0)),
+                            Token(
+                                lineBreak,
+                                "\n",
+                                Position(
+                                    0,
+                                    0
+                                )
+                            ),
                             i
                         )
                         i++ // Ajustar índice porque agregamos tokens
                     }
                 } else if (neededLineBreaks < 0) {
                     // Remover saltos de línea excesivos
-                    repeat(-neededLineBreaks) {
-                        if (i > 0 && tokens.get(i - 1)?.type == lineBreak) {
-                            val response = tokens.remove(i - 1)
+                    repeat(
+                        -neededLineBreaks
+                    ) {
+                        if (i > 0 && tokens.get(
+                                i - 1
+                            )?.type == lineBreak
+                        ) {
+                            val response = tokens.remove(
+                                i - 1
+                            )
                             tokens = response.container
                             i-- // Ajustar índice porque removemos tokens
                         }
