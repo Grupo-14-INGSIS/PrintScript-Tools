@@ -8,6 +8,6 @@ class HelloCommand : Runnable {
     var name: String = "mundo"
 
     override fun run() {
-        print("Hola, $name!")
+        println("Hola, $name!")
     }
 }

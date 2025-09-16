@@ -10,7 +10,7 @@ application{
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-
+    implementation project(':cli')
     implementation 'info.picocli:picocli:4.7.7'
     implementation "info.picocli:picocli-shell-jline3:4.7.7"
 

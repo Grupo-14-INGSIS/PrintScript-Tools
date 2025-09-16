@@ -7,7 +7,6 @@ dependencies {
     implementation project(":formatteraction")
     implementation project(":validator")
     implementation project(":analyzer")
-    implementation project(":mainApp")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
