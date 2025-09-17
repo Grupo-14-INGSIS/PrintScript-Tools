@@ -7,7 +7,7 @@ trim_trailing_whitespace = true
 max_line_length = 140
 
 # Reglas que ktlintFormat no puede corregir bien o que causan conflictos
-disabled_rules = no-wildcard-imports,no-consecutive-blank-lines,experimental:argument-list-wrapping,import-ordering
+ktlint_disabled_rules = no-wildcard-imports,no-consecutive-blank-lines,experimental:argument-list-wrapping,import-ordering
 
 # lo uso en build.gradle (:buildSrc)
 #disabled_rules = no-wildcard-imports #regla del linter
