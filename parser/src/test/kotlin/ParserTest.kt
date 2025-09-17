@@ -161,7 +161,5 @@ class ParserTest {
         assertEquals(DataType.NUMBER_LITERAL, div.children[1].type)
         assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
-
-        assert(false)
     }
 }
