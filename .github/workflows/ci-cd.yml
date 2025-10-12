@@ -68,6 +68,34 @@ jobs:
           echo "GITHUB_USER=${{ secrets.MY_USER }}" >> $GITHUB_ENV
           echo "GITHUB_TOKEN=${{ secrets.MY_TOKEN }}" >> $GITHUB_ENV
 
+      - name: Get last package version
+        id: get_version
+        uses: octokit/request-action@v5
+        with:
+          route: GET /users/{owner}/packages/maven/{package_name}/versions
+          owner: Grupo-14-INGSIS
+          package_name: PrintScript-Tools
+          headers: '{"Authorization":"token ${{ secrets.GITHUB_TOKEN }}"}'
+
+      - name: Set next version
+        id: next_version
+        run: |
+          last_version=$(echo '${{ steps.get_version.outputs.data }}' | jq -r '.[0].metadata.container.tags[0]')
+          echo "Last version: $last_version"
+
+          if [ -z "$last_version" ]; then
+            next_version="0.0.1"
+          else
+            # increment patch
+            IFS='.' read -r major minor patch <<< "$last_version"
+            patch=$((patch+1))
+            next_version="$major.$minor.$patch"
+          fi
+
+          echo "Next version: $next_version"
+          echo "$next_version" > VERSION.txt
+      
+
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish --no-configuration-cache
