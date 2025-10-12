@@ -11,18 +11,17 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - name: Get previous version
-        id: latest_version
-        uses: vsoch/maven-metadata-action@v1
-        with:
-          url: "https://maven.pkg.github.com/Grupo-14-INGSIS/PrintScript-Tools"
-          repository: "IngsisTP/cli"
-          token: "${{ secrets.MY_TOKEN }}"
+      - name: Get latest package version
+        id: get_latest
+        run: |
+          VERSIONS_JSON=$(curl -s -H "Authorization: token ${{ secrets.MY_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/orgs/Grupo-14-INGSIS/packages/maven/IngsisTP.cli/versions")
+          LATEST_VERSION=$(echo "$VERSIONS_JSON" | jq -r '.[0].name // ""')
+          echo "latest=$LATEST_VERSION" >> $GITHUB_OUTPUT
 
       - name: Increment version
         id: version
         run: |
-          version=${{ steps.latest_version.outputs.latest }}
+          version=${{ steps.get_latest.outputs.latest }}
           if [ -z "$version" ]; then
             version="1.0.0"
           else
