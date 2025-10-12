@@ -5,15 +5,43 @@ on:
     branches:
       - main
 
-jobs:
-  ci-cd:
-    runs-on: ubuntu-latest
+permissions:
+  packages: write
+  contents: read
 
+jobs:
+  get_version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Get previous version
+        id: latest_version
+        uses: vsoch/maven-metadata-action@v1
+        with:
+          url: "https://maven.pkg.github.com/Grupo-14-INGSIS/PrintScript-Tools"
+          repository: "IngsisTP/cli"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Increment version
+        id: version
+        run: |
+          version=${{ steps.latest_version.outputs.latest }}
+          if [ -z "$version" ]; then
+            version="1.0.0"
+          else
+            version=$(echo $version | awk -F. -v OFS=. '{$NF++;print}')
+          fi
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+  ci-cd:
+    needs: get_version
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Dar permisos de ejecución a gradlew
+      - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
       - name: Set up JDK
@@ -25,13 +53,19 @@ jobs:
       - name: Set up gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Set version and credentials in gradle.properties
+        run: |
+          echo "version=${{ needs.get_version.outputs.version }}" >> gradle.properties
+          echo "gpr.user=${{ github.actor }}" >> gradle.properties
+          echo "gpr.key=${{ secrets.GITHUB_TOKEN }}" >> gradle.properties
+
       - name: Run ktlintFormat
         run: |
           CHANGES_BEFORE=$(git diff --name-only)
           ./gradlew ktlintFormat --quiet
           CHANGES_AFTER=$(git diff --name-only)
           if [ "$CHANGES_BEFORE" != "$CHANGES_AFTER" ]; then
-            echo "Build bloqueado: ktlintFormat modificó archivos."
+            echo "Build blocked: ktlintFormat modified files."
             exit 1
           fi
 
@@ -42,7 +76,7 @@ jobs:
         run: |
           ./gradlew test --continue > .git/test-output.log
           if grep -q "FAILED" .git/test-output.log; then
-            echo "Build bloqueado: fallaron tests."
+            echo "Build blocked: tests failed."
             cat .git/test-output.log | grep FAILED
             exit 1
           fi
@@ -51,7 +85,7 @@ jobs:
         run: |
           ./gradlew jacocoTestCoverageVerification --quiet
           if [ $? -ne 0 ]; then
-            echo "Build bloqueado: cobertura de código inferior al 80%."
+            echo "Build blocked: code coverage below 80%."
             ./gradlew jacocoTestReport
             exit 1
           fi
@@ -61,12 +95,6 @@ jobs:
 
       - name: Build
         run: ./gradlew build
-
-      # --- Exportar secretos para CI/CD ---
-      - name: Set Gradle publishing secrets
-        run: |
-          echo "GITHUB_USER=${{ secrets.MY_USER }}" >> $GITHUB_ENV
-          echo "GITHUB_TOKEN=${{ secrets.MY_TOKEN }}" >> $GITHUB_ENV
 
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
