@@ -8,10 +8,15 @@ on:
 jobs:
   ci-cd:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Necesario para obtener todos los tags
 
       - name: Dar permisos de ejecución a gradlew
         run: chmod +x ./gradlew
@@ -69,19 +74,21 @@ jobs:
           echo "GITHUB_TOKEN=${{ secrets.MY_TOKEN }}" >> $GITHUB_ENV
 
       # --- Obtener última versión publicada y calcular siguiente ---
-      - name: Get last package version
+      - name: Get last version from Git tags
         id: get_version
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { data: versions } = await github.rest.packages.listVersionsForPackageForOrg({
-              org: 'Grupo-14-INGSIS',
-              package_type: 'maven',
-              package_name: 'PrintScript-Tools'
-            });
-            const lastVersion = versions.length > 0 ? versions[0].metadata.container.tags[0] : '0.0.0';
-            console.log('Last version:', lastVersion);
-            core.setOutput('version', lastVersion)
+        run: |
+          # Obtener el último tag que coincida con el patrón v*.*.* 
+          last_tag=$(git tag -l "v*.*.*" --sort=-v:refname | head -n 1)
+          
+          if [ -z "$last_tag" ]; then
+            echo "version=0.0.0" >> $GITHUB_OUTPUT
+            echo "No previous tags found, starting with 0.0.0"
+          else
+            # Remover la 'v' del inicio
+            version=${last_tag#v}
+            echo "version=$version" >> $GITHUB_OUTPUT
+            echo "Last version found: $version"
+          fi
 
       - name: Set next version
         id: next_version
@@ -100,3 +107,11 @@ jobs:
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish --no-configuration-cache
+
+      - name: Create and push tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "v${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
