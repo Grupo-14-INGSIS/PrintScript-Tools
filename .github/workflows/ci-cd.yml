@@ -74,21 +74,57 @@ jobs:
           echo "GITHUB_TOKEN=${{ secrets.MY_TOKEN }}" >> $GITHUB_ENV
 
       # --- Obtener última versión publicada y calcular siguiente ---
-      - name: Get last version from Git tags
+      - name: Get last published version
         id: get_version
-        run: |
-          # Obtener el último tag que coincida con el patrón v*.*.* 
-          last_tag=$(git tag -l "v*.*.*" --sort=-v:refname | head -n 1)
-          
-          if [ -z "$last_tag" ]; then
-            echo "version=0.0.0" >> $GITHUB_OUTPUT
-            echo "No previous tags found, starting with 0.0.0"
-          else
-            # Remover la 'v' del inicio
-            version=${last_tag#v}
-            echo "version=$version" >> $GITHUB_OUTPUT
-            echo "Last version found: $version"
-          fi
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              // Lista de todos los módulos/paquetes
+              const modules = ['container', 'lexer', 'token', 'tokendata', 'ast', 'linter', 'parser', 'progress', 'analyzer'];
+              let allVersions = [];
+            
+              // Obtener versiones de cada módulo
+              for (const module of modules) {
+                try {
+                  const response = await github.request('GET /orgs/{org}/packages/{package_type}/{package_name}/versions', {
+                    org: 'Grupo-14-INGSIS',
+                    package_type: 'maven',
+                    package_name: `IngsisTP.${module}`
+                  });
+            
+                  const versions = response.data
+                    .map(v => v.name)
+                    .filter(name => /^\d+\.\d+\.\d+$/.test(name));
+            
+                  allVersions = allVersions.concat(versions);
+                  console.log(`Module ${module}: found ${versions.length} versions`);
+                } catch (error) {
+                  console.log(`Module ${module}: not found or error (${error.message})`);
+                }
+              }
+            
+              if (allVersions.length === 0) {
+                console.log('No versions found in any module, starting with 0.0.0');
+                core.setOutput('version', '0.0.0');
+                return;
+              }
+            
+              // Ordenar todas las versiones y obtener la más alta
+              allVersions.sort((a, b) => {
+                const [aMajor, aMinor, aPatch] = a.split('.').map(Number);
+                const [bMajor, bMinor, bPatch] = b.split('.').map(Number);
+                return bMajor - aMajor || bMinor - aMinor || bPatch - aPatch;
+              });
+            
+              const lastVersion = allVersions[0];
+              console.log('Highest version found across all modules:', lastVersion);
+              core.setOutput('version', lastVersion);
+            } catch (error) {
+              console.log('Error fetching versions:', error.message);
+              core.setOutput('version', '0.0.0');
+            }
 
       - name: Set next version
         id: next_version
@@ -107,11 +143,3 @@ jobs:
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish --no-configuration-cache
-
-      - name: Create and push tag
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "v${{ env.VERSION }}"
-          git push origin "v${{ env.VERSION }}"
