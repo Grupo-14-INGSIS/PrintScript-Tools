@@ -1,5 +1,25 @@
-def versionFile = file("$rootDir/VERSION.txt")
-version = versionFile.exists() ? versionFile.text.trim() : '0.0.1'
+def srcHookPath = "${rootDir}/.githooks/pre-commit"
+def hookFilePath = "${rootDir}/.git/hooks/pre-commit"
+
+tasks.register("installGitHook") {
+    def srcHook = file(srcHookPath)
+    def hookFile = file(hookFilePath)
+
+    outputs.file(hookFile)
+
+    doLast {
+        if (!srcHook.exists()) {
+            println "No hook found in .githooks/pre-commit"
+            return
+        }
+
+        hookFile.parentFile.mkdirs()
+        hookFile.text = srcHook.text
+        hookFile.setExecutable(true)
+        println "Pre-commit was installed/updated in .git/hooks/"
+    }
+}
+
 
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
@@ -15,7 +35,6 @@ subprojects {
     compileKotlin {
         kotlinOptions { jvmTarget = "21" }
     }
-
     compileTestKotlin {
         kotlinOptions { jvmTarget = "21" }
     }
@@ -41,4 +60,12 @@ subprojects {
             }
         }
     }
+
+    tasks.named("test") {
+        dependsOn(rootProject.tasks.named("installGitHook"))
+    }
+}
+
+tasks.matching { it.name == "test" }.configureEach {
+    dependsOn(tasks.named("installGitHook"))
 }

@@ -8,15 +8,10 @@ on:
 jobs:
   ci-cd:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Necesario para obtener todos los tags
 
       - name: Dar permisos de ejecución a gradlew
         run: chmod +x ./gradlew
@@ -72,73 +67,6 @@ jobs:
         run: |
           echo "GITHUB_USER=${{ secrets.MY_USER }}" >> $GITHUB_ENV
           echo "GITHUB_TOKEN=${{ secrets.MY_TOKEN }}" >> $GITHUB_ENV
-
-      # --- Obtener última versión publicada y calcular siguiente ---
-      - name: Get last published version
-        id: get_version
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            try {
-              // Lista de todos los módulos/paquetes
-              const modules = ['container', 'lexer', 'token', 'tokendata', 'ast', 'linter', 'parser', 'progress', 'analyzer'];
-              let allVersions = [];
-            
-              // Obtener versiones de cada módulo
-              for (const module of modules) {
-                try {
-                  const response = await github.request('GET /orgs/{org}/packages/{package_type}/{package_name}/versions', {
-                    org: 'Grupo-14-INGSIS',
-                    package_type: 'maven',
-                    package_name: `IngsisTP.${module}`
-                  });
-            
-                  const versions = response.data
-                    .map(v => v.name)
-                    .filter(name => /^\d+\.\d+\.\d+$/.test(name));
-            
-                  allVersions = allVersions.concat(versions);
-                  console.log(`Module ${module}: found ${versions.length} versions`);
-                } catch (error) {
-                  console.log(`Module ${module}: not found or error (${error.message})`);
-                }
-              }
-            
-              if (allVersions.length === 0) {
-                console.log('No versions found in any module, starting with 0.0.0');
-                core.setOutput('version', '0.0.0');
-                return;
-              }
-            
-              // Ordenar todas las versiones y obtener la más alta
-              allVersions.sort((a, b) => {
-                const [aMajor, aMinor, aPatch] = a.split('.').map(Number);
-                const [bMajor, bMinor, bPatch] = b.split('.').map(Number);
-                return bMajor - aMajor || bMinor - aMinor || bPatch - aPatch;
-              });
-            
-              const lastVersion = allVersions[0];
-              console.log('Highest version found across all modules:', lastVersion);
-              core.setOutput('version', lastVersion);
-            } catch (error) {
-              console.log('Error fetching versions:', error.message);
-              core.setOutput('version', '0.0.0');
-            }
-
-      - name: Set next version
-        id: next_version
-        run: |
-          last_version=${{ steps.get_version.outputs.version }}
-          echo "Last version: $last_version"
-
-          IFS='.' read -r major minor patch <<< "$last_version"
-          patch=$((patch+1))
-          next_version="$major.$minor.$patch"
-
-          echo "Next version: $next_version"
-          echo "$next_version" > VERSION.txt
-          echo "VERSION=$next_version" >> $GITHUB_ENV
 
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
