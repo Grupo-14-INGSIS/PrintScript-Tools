@@ -20,11 +20,11 @@ tasks.register("installGitHook") {
     }
 }
 
+// --- Versión automática desde VERSION.txt ---
 def versionFile = file("$rootDir/VERSION.txt")
-version = versionFile.exists() ? versionFile.text.trim() : "3.0.0"
+version = versionFile.exists() ? versionFile.text.trim() : "0.0.1"
 
 println "Versión detectada automáticamente: $version"
-
 
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
