@@ -4,7 +4,7 @@ import container.src.main.kotlin.Container
 import java.io.File
 
 class Lexer(val source: CharSource) {
-    //
+
     var list = listOf<String>()
 
     fun split(lotSize: Int = 8192) {
