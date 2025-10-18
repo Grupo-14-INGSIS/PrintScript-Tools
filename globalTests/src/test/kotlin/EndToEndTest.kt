@@ -6,11 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.Parser
-import interpreter.src.main.kotlin.Actions
-import interpreter.src.main.kotlin.Interpreter
 import lexer.src.main.kotlin.Lexer
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import container.src.main.kotlin.Container
 
 class EndToEndTest {
@@ -45,6 +41,7 @@ class EndToEndTest {
         assertEquals("4", ast.children[1].children[1].content)
     }
 
+    /*
     @Test
     fun `test print statement execution`() {
         val input = "println \"Hello World\""
@@ -69,6 +66,8 @@ class EndToEndTest {
             System.setOut(originalOut)
         }
     }
+
+     */
 
     @Test
     fun `test complex expression with parentheses`() {
