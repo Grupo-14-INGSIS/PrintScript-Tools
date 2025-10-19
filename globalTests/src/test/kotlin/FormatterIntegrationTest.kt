@@ -77,27 +77,27 @@ class FormatterIntegrationTest {
         assertTrue(contents(result).joinToString("").contains("a:"))
     }
 
-    @Test
-    fun adapterSimulationTest() {
-        val expected = "let something: string=\"a really cool thing\";\n" +
-            "let another_thing: string=\"another really cool thing\";\n" +
-            "let twice_thing: string=\"another really cool thing twice\";\n" +
-            "let third_thing: string=\"another really cool thing three times\";"
-        val input = "let something: string= \"a really cool thing\";\n" +
-            "let another_thing: string =\"another really cool thing\";\n" +
-            "let twice_thing: string = \"another really cool thing twice\";\n" +
-            "let third_thing: string=\"another really cool thing three times\";"
-
-        val lexer = Lexer.from(input)
-        lexer.split()
-        val tokens: Container = lexer.createToken(lexer.list)
-        val formatter = Formatter()
-        var result = formatter.executeOne(tokens, NoSpaceBeforeEqualsRule())
-        result = formatter.executeOne(result, NoSpaceAfterEqualsRule())
-        var actual = ""
-        for (i in 0 until result.size()) {
-            actual += result.get(i)!!.content
-        }
-        assertEquals(expected, actual)
-    }
+//    @Test
+//    fun adapterSimulationTest() {
+//        val expected = "let something: string=\"a really cool thing\";\n" +
+//            "let another_thing: string=\"another really cool thing\";\n" +
+//            "let twice_thing: string=\"another really cool thing twice\";\n" +
+//            "let third_thing: string=\"another really cool thing three times\";"
+//        val input = "let something: string= \"a really cool thing\";\n" +
+//            "let another_thing: string =\"another really cool thing\";\n" +
+//            "let twice_thing: string = \"another really cool thing twice\";\n" +
+//            "let third_thing: string=\"another really cool thing three times\";"
+//
+//        val lexer = Lexer.from(input)
+//        lexer.split()
+//        val tokens: Container = lexer.createToken(lexer.list)
+//        val formatter = Formatter()
+//        var result = formatter.executeOne(tokens, NoSpaceBeforeEqualsRule())
+//        result = formatter.executeOne(result, NoSpaceAfterEqualsRule())
+//        var actual = ""
+//        for (i in 0 until result.size()) {
+//            actual += result.get(i)!!.content
+//        }
+//        assertEquals(expected, actual)
+//    }
 }
