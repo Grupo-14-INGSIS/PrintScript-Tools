@@ -20,29 +20,42 @@ class LineBreakAfterSemicolonRule : FormatRule {
             val token = tokens.get(i) ?: break
 
             if (token.type == semicolon) {
-                // Remover TODOS los espacios y saltos de línea después del semicolon
-                var removed = 0
-                while (i + 1 < tokens.size()) {
-                    val nextToken = tokens.get(i + 1) ?: break
-                    if (nextToken.type == lineBreak || nextToken.type == space) {
-                        val response = tokens.remove(i + 1)
-                        tokens = response.container
-                        if (response.token == null) break
-                        removed++
-                    } else {
+                // Verificar si hay tokens no-whitespace después del semicolon
+                var hasContentAfter = false
+                var j = i + 1
+                while (j < tokens.size()) {
+                    val nextToken = tokens.get(j) ?: break
+                    if (nextToken.type != lineBreak && nextToken.type != space) {
+                        hasContentAfter = true
                         break
                     }
+                    j++
                 }
 
-                // Agregar exactamente UN salto de línea después del semicolon
-                tokens = tokens.addAt(
-                    Token(
-                        lineBreak,
-                        "\n",
-                        Position(0, 0)
-                    ),
-                    i + 1
-                )
+                // Solo formatear si hay contenido después
+                if (hasContentAfter) {
+                    // Remover TODOS los espacios y saltos de línea después del semicolon
+                    while (i + 1 < tokens.size()) {
+                        val nextToken = tokens.get(i + 1) ?: break
+                        if (nextToken.type == lineBreak || nextToken.type == space) {
+                            val response = tokens.remove(i + 1)
+                            tokens = response.container
+                            if (response.token == null) break
+                        } else {
+                            break
+                        }
+                    }
+
+                    // Agregar exactamente UN salto de línea después del semicolon
+                    tokens = tokens.addAt(
+                        Token(
+                            lineBreak,
+                            "\n",
+                            Position(0, 0)
+                        ),
+                        i + 1
+                    )
+                }
             }
             i++
         }
