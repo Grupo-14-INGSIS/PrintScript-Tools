@@ -2,15 +2,13 @@ package parser.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import parser.src.main.kotlin.Grammar
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import container.src.main.kotlin.Container
+import parser.src.main.kotlin.Parser
 
 class MoreParserTest {
-
-    private val grammar = Grammar("1.1")
 
     private fun token(type: DataType, content: String, line: Int = 0, col: Int = 0) =
         Token(type, content, Position(line, col))
@@ -25,7 +23,8 @@ class MoreParserTest {
 
     @Test
     fun `stmtParse returns invalid on empty input`() {
-        val result = grammar.stmtParse(Container())
+        val parser = Parser(Container())
+        val result = parser.stmtParse(Container())
         assertEquals(DataType.INVALID, result.type)
     }
 
@@ -40,7 +39,8 @@ class MoreParserTest {
             token(DataType.STRING_LITERAL, "\"hello\"")
         )
 
-        val result = grammar.stmtParse(tokens)
+        val parser = Parser(tokens)
+        val result = parser.stmtParse(tokens)
         assertEquals(DataType.DECLARATION, result.type)
         assertEquals("\"hello\"", result.children.last().content)
     }
@@ -53,7 +53,8 @@ class MoreParserTest {
             token(DataType.NUMBER_LITERAL, "42")
         )
 
-        val result = grammar.stmtParse(tokens)
+        val parser = Parser(tokens)
+        val result = parser.stmtParse(tokens)
         assertEquals(DataType.ASSIGNATION, result.type)
         assertEquals("x", result.children.first().content)
     }
@@ -61,7 +62,8 @@ class MoreParserTest {
     @Test
     fun `expParse parses literal`() {
         val tokens = containerOf(token(DataType.STRING_LITERAL, "\"hi\""))
-        val result = grammar.expParse(tokens)
+        val parser = Parser(tokens)
+        val result = parser.expParse(tokens)
         assertEquals(DataType.STRING_LITERAL, result.type)
         assertEquals("\"hi\"", result.content)
     }
@@ -74,7 +76,8 @@ class MoreParserTest {
             token(DataType.CLOSE_PARENTHESIS, ")")
         )
 
-        val result = grammar.expParse(tokens)
+        val parser = Parser(tokens)
+        val result = parser.expParse(tokens)
         assertEquals(DataType.NUMBER_LITERAL, result.type)
         assertEquals("1", result.content)
     }
@@ -88,7 +91,8 @@ class MoreParserTest {
             token(DataType.CLOSE_PARENTHESIS, ")")
         )
 
-        val result = grammar.expParse(tokens)
+        val parser = Parser(tokens)
+        val result = parser.expParse(tokens)
         assertEquals(DataType.PRINTLN, result.type)
         assertEquals("println", result.content)
         assertEquals("\"msg\"", result.children.first().content)
@@ -97,7 +101,8 @@ class MoreParserTest {
     @Test
     fun `isLiteral detects boolean literal if supported`() {
         val tokens = containerOf(token(DataType.BOOLEAN_LITERAL, "true"))
-        val result = Grammar("1.1").expParse(tokens)
+        val parser = Parser(tokens, "1.1")
+        val result = parser.expParse(tokens)
         assertEquals(DataType.BOOLEAN_LITERAL, result.type)
     }
 
@@ -123,7 +128,8 @@ class MoreParserTest {
             token(DataType.CLOSE_BRACE, "}")
         )
 
-        val result = grammar.stmtParse(tokens)
+        val parser = Parser(tokens)
+        val result = parser.stmtParse(tokens)
         assertEquals(DataType.IF_STATEMENT, result.type)
         assertEquals(3, result.children.size) // condition, ifBlock, elseBlock
     }
