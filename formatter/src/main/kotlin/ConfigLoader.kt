@@ -10,8 +10,6 @@ import formatter.src.main.kotlin.formatrule.optional.CharLimitPerLineRule
 import formatter.src.main.kotlin.formatrule.optional.ClassNameCamelCaseRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
-import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeEqualsRule
-import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import org.yaml.snakeyaml.Yaml
@@ -71,8 +69,6 @@ class ConfigLoader(
                 val rule = when (ruleName) {
                     "NoSpaceBeforeColon" -> NoSpaceBeforeColonRule()
                     "NoSpaceAfterColon" -> NoSpaceAfterColonRule()
-                    "NoSpaceBeforeEquals" -> NoSpaceBeforeEqualsRule()
-                    "NoSpaceAfterEquals" -> NoSpaceAfterEqualsRule()
                     "CharLimitPerLine" -> CharLimitPerLineRule()
                     "ClassNameCamel" -> ClassNameCamelCaseRule()
                     "lineBreakBeforePrint" -> {

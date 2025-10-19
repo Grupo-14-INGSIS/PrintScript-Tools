@@ -3,8 +3,6 @@ rules:
   switch:
     NoSpaceBeforeColon: true
     NoSpaceAfterColon: false
-    NoSpaceBeforeEquals: true
-    NoSpaceAfterEquals: false
 
   setValue:
     lineBreakBeforePrint: 1    # 0, 1 o 2 saltos de línea antes de println
