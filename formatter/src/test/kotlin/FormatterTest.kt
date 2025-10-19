@@ -14,206 +14,36 @@ class FormatterTest {
     @Test
     fun onlyMandatoryTest() {
         // Testing only mandatory rules
-        // val source = "let    x:   string    =    \"Hi\"  ;"
-        // val configFile = "C:\\Users\\laris\\Downloads\\PrintScript-Tools\\formatter\\src\\test\\resources\\test1rules.yaml"
         val configFile: URL = this::class.java.getResource(
             "/test1rules.yaml"
         ) ?: error("Archivo de configuración no encontrado")
         val formatter = Formatter()
         val source = Container(
             listOf(
-                Token(
-                    DataType.LET_KEYWORD,
-                    "let",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.IDENTIFIER,
-                    "x",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.COLON,
-                    ":",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.STRING_TYPE,
-                    "string",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.ASSIGNATION,
-                    "=",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.STRING_LITERAL,
-                    "Hi",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SEMICOLON,
-                    ";",
-                    Position(
-                        0,
-                        0
-                    )
-                )
+                Token(DataType.LET_KEYWORD, "let", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.IDENTIFIER, "x", Position(0, 0)),
+                Token(DataType.COLON, ":", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.STRING_TYPE, "string", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.ASSIGNATION, "=", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.STRING_LITERAL, "Hi", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SEMICOLON, ";", Position(0, 0))
             )
         )
         val types = listOf(
@@ -228,149 +58,40 @@ class FormatterTest {
             DataType.SPACE,
             DataType.STRING_LITERAL,
             DataType.SPACE,
-            DataType.SEMICOLON,
-            DataType.LINE_BREAK
+            DataType.SEMICOLON
+            // SIN LINE_BREAK al final
         )
         val actual = formatter.execute(source, configFile)
         assertEquals(types.size, actual.size())
         for (i in types.indices) {
-            assertEquals(
-                types[i],
-                actual.get(i)!!.type
-            )
+            assertEquals(types[i], actual.get(i)!!.type)
         }
     }
 
     @Test
     fun optionalTest() {
         // Testing all rules
-        // val source = "let  x  :  number = 14;"
         val configFile: URL = this::class.java.getResource(
             "/test2rules.yaml"
         ) ?: error("Archivo de configuración no encontrado")
         val formatter = Formatter()
         val source = Container(
             listOf(
-                Token(
-                    DataType.LET_KEYWORD,
-                    "let",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.IDENTIFIER,
-                    "x",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.COLON,
-                    ":",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.NUMBER_TYPE,
-                    "number",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.ASSIGNATION,
-                    "=",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SPACE,
-                    " ",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.NUMBER_LITERAL,
-                    "14",
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                Token(
-                    DataType.SEMICOLON,
-                    ";",
-                    Position(
-                        0,
-                        0
-                    )
-                )
+                Token(DataType.LET_KEYWORD, "let", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.IDENTIFIER, "x", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.COLON, ":", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.NUMBER_TYPE, "number", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.ASSIGNATION, "=", Position(0, 0)),
+                Token(DataType.SPACE, " ", Position(0, 0)),
+                Token(DataType.NUMBER_LITERAL, "14", Position(0, 0)),
+                Token(DataType.SEMICOLON, ";", Position(0, 0))
             )
         )
         val types = listOf(
@@ -381,19 +102,13 @@ class FormatterTest {
             DataType.NUMBER_TYPE,
             DataType.ASSIGNATION,
             DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON,
-            DataType.LINE_BREAK
+            DataType.SEMICOLON
+            // SIN LINE_BREAK al final
         )
-        val actual: Container = formatter.execute(
-            source,
-            configFile
-        )
+        val actual: Container = formatter.execute(source, configFile)
         assertEquals(types.size, actual.size())
         for (i in types.indices) {
-            assertEquals(
-                types[i],
-                actual.get(i)!!.type
-            )
+            assertEquals(types[i], actual.get(i)!!.type)
         }
     }
 }

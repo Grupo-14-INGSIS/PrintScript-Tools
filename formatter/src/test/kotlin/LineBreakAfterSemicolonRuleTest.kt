@@ -24,7 +24,7 @@ class LineBreakAfterSemicolonRuleTest {
     }
 
     @Test
-    fun `adds line break after semicolon at end of file`() {
+    fun `does NOT add line break after semicolon at end of file`() {
         val source = containerOf(
             token(
                 DataType.IDENTIFIER,
@@ -40,7 +40,7 @@ class LineBreakAfterSemicolonRuleTest {
         val result = rule.format(source)
 
         assertEquals(";", result.get(1)!!.content)
-        assertEquals("\n", result.get(2)!!.content) // se agrega salto al final
+        assertEquals(2, result.size()) // Solo 2 tokens, sin salto de línea añadido
     }
 
     @Test

@@ -5,9 +5,6 @@ plugins {
     id 'maven-publish'
 }
 
-def timestamp = new Date().format("yyyyMMddHHmmss")
-version = "1.1.${timestamp}"
-
 repositories {
     mavenCentral()
 }
@@ -30,21 +27,6 @@ ktlint{
     additionalEditorconfigFile = file("$rootDir/config/.editorConfig") // con esto tenemos las reglas custom
 }
 
-// Cargo las variables automáticamente desde el .env (local)
-def dotenvFile = file("$rootDir/.env")
-def dotenvProps = new Properties()
-if (dotenvFile.exists()) {
-    dotenvFile.withReader { reader ->
-        reader.eachLine { line ->
-            line = line.trim()
-            if (!line.startsWith("#") && line.contains("=")) {
-                def (key, value) = line.split("=", 2)
-                dotenvProps.setProperty(key.trim(), value.trim())
-            }
-        }
-    }
-}
-
 // Para publicar objetos
 publishing {
     publications {
@@ -58,9 +40,8 @@ publishing {
             name = 'GitHubPackages'
             url = 'https://maven.pkg.github.com/Grupo-14-INGSIS/PrintScript-Tools'
             credentials {
-                // Primero intenta leer del entorno (CI/CD), si no existe usa el .env local
-                username = System.getenv("GITHUB_USER") ?: dotenvProps.getProperty("GITHUB_USER") ?: ""
-                password = System.getenv("GITHUB_TOKEN") ?: dotenvProps.getProperty("GITHUB_TOKEN") ?: ""
+                username = project.findProperty("gpr.user")
+                password = project.findProperty("gpr.key")
             }
         }
     }
