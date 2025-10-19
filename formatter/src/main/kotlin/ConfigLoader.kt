@@ -13,8 +13,10 @@ import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
+import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundEqualsRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
+
 
 class ConfigLoader(
     private val configFile: String
@@ -37,12 +39,14 @@ class ConfigLoader(
             IfBraceOnSameLineRule()
         )
 
-        return when (version) {
-            "1.0" -> baseRules
-            "1.1" -> baseRules + listOf(
+        return when {
+            version.contains("assign-spacing-surrounding-equals") -> baseRules + listOf(
+                SpaceAroundEqualsRule()
+            )
+            version == "1.1" -> baseRules + listOf(
                 IfBraceOnSameLineRule()
             )
-            else -> baseRules // Versión desconocida = usar base
+            else -> baseRules
         }
     }
 
