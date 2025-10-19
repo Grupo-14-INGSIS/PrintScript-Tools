@@ -108,6 +108,10 @@ class MoreParserTest {
 
     @Test
     fun `ifStmtParse returns valid AST with else block`() {
+        /*
+            if (true) {x = 1;} else {x = 2;}
+            Tokens: 17
+         */
         val tokens = containerOf(
             token(DataType.IF_KEYWORD, "if"),
             token(DataType.OPEN_PARENTHESIS, "("),
@@ -128,7 +132,7 @@ class MoreParserTest {
             token(DataType.CLOSE_BRACE, "}")
         )
 
-        val parser = Parser(tokens)
+        val parser = Parser(tokens, "1.1")
         val result = parser.stmtParse(tokens)
         assertEquals(DataType.IF_STATEMENT, result.type)
         assertEquals(3, result.children.size) // condition, ifBlock, elseBlock
