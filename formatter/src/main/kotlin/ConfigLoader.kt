@@ -11,13 +11,10 @@ import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceBelowLineRule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import org.yaml.snakeyaml.Yaml
 import java.io.File
 
 class ConfigLoader(private val configFile: String) {
-
-    private val mapper = jacksonObjectMapper()
 
     fun loadConfig(version: String = "1.0"): List<FormatRule> {
         val configurableRules = createConfigurableRules(readConfig())
@@ -39,8 +36,10 @@ class ConfigLoader(private val configFile: String) {
         return buildList {
             config.forEach { (ruleName, ruleValue) ->
                 val rule = when (ruleName) {
-                    // Espaciado alrededor de "=" - CON espacios
-                    "assign-spacing-surrounding-equals" -> {
+                    // ========== ESPACIADO ALREDEDOR DE "=" ==========
+
+                    // CON espacios: x = 5
+                    "SpaceBeforeEquals", "SpaceAfterEquals" -> {
                         if (ruleValue as Boolean) {
                             AssignSpacingRule(spaceBefore = true, spaceAfter = true)
                         } else {
@@ -48,8 +47,8 @@ class ConfigLoader(private val configFile: String) {
                         }
                     }
 
-                    // Espaciado alrededor de "=" - SIN espacios
-                    "enforce-no-spacing-around-equals" -> {
+                    // SIN espacios: x=5
+                    "NoSpaceBeforeEquals", "NoSpaceAfterEquals" -> {
                         if (ruleValue as Boolean) {
                             AssignSpacingRule(spaceBefore = false, spaceAfter = false)
                         } else {
@@ -57,84 +56,52 @@ class ConfigLoader(private val configFile: String) {
                         }
                     }
 
-                    // Espacio ANTES de ":"
-                    "enforce-decl-spacing-before-colon" -> {
+                    // ========== ESPACIADO ALREDEDOR DE ":" ==========
+
+                    // SIN espacio ANTES de ":"
+                    "NoSpaceBeforeColon" -> {
                         if (ruleValue as Boolean) {
-                            // true = permitir espacios = NO agregar regla que los elimina
-                            null
-                        } else {
-                            // false = NO permitir espacios = agregar regla que los elimina
                             NoSpaceBeforeColonRule()
+                        } else {
+                            null
                         }
                     }
 
-                    // Espacio DESPUÉS de ":"
-                    "enforce-decl-spacing-after-colon" -> {
+                    // SIN espacio DESPUÉS de ":"
+                    "NoSpaceAfterColon" -> {
                         if (ruleValue as Boolean) {
-                            // true = permitir espacios = NO agregar regla que los elimina
-                            null
-                        } else {
-                            // false = NO permitir espacios = agregar regla que los elimina
                             NoSpaceAfterColonRule()
-                        }
-                    }
-
-                    // 1 salto de línea antes de println
-                    "print-1-line-breaks-after" -> {
-                        if (ruleValue as Boolean) {
-                            LineBreakBeforePrintRule(1)
                         } else {
                             null
                         }
                     }
 
-                    // 2 saltos de línea antes de println
-                    "print-2-line-breaks-after" -> {
-                        if (ruleValue as Boolean) {
-                            LineBreakBeforePrintRule(2)
-                        } else {
-                            null
-                        }
+                    // ========== SALTOS DE LÍNEA ANTES DE PRINTLN ==========
+
+                    "lineBreakBeforePrint" -> {
+                        val count = (ruleValue as? Number)?.toInt() ?: 1
+                        LineBreakBeforePrintRule(count)
                     }
 
-                    // Llave del if en la MISMA línea
-                    "if-brace-same-line" -> {
-                        if (ruleValue as Boolean) {
-                            IfBraceOnSameLineRule()
-                        } else {
-                            null
-                        }
-                    }
+                    // ========== INDENTACIÓN ==========
 
-                    // Llave del if en línea SEPARADA
-                    "if-brace-below-line" -> {
-                        if (ruleValue as Boolean) {
-                            IfBraceBelowLineRule()
-                        } else {
-                            null
-                        }
-                    }
-
-                    // Indentación con 2 espacios
-                    "if-indent-inside-2" -> {
-                        if (ruleValue as Boolean) {
-                            IndentationRule(2)
-                        } else {
-                            null
-                        }
-                    }
-
-                    // Indentación con tamaño configurable
-                    "indent-inside-if-statement" -> {
+                    "indentSize" -> {
                         val size = (ruleValue as? Number)?.toInt() ?: 2
                         IndentationRule(size)
                     }
 
-                    // Espaciado de un solo token (ya está en mandatory)
-                    "enforce-single-space-separation" -> null
+                    // ========== LLAVE DEL IF ==========
 
-                    // Espaciado alrededor de operaciones (ya está en mandatory)
-                    "enforce-space-surrounding-operations" -> null
+                    "ifBraceSameLine" -> {
+                        if (ruleValue as Boolean) {
+                            IfBraceOnSameLineRule()
+                        } else {
+                            IfBraceBelowLineRule()
+                        }
+                    }
+
+                    // Ignorar reglas que ya están en mandatory
+                    "SpaceBetweenTokens", "SpaceAroundOperator", "LineBreakAfterSemicolon" -> null
 
                     else -> null
                 }
@@ -145,7 +112,24 @@ class ConfigLoader(private val configFile: String) {
     }
 
     internal fun readConfig(): Map<String, Any> {
-        val text = File(configFile).readText()
-        return mapper.readValue(text)
+        val yaml = Yaml()
+        val data = yaml.load<Map<String, Any>>(File(configFile).readText())
+        val rules = data["rules"] as? Map<String, Any> ?: return emptyMap()
+
+        return buildMap {
+            // Reglas de switch (boolean)
+            val switchRules = rules["switch"] as? Map<String, Boolean> ?: emptyMap()
+            for ((rule, enabled) in switchRules) {
+                if (enabled) {
+                    put(rule, true)
+                }
+            }
+
+            // Reglas con valores (number/string/object)
+            val valueRules = rules["setValue"] as? Map<String, Any> ?: emptyMap()
+            for ((rule, value) in valueRules) {
+                put(rule, value)
+            }
+        }
     }
 }
