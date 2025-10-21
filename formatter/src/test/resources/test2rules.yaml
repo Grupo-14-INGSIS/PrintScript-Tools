@@ -2,8 +2,7 @@ rules:
   switch:
     NoSpaceBeforeColon: true
     NoSpaceAfterColon: true
-    NoSpaceBeforeEquals: true
-    NoSpaceAfterEquals: true
+    SpaceAroundEquals: true
 
   setValue:
     # Any value in {0, 1, 2}
