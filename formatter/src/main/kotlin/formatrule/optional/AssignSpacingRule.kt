@@ -23,56 +23,45 @@ class AssignSpacingRule(
             if (token == null) break
 
             if (token.type == equals) {
-                // Handle space AFTER equals first
-                if (spaceAfter) {
-                    if (i + 1 < tokens.size()) {
-                        val next = tokens.get(i + 1)
-                        if (next?.type != space) {
-                            tokens = tokens.addAt(
-                                Token(space, " ", Position(0, 0)),
-                                i + 1
-                            )
-                        }
-                    }
-                } else {
-                    // Remove all spaces after
-                    while (i + 1 < tokens.size()) {
-                        val next = tokens.get(i + 1)
-                        if (next?.type == space) {
-                            val response = tokens.remove(i + 1)
-                            tokens = response.container
-                            if (response.token == null) break
-                        } else {
-                            break
-                        }
+                // PRIMERO: Remover TODOS los espacios antes del =
+                while (i > 0) {
+                    val previous = tokens.get(i - 1)
+                    if (previous?.type == space) {
+                        val response = tokens.remove(i - 1)
+                        tokens = response.container
+                        if (response.token == null) break
+                        i--
+                    } else {
+                        break
                     }
                 }
 
-                // Handle space BEFORE equals
+                // SEGUNDO: Remover TODOS los espacios después del =
+                while (i + 1 < tokens.size()) {
+                    val next = tokens.get(i + 1)
+                    if (next?.type == space) {
+                        val response = tokens.remove(i + 1)
+                        tokens = response.container
+                        if (response.token == null) break
+                    } else {
+                        break
+                    }
+                }
+
+                // TERCERO: Agregar espacios según la configuración
+                if (spaceAfter) {
+                    tokens = tokens.addAt(
+                        Token(space, " ", Position(0, 0)),
+                        i + 1
+                    )
+                }
+
                 if (spaceBefore) {
-                    if (i > 0) {
-                        val previous = tokens.get(i - 1)
-                        if (previous?.type != space) {
-                            tokens = tokens.addAt(
-                                Token(space, " ", Position(0, 0)),
-                                i
-                            )
-                            i++ // Adjust index because we added before
-                        }
-                    }
-                } else {
-                    // Remove all spaces before
-                    while (i > 0) {
-                        val previous = tokens.get(i - 1)
-                        if (previous?.type == space) {
-                            val response = tokens.remove(i - 1)
-                            tokens = response.container
-                            if (response.token == null) break
-                            i-- // Adjust index
-                        } else {
-                            break
-                        }
-                    }
+                    tokens = tokens.addAt(
+                        Token(space, " ", Position(0, 0)),
+                        i
+                    )
+                    i++ // Ajustar índice porque agregamos antes
                 }
             }
             i++

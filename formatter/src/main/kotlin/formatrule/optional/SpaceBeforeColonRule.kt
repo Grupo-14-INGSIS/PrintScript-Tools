@@ -19,16 +19,25 @@ class SpaceBeforeColonRule : FormatRule {
             val token = tokens.get(i) ?: break
 
             if (token.type == colon) {
-                if (i > 0) {
+                // Primero remover TODOS los espacios antes del colon
+                while (i > 0) {
                     val previous = tokens.get(i - 1)
-                    if (previous != null && previous.type != space) {
-                        tokens = tokens.addAt(
-                            Token(space, " ", Position(0, 0)),
-                            i
-                        )
-                        i++ // Adjust because we added before the colon
+                    if (previous?.type == space) {
+                        val response = tokens.remove(i - 1)
+                        tokens = response.container
+                        if (response.token == null) break
+                        i--
+                    } else {
+                        break
                     }
                 }
+
+                // Luego agregar UN espacio antes del colon
+                tokens = tokens.addAt(
+                    Token(space, " ", Position(0, 0)),
+                    i
+                )
+                i++ // Ajustar porque agregamos antes del colon
             }
             i++
         }
