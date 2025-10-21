@@ -4,99 +4,148 @@ import formatter.src.main.kotlin.formatrule.FormatRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceBetweenTokensRule
 import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRule
-import formatter.src.main.kotlin.formatrule.mandatory.IfBraceOnSameLineRule
-import formatter.src.main.kotlin.formatrule.optional.CharLimitPerLineRule
-import formatter.src.main.kotlin.formatrule.optional.ClassNameCamelCaseRule
+import formatter.src.main.kotlin.formatrule.optional.AssignSpacingRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
-import formatter.src.main.kotlin.formatrule.optional.AssignSpacingRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
-import org.yaml.snakeyaml.Yaml
+import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
+import formatter.src.main.kotlin.formatrule.optional.IfBraceBelowLineRule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.File
 
-class ConfigLoader(
-    private val configFile: String
-) {
+class ConfigLoader(private val configFile: String) {
+
+    private val mapper = jacksonObjectMapper()
 
     fun loadConfig(version: String = "1.0"): List<FormatRule> {
-        val configurableRules = createConfigurableRules(
-            readConfig()
-        )
+        val configurableRules = createConfigurableRules(readConfig())
         val mandatoryRules = createMandatoryRules(version)
 
-        return (configurableRules + mandatoryRules).toList()
+        return (mandatoryRules + configurableRules).toList()
     }
 
     internal fun createMandatoryRules(version: String = "1.0"): List<FormatRule> {
-        val baseRules = listOf(
+        // Reglas que SIEMPRE se aplican, no se configuran
+        return listOf(
             SpaceAroundOperatorRule(),
             SpaceBetweenTokensRule(),
-            LineBreakAfterSemicolonRule(),
-            IfBraceOnSameLineRule()
+            LineBreakAfterSemicolonRule()
         )
-
-        return when (version) {
-            "1.0" -> baseRules
-            "1.1" -> baseRules + listOf(
-                IfBraceOnSameLineRule()
-            )
-            else -> baseRules
-        }
     }
 
-    internal fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
+    internal fun createConfigurableRules(config: Map<String, Any>): List<FormatRule> {
         return buildList {
-            for ((ruleName, ruleValue) in rules) {
+            config.forEach { (ruleName, ruleValue) ->
                 val rule = when (ruleName) {
-                    "NoSpaceBeforeColon" -> NoSpaceBeforeColonRule()
-                    "NoSpaceAfterColon" -> NoSpaceAfterColonRule()
-                    "assignSpacing" -> {
-                        val config = ruleValue as? Map<*, *>
-                        val spaceBefore = config?.get("before") as? Boolean ?: true
-                        val spaceAfter = config?.get("after") as? Boolean ?: true
-                        AssignSpacingRule(spaceBefore, spaceAfter)
+                    // Espaciado alrededor de "=" - CON espacios
+                    "assign-spacing-surrounding-equals" -> {
+                        if (ruleValue as Boolean) {
+                            AssignSpacingRule(spaceBefore = true, spaceAfter = true)
+                        } else {
+                            null
+                        }
                     }
-                    "CharLimitPerLine" -> CharLimitPerLineRule()
-                    "ClassNameCamel" -> ClassNameCamelCaseRule()
-                    "lineBreakBeforePrint" -> {
-                        val count = (ruleValue as? Number)?.toInt() ?: 1
-                        LineBreakBeforePrintRule(count)
+
+                    // Espaciado alrededor de "=" - SIN espacios
+                    "enforce-no-spacing-around-equals" -> {
+                        if (ruleValue as Boolean) {
+                            AssignSpacingRule(spaceBefore = false, spaceAfter = false)
+                        } else {
+                            null
+                        }
                     }
-                    "indentSize" -> {
+
+                    // Espacio ANTES de ":"
+                    "enforce-decl-spacing-before-colon" -> {
+                        if (ruleValue as Boolean) {
+                            // true = permitir espacios = NO agregar regla que los elimina
+                            null
+                        } else {
+                            // false = NO permitir espacios = agregar regla que los elimina
+                            NoSpaceBeforeColonRule()
+                        }
+                    }
+
+                    // Espacio DESPUÉS de ":"
+                    "enforce-decl-spacing-after-colon" -> {
+                        if (ruleValue as Boolean) {
+                            // true = permitir espacios = NO agregar regla que los elimina
+                            null
+                        } else {
+                            // false = NO permitir espacios = agregar regla que los elimina
+                            NoSpaceAfterColonRule()
+                        }
+                    }
+
+                    // 1 salto de línea antes de println
+                    "print-1-line-breaks-after" -> {
+                        if (ruleValue as Boolean) {
+                            LineBreakBeforePrintRule(1)
+                        } else {
+                            null
+                        }
+                    }
+
+                    // 2 saltos de línea antes de println
+                    "print-2-line-breaks-after" -> {
+                        if (ruleValue as Boolean) {
+                            LineBreakBeforePrintRule(2)
+                        } else {
+                            null
+                        }
+                    }
+
+                    // Llave del if en la MISMA línea
+                    "if-brace-same-line" -> {
+                        if (ruleValue as Boolean) {
+                            IfBraceOnSameLineRule()
+                        } else {
+                            null
+                        }
+                    }
+
+                    // Llave del if en línea SEPARADA
+                    "if-brace-below-line" -> {
+                        if (ruleValue as Boolean) {
+                            IfBraceBelowLineRule()
+                        } else {
+                            null
+                        }
+                    }
+
+                    // Indentación con 2 espacios
+                    "if-indent-inside-2" -> {
+                        if (ruleValue as Boolean) {
+                            IndentationRule(2)
+                        } else {
+                            null
+                        }
+                    }
+
+                    // Indentación con tamaño configurable
+                    "indent-inside-if-statement" -> {
                         val size = (ruleValue as? Number)?.toInt() ?: 2
                         IndentationRule(size)
                     }
+
+                    // Espaciado de un solo token (ya está en mandatory)
+                    "enforce-single-space-separation" -> null
+
+                    // Espaciado alrededor de operaciones (ya está en mandatory)
+                    "enforce-space-surrounding-operations" -> null
+
                     else -> null
                 }
-                rule?.let {
-                    add(it)
-                }
+
+                rule?.let { add(it) }
             }
         }
     }
 
     internal fun readConfig(): Map<String, Any> {
-        val yaml = Yaml()
-        val data = yaml.load<Map<String, Any>>(
-            File(configFile).readText()
-        )
-        val rules = data["rules"] as? Map<String, Any> ?: return emptyMap()
-
-        return buildMap {
-            // Reglas de switch (boolean)
-            val switchRules = rules["switch"] as? Map<String, Boolean> ?: emptyMap()
-            for ((rule, enabled) in switchRules) {
-                if (enabled) {
-                    put(rule, true)
-                }
-            }
-
-            // Reglas con valores (number/string/object)
-            val valueRules = rules["setValue"] as? Map<String, Any> ?: emptyMap()
-            for ((rule, value) in valueRules) {
-                put(rule, value)
-            }
-        }
+        val text = File(configFile).readText()
+        return mapper.readValue(text)
     }
 }

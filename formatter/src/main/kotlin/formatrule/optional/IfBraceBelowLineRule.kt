@@ -1,4 +1,4 @@
-package formatter.src.main.kotlin.formatrule.mandatory
+package formatter.src.main.kotlin.formatrule.optional
 
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
@@ -6,7 +6,7 @@ import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class IfBraceOnSameLineRule : FormatRule {
+class IfBraceBelowLineRule : FormatRule {
 
     private val identifier = DataType.IDENTIFIER
     private val openBrace = DataType.OPEN_BRACE
@@ -19,9 +19,7 @@ class IfBraceOnSameLineRule : FormatRule {
         var i = 0
 
         while (i < tokens.size()) {
-            val token = tokens.get(
-                i
-            ) ?: break
+            val token = tokens.get(i) ?: break
 
             // Buscar "if"
             if (token.type == identifier && token.content == "if") {
@@ -31,9 +29,7 @@ class IfBraceOnSameLineRule : FormatRule {
                 var closeParenIndex = -1
 
                 while (j < tokens.size()) {
-                    val currentToken = tokens.get(
-                        j
-                    ) ?: break
+                    val currentToken = tokens.get(j) ?: break
                     val type = currentToken.type
 
                     if (type == DataType.OPEN_PARENTHESIS) {
@@ -45,7 +41,6 @@ class IfBraceOnSameLineRule : FormatRule {
                             break
                         }
                     }
-
                     j++
                 }
 
@@ -55,20 +50,14 @@ class IfBraceOnSameLineRule : FormatRule {
                     j = closeParenIndex + 1
 
                     while (j < tokens.size()) {
-                        val currentToken = tokens.get(
-                            j
-                        ) ?: break
+                        val currentToken = tokens.get(j) ?: break
                         when (currentToken.type) {
                             openBrace -> {
                                 braceIndex = j
                                 break
                             }
-                            space -> {
+                            space, lineBreak -> {
                                 // Continuar buscando
-                            }
-                            lineBreak -> {
-                                // Hay un salto de línea antes de la llave - necesita corrección
-                                break
                             }
                             else -> {
                                 // Otro token antes de la llave
@@ -79,33 +68,26 @@ class IfBraceOnSameLineRule : FormatRule {
                     }
 
                     if (braceIndex != -1) {
-                        // Remover todos los saltos de línea y espacios entre ) y {
+                        // Remover todos los espacios y saltos de línea entre ) y {
                         var k = closeParenIndex + 1
                         while (k < braceIndex) {
-                            val tokenToCheck = tokens.get(
-                                k
-                            ) ?: break
+                            val tokenToCheck = tokens.get(k) ?: break
                             if (tokenToCheck.type == lineBreak || tokenToCheck.type == space) {
-                                val response = tokens.remove(
-                                    k
-                                )
+                                val response = tokens.remove(k)
                                 tokens = response.container
                                 if (response.token == null) break
-                                braceIndex-- // Ajustar índice de la llave
+                                braceIndex--
                             } else {
                                 k++
                             }
                         }
 
-                        // Agregar exactamente un espacio entre ) y {
+                        // Agregar exactamente un salto de línea entre ) y {
                         tokens = tokens.addAt(
                             Token(
-                                space,
-                                " ",
-                                Position(
-                                    0,
-                                    0
-                                )
+                                lineBreak,
+                                "\n",
+                                Position(0, 0)
                             ),
                             closeParenIndex + 1
                         )
