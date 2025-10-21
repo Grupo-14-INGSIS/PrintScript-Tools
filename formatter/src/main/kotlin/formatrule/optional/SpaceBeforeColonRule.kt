@@ -19,20 +19,15 @@ class SpaceBeforeColonRule : FormatRule {
             val token = tokens.get(i) ?: break
 
             if (token.type == colon) {
-                // Verificar el token anterior
-                val previous = tokens.get(i - 1)
-
-                if (previous != null && previous.type != space) {
-                    // Agregar espacio antes del colon
-                    tokens = tokens.addAt(
-                        Token(
-                            space,
-                            " ",
-                            Position(0, 0)
-                        ),
-                        i
-                    )
-                    i++ // Ajustar índice porque agregamos un token
+                if (i > 0) {
+                    val previous = tokens.get(i - 1)
+                    if (previous != null && previous.type != space) {
+                        tokens = tokens.addAt(
+                            Token(space, " ", Position(0, 0)),
+                            i
+                        )
+                        i++ // Adjust because we added before the colon
+                    }
                 }
             }
             i++

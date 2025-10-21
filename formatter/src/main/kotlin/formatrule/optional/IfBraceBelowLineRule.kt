@@ -21,74 +21,30 @@ class IfBraceBelowLineRule : FormatRule {
         while (i < tokens.size()) {
             val token = tokens.get(i) ?: break
 
-            // Buscar "if"
             if (token.type == identifier && token.content == "if") {
-                // Buscar el cierre de paréntesis correspondiente
-                var j = i + 1
-                var parenCount = 0
-                var closeParenIndex = -1
-
-                while (j < tokens.size()) {
-                    val currentToken = tokens.get(j) ?: break
-                    val type = currentToken.type
-
-                    if (type == DataType.OPEN_PARENTHESIS) {
-                        parenCount++
-                    } else if (type == closeParen) {
-                        parenCount--
-                        if (parenCount == 0) {
-                            closeParenIndex = j
-                            break
-                        }
-                    }
-                    j++
-                }
+                val closeParenIndex = findCloseParenthesis(tokens, i)
 
                 if (closeParenIndex != -1) {
-                    // Buscar la llave de apertura después del cierre de paréntesis
-                    var braceIndex = -1
-                    j = closeParenIndex + 1
-
-                    while (j < tokens.size()) {
-                        val currentToken = tokens.get(j) ?: break
-                        when (currentToken.type) {
-                            openBrace -> {
-                                braceIndex = j
-                                break
-                            }
-                            space, lineBreak -> {
-                                // Continuar buscando
-                            }
-                            else -> {
-                                // Otro token antes de la llave
-                                break
-                            }
-                        }
-                        j++
-                    }
+                    val braceIndex = findOpenBrace(tokens, closeParenIndex)
 
                     if (braceIndex != -1) {
-                        // Remover todos los espacios y saltos de línea entre ) y {
-                        var k = closeParenIndex + 1
-                        while (k < braceIndex) {
-                            val tokenToCheck = tokens.get(k) ?: break
-                            if (tokenToCheck.type == lineBreak || tokenToCheck.type == space) {
-                                val response = tokens.remove(k)
+                        // Remover todo entre ) y {
+                        var currentBraceIndex = braceIndex
+                        while (closeParenIndex + 1 < currentBraceIndex) {
+                            val tokenBetween = tokens.get(closeParenIndex + 1)
+                            if (tokenBetween?.type == lineBreak || tokenBetween?.type == space) {
+                                val response = tokens.remove(closeParenIndex + 1)
                                 tokens = response.container
                                 if (response.token == null) break
-                                braceIndex--
+                                currentBraceIndex--
                             } else {
-                                k++
+                                break
                             }
                         }
 
-                        // Agregar exactamente un salto de línea entre ) y {
+                        // Agregar un line break
                         tokens = tokens.addAt(
-                            Token(
-                                lineBreak,
-                                "\n",
-                                Position(0, 0)
-                            ),
+                            Token(lineBreak, "\n", Position(0, 0)),
                             closeParenIndex + 1
                         )
                     }
@@ -98,5 +54,38 @@ class IfBraceBelowLineRule : FormatRule {
         }
 
         return tokens
+    }
+
+    private fun findCloseParenthesis(tokens: Container, startIndex: Int): Int {
+        var parenCount = 0
+        var j = startIndex + 1
+
+        while (j < tokens.size()) {
+            val currentToken = tokens.get(j) ?: break
+            when (currentToken.type) {
+                DataType.OPEN_PARENTHESIS -> parenCount++
+                closeParen -> {
+                    parenCount--
+                    if (parenCount == 0) return j
+                }
+
+                else -> {}
+            }
+            j++
+        }
+        return -1
+    }
+
+    private fun findOpenBrace(tokens: Container, startIndex: Int): Int {
+        var j = startIndex + 1
+        while (j < tokens.size()) {
+            val currentToken = tokens.get(j) ?: break
+            when (currentToken.type) {
+                openBrace -> return j
+                space, lineBreak -> j++
+                else -> return -1
+            }
+        }
+        return -1
     }
 }
