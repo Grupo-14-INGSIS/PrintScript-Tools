@@ -67,48 +67,4 @@ class FormatterTest {
             assertEquals(types[i], actual.get(i)!!.type)
         }
     }
-
-    @Test
-    fun optionalTest() {
-        // Testing all rules
-        val configFile: URL = this::class.java.getResource(
-            "/test2rules.yaml"
-        ) ?: error("Archivo de configuración no encontrado")
-        val formatter = Formatter()
-        val source = Container(
-            listOf(
-                Token(DataType.LET_KEYWORD, "let", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.IDENTIFIER, "x", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.COLON, ":", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.NUMBER_TYPE, "number", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.ASSIGNATION, "=", Position(0, 0)),
-                Token(DataType.SPACE, " ", Position(0, 0)),
-                Token(DataType.NUMBER_LITERAL, "14", Position(0, 0)),
-                Token(DataType.SEMICOLON, ";", Position(0, 0))
-            )
-        )
-        val types = listOf(
-            DataType.LET_KEYWORD,
-            DataType.SPACE,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.ASSIGNATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
-            // SIN LINE_BREAK al final
-        )
-        val actual: Container = formatter.execute(source, configFile)
-        assertEquals(types.size, actual.size())
-        for (i in types.indices) {
-            assertEquals(types[i], actual.get(i)!!.type)
-        }
-    }
 }

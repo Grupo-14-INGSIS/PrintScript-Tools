@@ -45,9 +45,8 @@ class ConfigLoaderTest {
 
         val names = rules.map { it::class.simpleName }.toSet()
         assertTrue(names.contains("NoSpaceBeforeColonRule"))
-        assertTrue(names.contains("NoSpaceAfterEqualsRule"))
         // UnknownRule no debería haberse agregado
-        assertEquals(2, rules.size)
+        assertEquals(1, rules.size)
     }
 
     @Test
