@@ -1,3 +1,4 @@
+# ej de onfiguración para formatter
 rules:
   switch:
     SpaceAroundEquals: true
@@ -5,5 +6,5 @@ rules:
     # NoSpaceAfterEquals: false
 
   setValue:
-    lineBreakBeforePrint: 1
-    indentSize: 2
+    lineBreakBeforePrint: 1    # 0, 1 o 2 saltos de línea antes de println
+    indentSize: 2              # espacios por nivel de indentación

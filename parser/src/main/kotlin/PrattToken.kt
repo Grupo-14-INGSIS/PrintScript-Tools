@@ -3,10 +3,10 @@ package parser.src.main.kotlin
 import token.src.main.kotlin.Token
 
 class PrattToken(
-    private val token: Token,
-    private val precedence: Int,
-    private val associativity: Association,
-    private val children: List<PrattToken> = emptyList()
+    val token: Token,
+    val precedence: Int,
+    val associativity: Association,
+    val children: List<PrattToken> = emptyList()
 ) {
 
     fun token(): Token = token

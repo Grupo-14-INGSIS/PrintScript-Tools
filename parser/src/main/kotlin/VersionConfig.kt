@@ -10,15 +10,15 @@ class VersionConfig {
                 "*" to 2,
                 "/" to 2,
                 "+" to 1,
-                "-" to 1,
-                "=" to 0
+                "-" to 1
+                // "=" to 0
             ),
             associations = mapOf(
                 "*" to Association.LEFT,
                 "/" to Association.LEFT,
                 "+" to Association.LEFT,
-                "-" to Association.LEFT,
-                "=" to Association.RIGHT
+                "-" to Association.LEFT
+                // "=" to Association.RIGHT
             )
         )
 
@@ -30,15 +30,15 @@ class VersionConfig {
                 "*" to 2,
                 "/" to 2,
                 "+" to 1,
-                "-" to 1,
-                "=" to 0
+                "-" to 1
+                // "=" to 0
             ),
             associations = mapOf(
                 "*" to Association.LEFT,
                 "/" to Association.LEFT,
                 "+" to Association.LEFT,
-                "-" to Association.LEFT,
-                "=" to Association.RIGHT
+                "-" to Association.LEFT
+                // "=" to Association.RIGHT
             ),
             supportsConst = true,
             supportsIfElse = true,
