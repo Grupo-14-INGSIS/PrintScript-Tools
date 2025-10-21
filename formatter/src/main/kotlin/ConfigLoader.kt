@@ -14,6 +14,7 @@ import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.SpaceAroundEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
+import formatter.src.main.kotlin.formatrule.mandatory.SpaceBeforeColonRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
@@ -41,7 +42,7 @@ class ConfigLoader(
         return when (version) {
             "1.0" -> baseRules
             "1.1" -> baseRules + listOf(
-                IfBraceOnSameLineRule()
+                SpaceBeforeColonRule()
             )
             else -> baseRules // Versión desconocida = usar base
         }
