@@ -74,7 +74,6 @@ class ConfigLoaderTest {
         // Verificar reglas obligatorias
         assertTrue(ruleNames.contains("SpaceAroundOperatorRule"))
         assertTrue(ruleNames.contains("SpaceBetweenTokensRule"))
-        // Verificar reglas configurables
         assertTrue(ruleNames.contains("NoSpaceBeforeColonRule"))
         assertTrue(ruleNames.contains("NoSpaceAfterColonRule"))
     }
