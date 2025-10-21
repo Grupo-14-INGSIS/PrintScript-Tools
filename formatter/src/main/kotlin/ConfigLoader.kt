@@ -7,6 +7,8 @@ import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRul
 import formatter.src.main.kotlin.formatrule.optional.AssignSpacingRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceBeforeColonRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceAfterColonRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
@@ -24,7 +26,6 @@ class ConfigLoader(private val configFile: String) {
     }
 
     internal fun createMandatoryRules(version: String = "1.0"): List<FormatRule> {
-        // Reglas que SIEMPRE se aplican, no se configuran
         return listOf(
             SpaceAroundOperatorRule(),
             SpaceBetweenTokensRule(),
@@ -37,9 +38,7 @@ class ConfigLoader(private val configFile: String) {
             config.forEach { (ruleName, ruleValue) ->
                 val rule = when (ruleName) {
                     // ========== ESPACIADO ALREDEDOR DE "=" ==========
-
-                    // CON espacios: x = 5
-                    "SpaceBeforeEquals", "SpaceAfterEquals" -> {
+                    "enforce-spacing-around-equals", "assign-spacing-surrounding-equals" -> {
                         if (ruleValue as Boolean) {
                             AssignSpacingRule(spaceBefore = true, spaceAfter = true)
                         } else {
@@ -47,8 +46,7 @@ class ConfigLoader(private val configFile: String) {
                         }
                     }
 
-                    // SIN espacios: x=5
-                    "NoSpaceBeforeEquals", "NoSpaceAfterEquals" -> {
+                    "enforce-no-spacing-around-equals", "assign-no-spacing-surrounding-equals" -> {
                         if (ruleValue as Boolean) {
                             AssignSpacingRule(spaceBefore = false, spaceAfter = false)
                         } else {
@@ -57,51 +55,59 @@ class ConfigLoader(private val configFile: String) {
                     }
 
                     // ========== ESPACIADO ALREDEDOR DE ":" ==========
-
-                    // SIN espacio ANTES de ":"
-                    "NoSpaceBeforeColon" -> {
+                    "enforce-spacing-before-colon-in-declaration" -> {
                         if (ruleValue as Boolean) {
-                            NoSpaceBeforeColonRule()
+                            SpaceBeforeColonRule()
                         } else {
-                            null
+                            NoSpaceBeforeColonRule()
                         }
                     }
 
-                    // SIN espacio DESPUÉS de ":"
-                    "NoSpaceAfterColon" -> {
+                    "enforce-spacing-after-colon-in-declaration" -> {
                         if (ruleValue as Boolean) {
-                            NoSpaceAfterColonRule()
+                            SpaceAfterColonRule()
                         } else {
-                            null
+                            NoSpaceAfterColonRule()
                         }
                     }
 
                     // ========== SALTOS DE LÍNEA ANTES DE PRINTLN ==========
-
-                    "lineBreakBeforePrint" -> {
-                        val count = (ruleValue as? Number)?.toInt() ?: 1
-                        LineBreakBeforePrintRule(count)
+                    "line-breaks-after-println" -> {
+                        val count = (ruleValue as? Number)?.toInt() ?: 0
+                        if (count > 0) {
+                            LineBreakBeforePrintRule(count)
+                        } else {
+                            null
+                        }
                     }
 
                     // ========== INDENTACIÓN ==========
-
-                    "indentSize" -> {
+                    "indent-inside-if" -> {
                         val size = (ruleValue as? Number)?.toInt() ?: 2
                         IndentationRule(size)
                     }
 
                     // ========== LLAVE DEL IF ==========
-
-                    "ifBraceSameLine" -> {
+                    "if-brace-same-line" -> {
                         if (ruleValue as Boolean) {
                             IfBraceOnSameLineRule()
                         } else {
-                            IfBraceBelowLineRule()
+                            null
                         }
                     }
 
-                    // Ignorar reglas que ya están en mandatory
-                    "SpaceBetweenTokens", "SpaceAroundOperator", "LineBreakAfterSemicolon" -> null
+                    "if-brace-below-line" -> {
+                        if (ruleValue as Boolean) {
+                            IfBraceBelowLineRule()
+                        } else {
+                            null
+                        }
+                    }
+
+                    // Ignorar reglas mandatory que vienen en el config
+                    "mandatory-single-space-separation",
+                    "mandatory-space-surrounding-operations",
+                    "mandatory-line-break-after-statement" -> null
 
                     else -> null
                 }
@@ -114,22 +120,8 @@ class ConfigLoader(private val configFile: String) {
     internal fun readConfig(): Map<String, Any> {
         val yaml = Yaml()
         val data = yaml.load<Map<String, Any>>(File(configFile).readText())
-        val rules = data["rules"] as? Map<String, Any> ?: return emptyMap()
 
-        return buildMap {
-            // Reglas de switch (boolean)
-            val switchRules = rules["switch"] as? Map<String, Boolean> ?: emptyMap()
-            for ((rule, enabled) in switchRules) {
-                if (enabled) {
-                    put(rule, true)
-                }
-            }
-
-            // Reglas con valores (number/string/object)
-            val valueRules = rules["setValue"] as? Map<String, Any> ?: emptyMap()
-            for ((rule, value) in valueRules) {
-                put(rule, value)
-            }
-        }
+        // Los tests pasan el JSON directamente como primer nivel
+        return data
     }
 }
