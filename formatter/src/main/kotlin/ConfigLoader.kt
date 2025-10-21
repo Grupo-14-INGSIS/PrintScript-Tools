@@ -11,6 +11,7 @@ import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceAroundEqualsRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import org.yaml.snakeyaml.Yaml
@@ -46,8 +47,6 @@ class ConfigLoader(
         }
     }
 
-
-
     internal fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
         return buildList {
             for ((ruleName, ruleValue) in rules) {
@@ -56,6 +55,7 @@ class ConfigLoader(
                     "NoSpaceAfterColon" -> NoSpaceAfterColonRule()
                     "NoSpaceBeforeEquals" -> NoSpaceBeforeEqualsRule()
                     "NoSpaceAfterEquals" -> NoSpaceAfterEqualsRule()
+                    "SpaceAroundEquals" -> SpaceAroundEqualsRule()
                     "CharLimitPerLine" -> CharLimitPerLineRule()
                     "ClassNameCamel" -> ClassNameCamelCaseRule()
                     "lineBreakBeforePrint" -> {
