@@ -30,6 +30,7 @@ subprojects {
         testImplementation "org.jetbrains.kotlin:kotlin-test:2.0.0"
         testImplementation "org.junit.jupiter:junit-jupiter:5.9.2"
         testImplementation "io.mockk:mockk:1.13.7"
+        implementation 'org.yaml:snakeyaml:1.33'
     }
 
     compileKotlin {

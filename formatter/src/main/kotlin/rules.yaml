@@ -1,10 +1,14 @@
-# ej de onfiguración para formatter
+# Configuración para formatter
 rules:
   switch:
-    SpaceAroundEquals: true
-    # NoSpaceBeforeEquals: false  # Ya no necesitas estas
-    # NoSpaceAfterEquals: false
+    NoSpaceBeforeColon: true
+    NoSpaceAfterColon: false
 
   setValue:
+    # Configuración de espaciado alrededor del signo igual
+    assignSpacing:
+      before: true   # true = espacio antes del =, false = sin espacio
+      after: true    # true = espacio después del =, false = sin espacio
+
     lineBreakBeforePrint: 1    # 0, 1 o 2 saltos de línea antes de println
     indentSize: 2              # espacios por nivel de indentación

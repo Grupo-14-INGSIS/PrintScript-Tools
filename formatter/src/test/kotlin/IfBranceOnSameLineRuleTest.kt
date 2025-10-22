@@ -2,7 +2,7 @@ package formatter.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import formatter.src.main.kotlin.formatrule.mandatory.IfBraceOnSameLineRule
+import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position

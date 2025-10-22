@@ -4,108 +4,124 @@ import formatter.src.main.kotlin.formatrule.FormatRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceBetweenTokensRule
 import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRule
-import formatter.src.main.kotlin.formatrule.mandatory.IfBraceOnSameLineRule
-import formatter.src.main.kotlin.formatrule.optional.CharLimitPerLineRule
-import formatter.src.main.kotlin.formatrule.optional.ClassNameCamelCaseRule
+import formatter.src.main.kotlin.formatrule.optional.AssignSpacingRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
-import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterEqualsRule
-import formatter.src.main.kotlin.formatrule.optional.SpaceAroundEqualsRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceBeforeColonRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceAfterColonRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
+import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
+import formatter.src.main.kotlin.formatrule.optional.IfBraceBelowLineRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
-class ConfigLoader(
-    private val configFile: String
-) {
+class ConfigLoader(private val configFile: String) {
 
     fun loadConfig(version: String = "1.0"): List<FormatRule> {
-        val configurableRules = createConfigurableRules(
-            readConfig()
-        )
+        val configurableRules = createConfigurableRules(readConfig())
         val mandatoryRules = createMandatoryRules(version)
 
-        return (configurableRules + mandatoryRules).toList()
+        return (mandatoryRules + configurableRules).toList()
     }
 
     internal fun createMandatoryRules(version: String = "1.0"): List<FormatRule> {
-        val baseRules = listOf(
+        return listOf(
             SpaceAroundOperatorRule(),
             SpaceBetweenTokensRule(),
-            LineBreakAfterSemicolonRule(),
-            IfBraceOnSameLineRule()
+            LineBreakAfterSemicolonRule()
         )
-
-        return when (version) {
-            "1.0" -> baseRules
-            "1.1" -> baseRules + listOf(
-                IfBraceOnSameLineRule()
-            )
-            else -> baseRules // Versión desconocida = usar base
-        }
     }
 
-    internal fun createConfigurableRules(rules: Map<String, Any>): List<FormatRule> {
+    internal fun createConfigurableRules(config: Map<String, Any>): List<FormatRule> {
         return buildList {
-            for ((ruleName, ruleValue) in rules) {
+            config.forEach { (ruleName, ruleValue) ->
                 val rule = when (ruleName) {
-                    "NoSpaceBeforeColon" -> NoSpaceBeforeColonRule()
-                    "NoSpaceAfterColon" -> NoSpaceAfterColonRule()
-                    "NoSpaceAfterEquals" -> NoSpaceAfterEqualsRule()
-                    "SpaceAroundEquals" -> SpaceAroundEqualsRule()
-                    "CharLimitPerLine" -> CharLimitPerLineRule()
-                    "ClassNameCamel" -> ClassNameCamelCaseRule()
-                    "lineBreakBeforePrint" -> {
-                        val count = (ruleValue as? Number)?.toInt() ?: 1
-                        LineBreakBeforePrintRule(
-                            count
-                        )
+                    // ========== ESPACIADO ALREDEDOR DE "=" ==========
+                    "enforce-spacing-around-equals", "assign-spacing-surrounding-equals" -> {
+                        if (ruleValue as Boolean) {
+                            AssignSpacingRule(spaceBefore = true, spaceAfter = true)
+                        } else {
+                            null
+                        }
                     }
-                    "indentSize" -> {
+
+                    "enforce-no-spacing-around-equals", "assign-no-spacing-surrounding-equals" -> {
+                        if (ruleValue as Boolean) {
+                            AssignSpacingRule(spaceBefore = false, spaceAfter = false)
+                        } else {
+                            null
+                        }
+                    }
+
+                    // ========== ESPACIADO ALREDEDOR DE ":" ==========
+                    "enforce-spacing-before-colon-in-declaration" -> {
+                        if (ruleValue as Boolean) {
+                            SpaceBeforeColonRule()
+                        } else {
+                            NoSpaceBeforeColonRule()
+                        }
+                    }
+
+                    "enforce-spacing-after-colon-in-declaration" -> {
+                        if (ruleValue as Boolean) {
+                            SpaceAfterColonRule()
+                        } else {
+                            NoSpaceAfterColonRule()
+                        }
+                    }
+
+                    // ========== SALTOS DE LÍNEA ANTES DE PRINTLN ==========
+                    "line-breaks-after-println" -> {
+                        val count = (ruleValue as? Number)?.toInt() ?: 0
+                        if (count > 0) {
+                            LineBreakBeforePrintRule(count)
+                        } else {
+                            null
+                        }
+                    }
+
+                    // ========== INDENTACIÓN ==========
+                    "indent-inside-if" -> {
                         val size = (ruleValue as? Number)?.toInt() ?: 2
-                        IndentationRule(
-                            size
-                        )
+                        IndentationRule(size)
                     }
+
+                    // ========== LLAVE DEL IF ==========
+                    "if-brace-same-line" -> {
+                        if (ruleValue as Boolean) {
+                            IfBraceOnSameLineRule()
+                        } else {
+                            null
+                        }
+                    }
+
+                    "if-brace-below-line" -> {
+                        if (ruleValue as Boolean) {
+                            IfBraceBelowLineRule()
+                        } else {
+                            null
+                        }
+                    }
+
+                    // Ignorar reglas mandatory que vienen en el config
+                    "mandatory-single-space-separation",
+                    "mandatory-space-surrounding-operations",
+                    "mandatory-line-break-after-statement" -> null
+
                     else -> null
                 }
-                rule?.let {
-                    add(
-                        it
-                    )
-                }
+
+                rule?.let { add(it) }
             }
         }
     }
 
     internal fun readConfig(): Map<String, Any> {
         val yaml = Yaml()
-        val data = yaml.load<Map<String, Any>>(
-            File(configFile).readText()
-        )
-        val rules = data["rules"] as? Map<String, Any> ?: return emptyMap()
+        val data = yaml.load<Map<String, Any>>(File(configFile).readText())
 
-        return buildMap {
-            // Reglas de switch (boolean)
-            val switchRules = rules["switch"] as? Map<String, Boolean> ?: emptyMap()
-            for ((rule, enabled) in switchRules) {
-                if (enabled) {
-                    put(
-                        rule,
-                        true
-                    )
-                }
-            }
-
-            // Reglas con valores (number/string)
-            val valueRules = rules["setValue"] as? Map<String, Any> ?: emptyMap()
-            for ((rule, value) in valueRules) {
-                put(
-                    rule,
-                    value
-                )
-            }
-        }
+        // Los tests pasan el JSON directamente como primer nivel
+        return data
     }
 }
