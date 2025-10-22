@@ -317,10 +317,12 @@ class Parser(
                     braceDepth++
                     currentStmt = currentStmt.addContainer(token)
                 }
+
                 DataType.CLOSE_BRACE -> {
                     braceDepth--
                     currentStmt = currentStmt.addContainer(token)
                 }
+
                 DataType.SEMICOLON -> {
                     if (braceDepth == 0) {
                         // End of statement at block level
@@ -336,6 +338,7 @@ class Parser(
                         currentStmt = currentStmt.addContainer(token)
                     }
                 }
+
                 else -> {
                     currentStmt = currentStmt.addContainer(token)
                 }
@@ -438,6 +441,7 @@ class Parser(
                     parenCount--
                     if (parenCount == 0) return i
                 }
+
                 else -> {}
             }
         }
@@ -455,6 +459,7 @@ class Parser(
                     braceCount--
                     if (braceCount == 0) return i
                 }
+
                 else -> {}
             }
         }
@@ -472,7 +477,9 @@ class Parser(
         if (tokens.isEmpty()) {
             return invalid
         }
+        return shuntingYard(tokens)
 
+/*
         recursionDepth = 0
         val symbols: List<PrattToken> = prattify(tokens)
         val result = processTokens(symbols)
@@ -482,6 +489,7 @@ class Parser(
         } else {
             invalid
         }
+ */
     }
 
     // Iteration
@@ -594,5 +602,100 @@ class Parser(
             symbol.token().position,
             children
         )
+    }
+
+    private fun getPrecedence(token: Token): Int {
+        return when (token.type) {
+            DataType.ADDITION -> 1
+            DataType.SUBTRACTION -> 1
+            DataType.MULTIPLICATION -> 2
+            DataType.DIVISION -> 2
+            else -> -1
+        }
+    }
+
+    private fun shuntingYard(tokens: Container): ASTNode {
+        // Shunting-Yard algorithm for replacing Pratt-Parsing
+
+        // Step 1: convert into post-fix notation
+        val operators = ArrayDeque<Token>()
+        val postFix = ArrayDeque<Token>()
+        var nextToken: Token
+        for (i in 0 until tokens.size()) {
+            nextToken = tokens.get(i)!!
+            // Case operand -> Add directly to operands
+            if (nextToken.type == DataType.NUMBER_LITERAL) {
+                postFix.addLast(nextToken)
+                // Case operator
+            } else {
+                // Empty -> Directly add and prevent NoSuchElementException
+                if (operators.isEmpty()) {
+                    operators.addFirst(nextToken)
+                } else {
+                    // Open Parenthesis -> Add directly to operands
+                    if (nextToken.type == DataType.OPEN_PARENTHESIS) {
+                        operators.addFirst(nextToken)
+                        // Close Parenthesis -> Add all operands between parenthesis and discard both
+                    } else if (nextToken.type == DataType.CLOSE_PARENTHESIS) {
+                        try {
+                            while (operators.first().type != DataType.OPEN_PARENTHESIS) {
+                                postFix.addLast(operators.removeFirst())
+                            }
+                        } catch (e: Exception) {
+                            return invalid
+                        }
+                        operators.removeFirst()
+                        // Default case -> While there is an operand with greater or equal precedence, move that to output
+                    } else {
+                        while (getPrecedence(operators.first()) >= getPrecedence(nextToken)) {
+                            postFix.addLast(operators.removeFirst())
+                            if (operators.isEmpty()) {
+                                break
+                            }
+                        }
+                        operators.addFirst(nextToken)
+                    }
+                }
+            }
+        }
+        while (operators.isNotEmpty()) {
+            postFix.addLast(operators.removeFirst())
+        }
+
+        for (token in postFix) {
+            print(token.type)
+            print(" ")
+        }
+
+        // Step 2: Create AST from output
+        val output = ArrayDeque<ASTNode>()
+        var children: List<ASTNode>
+        while (postFix.isNotEmpty()) {
+            nextToken = postFix.removeFirst()
+            // Case operand -> Turn into leaf node
+            if (nextToken.type == DataType.NUMBER_LITERAL) {
+                children = listOf()
+                // Case operator -> Take two last nodes and associate them
+            } else {
+                // Ensure there are enough tokens
+                if (output.size < 2) {
+                    return invalid
+                } else {
+                    children = listOf(
+                        output.removeFirst(),
+                        output.removeFirst()
+                    )
+                }
+            }
+            output.addFirst(
+                ASTNode(
+                    nextToken.type,
+                    nextToken.content,
+                    nextToken.position,
+                    children
+                )
+            )
+        }
+        return output.first()
     }
 }
