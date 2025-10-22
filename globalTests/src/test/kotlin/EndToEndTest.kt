@@ -33,12 +33,12 @@ class EndToEndTest {
         assertEquals(2, ast.children.size)
 
         // Left child should be "2"
-        assertEquals("2", ast.children[0].content)
+        assertEquals("2", ast.children[1].content)
 
         // Right child should be multiplication node "3 * 4"
-        assertEquals(DataType.MULTIPLICATION, ast.children[1].type)
-        assertEquals("3", ast.children[1].children[0].content)
-        assertEquals("4", ast.children[1].children[1].content)
+        assertEquals(DataType.MULTIPLICATION, ast.children[0].type)
+        assertEquals("3", ast.children[0].children[1].content)
+        assertEquals("4", ast.children[0].children[0].content)
     }
 
     /*
@@ -88,7 +88,7 @@ class EndToEndTest {
 //        assertEquals("3", ast.children[0].children[1].content)
 
         // Right side should be "4"
-        assertEquals("4", ast.children[1].content)
+        assertEquals("4", ast.children[0].content)
     }
 
     @Test
