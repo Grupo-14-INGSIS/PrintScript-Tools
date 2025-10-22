@@ -8,6 +8,7 @@ import formatter.src.main.kotlin.formatrule.FormatRule
 
 class LineBreakAfterPrintRule(private val lineBreakCount: Int = 1) : FormatRule {
 
+    private val printlnType = DataType.PRINTLN
     private val identifier = DataType.IDENTIFIER
     private val lineBreak = DataType.LINE_BREAK
     private val space = DataType.SPACE
@@ -20,55 +21,40 @@ class LineBreakAfterPrintRule(private val lineBreakCount: Int = 1) : FormatRule 
         while (i < tokens.size()) {
             val token = tokens.get(i) ?: break
 
-            // Buscar "println"
-            if (token.type == identifier && token.content == "println") {
-                // Encontrar el semicolon que cierra este println
-                var semicolonIndex = findSemicolonAfterPrintln(tokens, i)
+            // Check both PRINTLN token and IDENTIFIER with content "println"
+            val isPrintln = token.type == printlnType ||
+                (token.type == identifier && token.content == "println")
 
+            if (isPrintln) {
+                val semicolonIndex = findSemicolonAfterPrintln(tokens, i)
                 if (semicolonIndex == -1) {
                     i++
                     continue
                 }
 
-                // Contar cuántos line breaks ya existen DESPUÉS del semicolon
-                var existingLineBreaks = 0
-                var j = semicolonIndex + 1
-
-                // Contar line breaks (pueden estar intercalados con espacios)
-                while (j < tokens.size()) {
-                    val next = tokens.get(j) ?: break
-                    if (next.type == lineBreak) {
-                        existingLineBreaks++
-                        j++
-                    } else if (next.type == space) {
-                        j++
+                // FIRST: Remove ALL existing line breaks and spaces after semicolon
+                var removeIndex = semicolonIndex + 1
+                while (removeIndex < tokens.size()) {
+                    val next = tokens.get(removeIndex)
+                    if (next?.type == lineBreak || next?.type == space) {
+                        val response = tokens.remove(removeIndex)
+                        tokens = response.container
+                        // Don't increment removeIndex, continue checking same position
                     } else {
                         break
                     }
                 }
 
-                // Total de line breaks que queremos: lineBreakCount + 1 (el mandatory)
-                val totalNeeded = lineBreakCount + 1
-                val missing = totalNeeded - existingLineBreaks
-
-                if (missing > 0) {
-                    // Insertar después del semicolon, saltando espacios
-                    var insertPos = semicolonIndex + 1
-                    while (insertPos < tokens.size() && tokens.get(insertPos)?.type == space) {
-                        insertPos++
-                    }
-
-                    // Insertar después de los line breaks existentes
-                    insertPos += existingLineBreaks
-
-                    repeat(missing) {
-                        tokens = tokens.addAt(
-                            Token(lineBreak, "\n", Position(0, 0)),
-                            insertPos
-                        )
-                    }
+                // SECOND: Insert exactly the configured number of line breaks
+                val insertPosition = semicolonIndex + 1
+                repeat(lineBreakCount) { offset ->
+                    tokens = tokens.addAt(
+                        Token(lineBreak, "\n", Position(0, 0)),
+                        insertPosition + offset
+                    )
                 }
             }
+
             i++
         }
 
@@ -81,15 +67,10 @@ class LineBreakAfterPrintRule(private val lineBreakCount: Int = 1) : FormatRule 
 
         while (j < tokens.size()) {
             val current = tokens.get(j) ?: break
-
             when (current.type) {
                 DataType.OPEN_PARENTHESIS -> parenCount++
                 DataType.CLOSE_PARENTHESIS -> parenCount--
-                semicolon -> {
-                    if (parenCount == 0) {
-                        return j
-                    }
-                }
+                semicolon -> if (parenCount == 0) return j
                 else -> {}
             }
             j++

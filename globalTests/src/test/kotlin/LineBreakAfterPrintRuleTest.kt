@@ -1,20 +1,21 @@
-package formatter.src.test.kotlin
-
 import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.Formatter
 import lexer.src.main.kotlin.Lexer
 import lexer.src.main.kotlin.StringCharSource
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
 
-class LineBreakAfterPrintlnTest {
+class LineBreakAfterPrintRuleTest {
 
     @Test
-    fun `test line-breaks-after-println inserts blank line before second println`() {
+    fun `test removes extra line breaks after println when config is zero`() {
         val input = """
             let something:string = "a really cool thing";
             println(something);
+
+
+
             println("in the way she moves");
         """.trimIndent()
 
@@ -25,7 +26,7 @@ class LineBreakAfterPrintlnTest {
         """.trimIndent()
 
         val configContent = """{
-          "line-breaks-after-println": 1
+          "line-breaks-after-println": 0
         }"""
         val configFile = File.createTempFile("test_config", ".json").apply {
             writeText(configContent)
@@ -44,7 +45,7 @@ class LineBreakAfterPrintlnTest {
         println("Expected:\n$expected")
         println("\nGot:\n$result")
 
-        assertEquals(expected, result.trim())
+        Assertions.assertEquals(expected, result.trim())
     }
 
     private fun containerToString(container: Container): String {
