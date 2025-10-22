@@ -6,13 +6,15 @@ import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class LineBreakAfterSemicolonRule : FormatRule {
+class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatRule {
 
     private val semicolon = DataType.SEMICOLON
     private val lineBreak = DataType.LINE_BREAK
     private val space = DataType.SPACE
 
     override fun format(source: Container): Container {
+        if (!enabled) return source
+
         var tokens = source
         var i = 0
 
@@ -20,7 +22,6 @@ class LineBreakAfterSemicolonRule : FormatRule {
             val token = tokens.get(i) ?: break
 
             if (token.type == semicolon) {
-                // Verificar si hay tokens no-whitespace después del semicolon
                 var hasContentAfter = false
                 var j = i + 1
                 while (j < tokens.size()) {
@@ -32,9 +33,7 @@ class LineBreakAfterSemicolonRule : FormatRule {
                     j++
                 }
 
-                // Solo formatear si hay contenido después
                 if (hasContentAfter) {
-                    // Remover TODOS los espacios y saltos de línea después del semicolon
                     while (i + 1 < tokens.size()) {
                         val nextToken = tokens.get(i + 1) ?: break
                         if (nextToken.type == lineBreak || nextToken.type == space) {
@@ -46,13 +45,8 @@ class LineBreakAfterSemicolonRule : FormatRule {
                         }
                     }
 
-                    // Agregar exactamente UN salto de línea después del semicolon
                     tokens = tokens.addAt(
-                        Token(
-                            lineBreak,
-                            "\n",
-                            Position(0, 0)
-                        ),
+                        Token(lineBreak, "\n", Position(0, 0)),
                         i + 1
                     )
                 }

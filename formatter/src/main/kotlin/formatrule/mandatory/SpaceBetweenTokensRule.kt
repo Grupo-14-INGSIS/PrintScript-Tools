@@ -5,20 +5,15 @@ import tokendata.src.main.kotlin.DataType
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class SpaceBetweenTokensRule : FormatRule {
+class SpaceBetweenTokensRule(private val enabled: Boolean = true) : FormatRule {
 
     private val space = DataType.SPACE
-
-    // Tokens que NO deben tener espacio antes
-    private val noSpaceBefore = setOf(
-        DataType.SEMICOLON
-        // DataType.OPEN_PARENTHESIS ← eliminado para permitir println ( x )
-    )
-
-    // Tokens que NO deben tener espacio después (vacío por ahora)
+    private val noSpaceBefore = setOf(DataType.SEMICOLON)
     private val noSpaceAfter = emptySet<DataType>()
 
     override fun format(source: Container): Container {
+        if (!enabled) return source
+
         var result = Container()
         var i = 0
 
@@ -31,15 +26,13 @@ class SpaceBetweenTokensRule : FormatRule {
                 continue
             }
 
-            // Eliminar espacios duplicados
             if (current.type == space && next?.type == space) {
-                i++ // saltar espacio redundante
+                i++
                 continue
             }
 
             result = result.addContainer(current)
 
-            // Insertar espacio si falta entre dos tokens válidos
             if (
                 current.type != space &&
                 next != null &&
