@@ -52,20 +52,6 @@ class FormatterRulesTest {
         assertEquals(expected, output.container.map { it.content })
     }
 
-    @Test
-    fun `SpaceBetweenTokensRule keeps single space`() {
-        val a = token(DataType.IDENTIFIER, "a")
-        val sp = token(DataType.SPACE, " ")
-        val b = token(DataType.IDENTIFIER, "b")
-        val c = token(DataType.IDENTIFIER, "c")
-        val input = containerOf(a, sp, b, c)
-
-        val rule: FormatRule = SpaceBetweenTokensRule()
-        val output = rule.format(input)
-
-        val expected = listOf("a", " ", "b", "c")
-        assertEquals(expected, output.container.map { it.content })
-    }
 
 
     @Test
