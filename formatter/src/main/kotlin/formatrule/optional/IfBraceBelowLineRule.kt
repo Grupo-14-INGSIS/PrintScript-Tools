@@ -31,12 +31,15 @@ class IfBraceBelowLineRule : FormatRule {
 
                 val nextToken = tokens.get(closeParenIndex + 1)
                 if (nextToken?.type == openBrace) {
-                    // Ya tiene llave, moverla a la línea siguiente si está en la misma línea
+                    // Ya tiene llave, moverla a la línea siguiente
                     tokens = removeSpacesAndLineBreaks(tokens, closeParenIndex + 1)
                     tokens = tokens.addAt(
                         Token(lineBreak, "\n", Position(0, 0)),
                         closeParenIndex + 1
                     )
+
+                    // Agregar indentación al contenido dentro del if
+                    tokens = addIndentationAfterOpenBrace(tokens, closeParenIndex + 2)
                 } else {
                     val insertOpenIndex = closeParenIndex + 1
                     tokens = removeSpacesAndLineBreaks(tokens, insertOpenIndex)
@@ -59,6 +62,8 @@ class IfBraceBelowLineRule : FormatRule {
                     // Insertar salto de línea y llave de cierre
                     tokens = tokens.addAt(Token(lineBreak, "\n", Position(0, 0)), endIndex + 1)
                     tokens = tokens.addAt(Token(closeBrace, "}", Position(0, 0)), endIndex + 2)
+
+                    // Agregar indentación (4 espacios)
                     tokens = tokens.addAt(Token(space, "    ", Position(0, 0)), insertOpenIndex + 3)
                 }
             }
@@ -67,6 +72,30 @@ class IfBraceBelowLineRule : FormatRule {
         }
 
         return tokens
+    }
+
+    private fun addIndentationAfterOpenBrace(tokens: Container, openBraceIndex: Int): Container {
+        var result = tokens
+
+        // Buscar el line break después de la llave de apertura
+        var i = openBraceIndex
+        while (i < result.size()) {
+            val token = result.get(i)
+            if (token?.type == lineBreak) {
+                // Después del line break, agregar indentación si no hay espacios
+                val nextToken = result.get(i + 1)
+                if (nextToken != null && nextToken.type != space && nextToken.type != closeBrace) {
+                    result = result.addAt(
+                        Token(space, "    ", Position(0, 0)),
+                        i + 1
+                    )
+                }
+                break
+            }
+            i++
+        }
+
+        return result
     }
 
     private fun findCloseParenthesis(tokens: Container, startIndex: Int): Int {

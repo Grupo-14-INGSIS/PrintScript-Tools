@@ -15,107 +15,60 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
 
     override fun format(source: Container): Container {
         var tokens = source
+        var currentIndent = 0
         var i = 0
-        var indentLevel = 0
-        var atLineStart = true
 
         while (i < tokens.size()) {
-            val token = tokens.get(
-                i
-            ) ?: break
+            val token = tokens.get(i) ?: break
 
-            when {
-                // Nueva línea - marcar que estamos al inicio
-                token.type == lineBreak -> {
-                    atLineStart = true
+            // Cuando encontramos un line break
+            if (token.type == lineBreak) {
+                println("Found LINE_BREAK at index $i, currentIndent=$currentIndent") // DEBUG
+
+                // Limpiar espacios después del line break
+                var nextIndex = i + 1
+                while (nextIndex < tokens.size() && tokens.get(nextIndex)?.type == space) {
+                    println("  Removing space at $nextIndex") // DEBUG
+                    val response = tokens.remove(nextIndex)
+                    tokens = response.container
                 }
 
-                // Llave de cierre - reducir indentación
-                token.type == closeBrace -> {
-                    indentLevel = maxOf(
-                        0,
-                        indentLevel - 1
-                    )
-                    if (atLineStart) {
-                        tokens = addIndentation(
-                            tokens,
-                            i,
-                            indentLevel
+                // Ver qué viene después
+                val nextToken = tokens.get(i + 1)
+                println("  Next token: ${nextToken?.type}, content='${nextToken?.content}'") // DEBUG
+
+                if (nextToken != null && nextToken.type != lineBreak) {
+                    val indentLevel = if (nextToken.type == closeBrace) {
+                        maxOf(0, currentIndent - 1)
+                    } else {
+                        currentIndent
+                    }
+
+                    println("  Adding indent level $indentLevel") // DEBUG
+
+                    if (indentLevel > 0) {
+                        val indentString = " ".repeat(indentSize * indentLevel)
+                        tokens = tokens.addAt(
+                            Token(space, indentString, Position(0, 0)),
+                            i + 1
                         )
-                        atLineStart = false
+                        i++
                     }
                 }
+            }
 
-                // Llave de apertura - aumentar indentación para próxima línea
-                token.type == openBrace -> {
-                    if (atLineStart) {
-                        tokens = addIndentation(
-                            tokens,
-                            i,
-                            indentLevel
-                        )
-                        atLineStart = false
-                    }
-                    indentLevel++
-                }
-
-                // Cualquier otro token no-espacio al inicio de línea
-                token.type != space && atLineStart -> {
-                    tokens = addIndentation(
-                        tokens,
-                        i,
-                        indentLevel
-                    )
-                    atLineStart = false
-                }
-
-                // Token de espacio al inicio de línea - remover indentación existente
-                token.type == space && atLineStart -> {
-                    // Remover espacios existentes al inicio de línea
-                    var j = i
-                    while (j < tokens.size() && tokens.get(
-                            j
-                        )?.type == space
-                    ) {
-                        val response = tokens.remove(
-                            j
-                        )
-                        tokens = response.container
-                        if (response.token == null) break
-                    }
-                    // Agregar indentación correcta
-                    tokens = addIndentation(
-                        tokens,
-                        i,
-                        indentLevel
-                    )
-                    atLineStart = false
-                    continue // Saltar incremento de i
-                }
+            // Actualizar nivel cuando encontramos llaves
+            if (token.type == openBrace) {
+                println("Found OPEN_BRACE at index $i, incrementing indent to ${currentIndent + 1}") // DEBUG
+                currentIndent++
+            } else if (token.type == closeBrace) {
+                println("Found CLOSE_BRACE at index $i, decrementing indent to ${currentIndent - 1}") // DEBUG
+                currentIndent = maxOf(0, currentIndent - 1)
             }
 
             i++
         }
 
         return tokens
-    }
-
-    private fun addIndentation(tokens: Container, index: Int, level: Int): Container {
-        val indentation = " ".repeat(indentSize * level)
-        return if (indentation.isNotEmpty()) {
-            tokens.addAt(
-                Token(
-                    space,
-                    indentation,
-                    Position(
-                        0,
-                        0
-                    )
-                ),
-                index
-            )
-        } else {
-            tokens
-        }
     }
 }

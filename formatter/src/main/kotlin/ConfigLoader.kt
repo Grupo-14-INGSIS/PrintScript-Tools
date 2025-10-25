@@ -22,6 +22,8 @@ class ConfigLoader(private val configFile: String) {
         val config = readConfig()
         val mandatoryRules = extractMandatoryRulesFromConfig(config)
         val configurableRules = createConfigurableRules(config)
+
+        // ORDEN CRÍTICO: primero mandatory, luego configurables, y al final indentación
         return (mandatoryRules + configurableRules).toList()
     }
 
@@ -40,44 +42,51 @@ class ConfigLoader(private val configFile: String) {
     }
 
     internal fun createConfigurableRules(config: Map<String, Any>): List<FormatRule> {
-        return buildList {
-            config.forEach { (ruleName, ruleValue) ->
-                val rule = when (ruleName) {
-                    "enforce-spacing-around-equals", "assign-spacing-surrounding-equals" -> {
-                        if (ruleValue as Boolean) AssignSpacingRule(true, true) else null
-                    }
-                    "enforce-no-spacing-around-equals", "assign-no-spacing-surrounding-equals" -> {
-                        if (ruleValue as Boolean) AssignSpacingRule(false, false) else null
-                    }
-                    "enforce-spacing-before-colon-in-declaration" -> {
-                        if (ruleValue as Boolean) SpaceBeforeColonRule() else NoSpaceBeforeColonRule()
-                    }
-                    "enforce-spacing-after-colon-in-declaration" -> {
-                        if (ruleValue as Boolean) SpaceAfterColonRule() else NoSpaceAfterColonRule()
-                    }
-                    "line-breaks-after-println" -> {
-                        val count = (ruleValue as? Number)?.toInt() ?: 1
-                        LineBreakAfterPrintRule(if (count <= 0) 1 else count)
-                    }
+        val rules = mutableListOf<FormatRule>()
+        var indentationRule: FormatRule? = null
 
-                    "indent-inside-if" -> {
-                        val size = (ruleValue as? Number)?.toInt() ?: 2
-                        IndentationRule(size)
-                    }
-                    "if-brace-same-line" -> {
-                        if (ruleValue as Boolean) IfBraceOnSameLineRule() else null
-                    }
-                    "if-brace-below-line" -> {
-                        if (ruleValue as Boolean) IfBraceBelowLineRule() else null
-                    }
-                    "mandatory-single-space-separation",
-                    "mandatory-space-surrounding-operations",
-                    "mandatory-line-break-after-statement" -> null
-                    else -> null
+        config.forEach { (ruleName, ruleValue) ->
+            val rule = when (ruleName) {
+                "enforce-spacing-around-equals", "assign-spacing-surrounding-equals" -> {
+                    if (ruleValue as Boolean) AssignSpacingRule(true, true) else null
                 }
-                rule?.let { add(it) }
+                "enforce-no-spacing-around-equals", "assign-no-spacing-surrounding-equals" -> {
+                    if (ruleValue as Boolean) AssignSpacingRule(false, false) else null
+                }
+                "enforce-spacing-before-colon-in-declaration" -> {
+                    if (ruleValue as Boolean) SpaceBeforeColonRule() else NoSpaceBeforeColonRule()
+                }
+                "enforce-spacing-after-colon-in-declaration" -> {
+                    if (ruleValue as Boolean) SpaceAfterColonRule() else NoSpaceAfterColonRule()
+                }
+                "line-breaks-after-println" -> {
+                    val count = (ruleValue as? Number)?.toInt() ?: 1
+                    LineBreakAfterPrintRule(if (count <= 0) 1 else count)
+                }
+                "if-brace-same-line" -> {
+                    if (ruleValue as Boolean) IfBraceOnSameLineRule() else null
+                }
+                "if-brace-below-line" -> {
+                    if (ruleValue as Boolean) IfBraceBelowLineRule() else null
+                }
+                "indent-inside-if" -> {
+                    // Guardar para agregar al final
+                    val size = (ruleValue as? Number)?.toInt() ?: 2
+                    indentationRule = IndentationRule(size)
+                    null
+                }
+                "mandatory-single-space-separation",
+                "mandatory-space-surrounding-operations",
+                "mandatory-line-break-after-statement" -> null
+                else -> null
             }
+            rule?.let { rules.add(it) }
         }
+
+        // IMPORTANTE: Agregar IndentationRule AL FINAL
+        indentationRule?.let { rules.add(it) }
+
+        return rules
     }
 
     internal fun readConfig(): Map<String, Any> {

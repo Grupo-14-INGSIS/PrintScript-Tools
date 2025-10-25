@@ -39,6 +39,7 @@ class IfBraceBelowLineRuleTest {
 
         val formatter = Formatter()
         val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
+        debugTokens(formattedTokens)
         val result = containerToString(formattedTokens)
 
         println("\n=== RESULTADO FINAL ===")
@@ -57,5 +58,14 @@ class IfBraceBelowLineRuleTest {
             }
         }
         return result.toString()
+    }
+    private fun debugTokens(container: Container) {
+        println("\n=== DEBUG TOKENS ===")
+        for (i in 0 until container.size()) {
+            val token = container.get(i)
+            if (token != null) {
+                println("[$i] Type: ${token.type}, Content: '${token.content.replace("\n", "\\n")}'")
+            }
+        }
     }
 }
