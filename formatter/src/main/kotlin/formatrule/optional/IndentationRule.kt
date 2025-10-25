@@ -21,30 +21,21 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
         while (i < tokens.size()) {
             val token = tokens.get(i) ?: break
 
-            // Cuando encontramos un line break
             if (token.type == lineBreak) {
-                println("Found LINE_BREAK at index $i, currentIndent=$currentIndent") // DEBUG
-
-                // Limpiar espacios después del line break
+                // Eliminar espacios inmediatamente después del salto de línea
                 var nextIndex = i + 1
                 while (nextIndex < tokens.size() && tokens.get(nextIndex)?.type == space) {
-                    println("  Removing space at $nextIndex") // DEBUG
                     val response = tokens.remove(nextIndex)
                     tokens = response.container
                 }
 
-                // Ver qué viene después
                 val nextToken = tokens.get(i + 1)
-                println("  Next token: ${nextToken?.type}, content='${nextToken?.content}'") // DEBUG
-
                 if (nextToken != null && nextToken.type != lineBreak) {
                     val indentLevel = if (nextToken.type == closeBrace) {
                         maxOf(0, currentIndent - 1)
                     } else {
                         currentIndent
                     }
-
-                    println("  Adding indent level $indentLevel") // DEBUG
 
                     if (indentLevel > 0) {
                         val indentString = " ".repeat(indentSize * indentLevel)
@@ -57,16 +48,19 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
                 }
             }
 
-            // Actualizar nivel cuando encontramos llaves
             if (token.type == openBrace) {
-                println("Found OPEN_BRACE at index $i, incrementing indent to ${currentIndent + 1}") // DEBUG
                 currentIndent++
             } else if (token.type == closeBrace) {
-                println("Found CLOSE_BRACE at index $i, decrementing indent to ${currentIndent - 1}") // DEBUG
                 currentIndent = maxOf(0, currentIndent - 1)
             }
 
             i++
+        }
+
+        // Eliminar saltos de línea finales (garantiza que no quede \n al final)
+        while (tokens.size() > 0 && tokens.get(tokens.size() - 1)?.type == lineBreak) {
+            val response = tokens.remove(tokens.size() - 1)
+            tokens = response.container
         }
 
         return tokens

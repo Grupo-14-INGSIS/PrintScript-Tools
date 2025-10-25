@@ -14,6 +14,7 @@ class IfBraceBelowLineRule : FormatRule {
     private val closeParen = DataType.CLOSE_PARENTHESIS
     private val lineBreak = DataType.LINE_BREAK
     private val space = DataType.SPACE
+    private val semicolon = DataType.SEMICOLON
 
     override fun format(source: Container): Container {
         var tokens = source
@@ -38,8 +39,8 @@ class IfBraceBelowLineRule : FormatRule {
                         closeParenIndex + 1
                     )
 
-                    // Agregar indentación al contenido dentro del if
-                    tokens = addIndentationAfterOpenBrace(tokens, closeParenIndex + 2)
+                    // Agregar indentación dentro del bloque
+                    tokens = addIndentationInsideIf(tokens, closeParenIndex + 2)
                 } else {
                     val insertOpenIndex = closeParenIndex + 1
                     tokens = removeSpacesAndLineBreaks(tokens, insertOpenIndex)
@@ -49,52 +50,54 @@ class IfBraceBelowLineRule : FormatRule {
                     tokens = tokens.addAt(Token(openBrace, "{", Position(0, 0)), insertOpenIndex + 1)
                     tokens = tokens.addAt(Token(lineBreak, "\n", Position(0, 0)), insertOpenIndex + 2)
 
+                    // Agregar indentación dentro del bloque
+                    tokens = tokens.addAt(Token(space, "    ", Position(0, 0)), insertOpenIndex + 3)
+
                     // Buscar fin de la instrucción (hasta el punto y coma)
-                    var endIndex = insertOpenIndex + 3
+                    var endIndex = insertOpenIndex + 4
                     while (endIndex < tokens.size()) {
                         val t = tokens.get(endIndex)
-                        if (t?.content == ";") {
-                            break
-                        }
+                        if (t?.content == ";") break
                         endIndex++
                     }
 
                     // Insertar salto de línea y llave de cierre
                     tokens = tokens.addAt(Token(lineBreak, "\n", Position(0, 0)), endIndex + 1)
                     tokens = tokens.addAt(Token(closeBrace, "}", Position(0, 0)), endIndex + 2)
-
-                    // Agregar indentación (4 espacios)
-                    tokens = tokens.addAt(Token(space, "    ", Position(0, 0)), insertOpenIndex + 3)
                 }
             }
 
             i++
+        }
+
+        // Limpieza final: quitar saltos de línea al final del archivo
+        while (tokens.size() > 0 && tokens.get(tokens.size() - 1)?.type == lineBreak) {
+            val response = tokens.remove(tokens.size() - 1)
+            tokens = response.container
         }
 
         return tokens
     }
 
-    private fun addIndentationAfterOpenBrace(tokens: Container, openBraceIndex: Int): Container {
+    /**
+     * Agrega indentación (4 espacios) a la línea después del '{'
+     */
+    private fun addIndentationInsideIf(tokens: Container, openBraceIndex: Int): Container {
         var result = tokens
+        var j = openBraceIndex
 
-        // Buscar el line break después de la llave de apertura
-        var i = openBraceIndex
-        while (i < result.size()) {
-            val token = result.get(i)
-            if (token?.type == lineBreak) {
-                // Después del line break, agregar indentación si no hay espacios
-                val nextToken = result.get(i + 1)
-                if (nextToken != null && nextToken.type != space && nextToken.type != closeBrace) {
-                    result = result.addAt(
-                        Token(space, "    ", Position(0, 0)),
-                        i + 1
-                    )
+        // Buscar el primer salto de línea después del '{'
+        while (j < result.size()) {
+            val t = result.get(j)
+            if (t?.type == lineBreak) {
+                val next = result.get(j + 1)
+                if (next != null && next.type != space && next.type != closeBrace) {
+                    result = result.addAt(Token(space, "    ", Position(0, 0)), j + 1)
                 }
                 break
             }
-            i++
+            j++
         }
-
         return result
     }
 
