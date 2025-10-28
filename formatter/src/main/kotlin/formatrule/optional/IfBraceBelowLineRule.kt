@@ -109,7 +109,7 @@ class IfBraceBelowLineRule : FormatRule {
                 val next = result.get(j + 1)
                 if (next != null && next.type != space && next.type != closeBrace) {
                     // *** Asegurando la indentación de 4 espacios ***
-                    result = result.addAt(Token(space, "    ", Position(0, 0)), j + 1)
+                    result = result.addAt(Token(space, "  ", Position(0, 0)), j + 1)
                 }
                 break
             }
