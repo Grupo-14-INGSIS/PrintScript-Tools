@@ -16,7 +16,9 @@ class NoSpaceBeforeColonRule : FormatRule {
         var tokens = source
         var i = 0
         while (i < tokens.size()) {
-            token = tokens.get(i)
+            token = tokens.get(
+                i
+            )
             if (token == null) break
             /*
              * Delete every space that comes before a colon
@@ -33,12 +35,16 @@ class NoSpaceBeforeColonRule : FormatRule {
                 // For every token before the colon
                 while (i > 0) {
                     // See previous token
-                    previous = tokens.get(i - 1)
+                    previous = tokens.get(
+                        i - 1
+                    )
                     if (previous == null) {
                         break
                     } else if (previous.type == space) { // It's a space
                         // Remove it and correct i value
-                        val response = tokens.remove(i - 1)
+                        val response = tokens.remove(
+                            i - 1
+                        )
                         tokens = response.container
                         if (response.token == null) break
                         i--

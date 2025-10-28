@@ -21,7 +21,9 @@ class NoSpaceAfterColonRuleTest {
         var input = Container()
         input = input.addContainer(token(DataType.COLON, ":", 1, 0))
         input = input.addContainer(token(DataType.SPACE, " ", 1, 1))
-        input = input.addContainer(token(DataType.IDENTIFIER, "x", 1, 2))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "x", 1, 2)
+        )
 
         val result = rule.format(input)
 
@@ -34,7 +36,9 @@ class NoSpaceAfterColonRuleTest {
     fun `does not remove non-space after colon`() {
         var input = Container()
         input = input.addContainer(token(DataType.COLON, ":", 2, 0))
-        input = input.addContainer(token(DataType.IDENTIFIER, "y", 2, 1))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "y", 2, 1)
+        )
 
         val result = rule.format(input)
 
@@ -46,7 +50,9 @@ class NoSpaceAfterColonRuleTest {
     @Test
     fun `does not remove space not after colon`() {
         var input = Container()
-        input = input.addContainer(token(DataType.IDENTIFIER, "a", 3, 0))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "a", 3, 0)
+        )
         input = input.addContainer(token(DataType.SPACE, " ", 3, 1))
         input = input.addContainer(token(DataType.COLON, ":", 3, 2))
 
@@ -74,7 +80,9 @@ class NoSpaceAfterColonRuleTest {
         var input = Container()
         input = input.addContainer(token(DataType.COLON, ":", 5, 0))
         input = input.addContainer(token(DataType.SPACE, " ", 5, 1))
-        input = input.addContainer(token(DataType.IDENTIFIER, "z", 5, 2))
+        input = input.addContainer(
+            token(DataType.IDENTIFIER, "z", 5, 2)
+        )
 
         val result = rule.format(input)
 

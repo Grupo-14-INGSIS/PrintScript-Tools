@@ -35,10 +35,16 @@ object TokenMap {
     )
 
     fun classifyTokenMap(piece: String, version: String = "1.0"): DataType? { // 1.0 como default
-        return when (version) {
-            "1.0" -> tokenMapv10[piece]
-            "1.1" -> tokenMapv11[piece]
-            else -> tokenMapv10[piece]
+        if (version == "1.0") {
+            if (tokenMapv10.containsKey(piece)) {
+                return tokenMapv10[piece]
+            }
+        } else if (version == "1.1") {
+            if (tokenMapv11.containsKey(piece)) {
+                return tokenMapv10[piece]
+            }
         }
+        // No version specified or invalid token
+        return tokenMapv10[piece]
     } // si agrego una nueva version solo cambio aca
 }

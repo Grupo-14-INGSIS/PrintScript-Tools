@@ -18,38 +18,39 @@ class SpaceAroundOperatorRule : FormatRule {
     )
 
     override fun format(source: Container): Container {
-        var token: Token?
-        var previous: Token?
-        var next: Token?
         var tokens = source
         var i = 0
+
         while (i < tokens.size()) {
-            token = tokens.get(i)
-            if (token == null) {
-                break
-            } else if (token.type in operators) {
-                /*
-                 * Check first the right space and then the left token,
-                 * as otherwise will modify the current indexes.
-                 * This is the reason why there is a double i++ at the
-                 * end of the `previous` insertion
-                 */
-                next = tokens.get(i + 1)
-                if (next != null) {
-                    if (next.type != space) {
-                        tokens = tokens.addAt(Token(space, " ", Position(0, 0)), i + 1)
+            val token = tokens.get(i) ?: break
+
+            if (token.type in operators) {
+                // Primero agregar espacio DESPUÉS
+                if (i + 1 < tokens.size()) {
+                    val next = tokens.get(i + 1)
+                    if (next != null && next.type != space) {
+                        tokens = tokens.addAt(
+                            Token(space, " ", Position(0, 0)),
+                            i + 1
+                        )
                     }
                 }
-                previous = tokens.get(i - 1)
-                if (previous != null) {
-                    if (previous.type != space) {
-                        tokens = tokens.addAt(Token(space, " ", Position(0, 0)), i - 1)
-                        i++
+
+                // Luego agregar espacio ANTES
+                if (i > 0) {
+                    val previous = tokens.get(i - 1)
+                    if (previous != null && previous.type != space) {
+                        tokens = tokens.addAt(
+                            Token(space, " ", Position(0, 0)),
+                            i
+                        )
+                        i++ // Ajustar porque agregamos antes
                     }
                 }
             }
             i++
         }
+
         return tokens
     }
 }

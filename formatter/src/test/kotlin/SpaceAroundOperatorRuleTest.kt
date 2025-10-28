@@ -29,7 +29,9 @@ class SpaceAroundOperatorRuleTest {
     @Test
     fun `take() returns correct token`() {
         var container = Container()
-        container = container.addContainer(token(DataType.IDENTIFIER, "x", 2, 5))
+        container = container.addContainer(
+            token(DataType.IDENTIFIER, "x", 2, 5)
+        )
         val slice = container.take(0)
         assertEquals(1, slice.size())
         assertEquals("x", slice.get(0)?.content)
@@ -40,8 +42,13 @@ class SpaceAroundOperatorRuleTest {
     @Test
     fun `addAt inserts token at index`() {
         var container = Container()
-        container = container.addContainer(token(DataType.IDENTIFIER, "a", 3, 1))
-        container = container.addAt(token(DataType.ADDITION, "+", 3, 2), 1)
+        container = container.addContainer(
+            token(DataType.IDENTIFIER, "a", 3, 1)
+        )
+        container = container.addAt(
+            token(DataType.ADDITION, "+", 3, 2),
+            1
+        )
         assertEquals("+", container.get(1)?.content)
         assertEquals(3, container.get(1)?.position?.line)
         assertEquals(2, container.get(1)?.position?.column)

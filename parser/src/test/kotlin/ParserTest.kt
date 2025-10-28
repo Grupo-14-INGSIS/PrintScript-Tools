@@ -90,6 +90,13 @@ class ParserTest {
 
     @Test
     fun basicArithmeticTest() {
+        /*
+        Expected output:
+          +
+        8   *
+           2 3
+        */
+
         var container = Container()
         val sentence = listOf("8", "+", "2", "*", "3", ";")
         val dataTypes = listOf(
@@ -105,17 +112,24 @@ class ParserTest {
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
-        val mult = root.children[1]
+        val mult = root.children[0]
 
         assertEquals(DataType.ADDITION, root.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].type)
         assertEquals(DataType.MULTIPLICATION, mult.type)
         assertEquals(DataType.NUMBER_LITERAL, mult.children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, mult.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
     }
 
     @Test
     fun basicArithmeticTest2() {
+        /*
+        10 - 8 + 4 * 3 / 2 + 4
+        Expected output:
+
+
+        (10-8 + 4*3) / 2 + 4
+         */
         var container = Container()
         val sentence = listOf("10", "-", "8", "+", "4", "*", "3", "/", "2", "+", "4", ";")
         val dataTypes = listOf(
@@ -137,29 +151,22 @@ class ParserTest {
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
-        /*
-                          +
-                 +                 4
-            -         /
-        10     8   *     2
-                  4 3
-         */
 
-        val sum = root.children[0]
-        val sub = sum.children[0]
-        val div = sum.children[1]
-        val mul = div.children[0]
+        val sum = root.children[1]
+        val sub = sum.children[1]
+        val div = sum.children[0]
+        val mul = div.children[1]
 
         assertEquals(DataType.ADDITION, root.type)
         assertEquals(DataType.ADDITION, sum.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[0].type)
         assertEquals(DataType.SUBTRACTION, sub.type)
         assertEquals(DataType.DIVISION, div.type)
-        assertEquals(DataType.NUMBER_LITERAL, sub.children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, sub.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, sub.children[0].type)
         assertEquals(DataType.MULTIPLICATION, mul.type)
-        assertEquals(DataType.NUMBER_LITERAL, div.children[1].type)
-        assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, div.children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
     }
 }

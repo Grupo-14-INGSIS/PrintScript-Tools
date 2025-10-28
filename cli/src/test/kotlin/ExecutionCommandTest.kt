@@ -19,7 +19,11 @@ class ExecutionCommandTest {
 
         val output = outputStream.toString().trim()
         assertTrue(output.contains("Must specify the source file."))
-        assertTrue(output.contains("Usage: execution <source_file> [version]"))
+        assertTrue(
+            output.contains(
+                "Usage: execution <source_file> [version]"
+            )
+        )
     }
 
     @Test
@@ -31,7 +35,11 @@ class ExecutionCommandTest {
         command.execute(listOf("file.txt", "2.0"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: Unsupported version. Only 1.0 and 1.1 are supported."))
+        assertTrue(
+            output.contains(
+                "Error: Unsupported version. Only 1.0 and 1.1 are supported."
+            )
+        )
     }
 
     @Test
@@ -43,13 +51,19 @@ class ExecutionCommandTest {
         command.execute(listOf("nonexistent.txt"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: The source file 'nonexistent.txt' does not exist."))
+        assertTrue(
+            output.contains(
+                "Error: The source file 'nonexistent.txt' does not exist."
+            )
+        )
     }
 
     @Test
     fun `successful execution prints completion`() {
         val sourceFile = File.createTempFile("source", ".txt").apply {
-            writeText("print(1)") // Asegurate que esto sea válido para tu lexer/parser
+            writeText(
+                "print(1)"
+            ) // Asegurate que esto sea válido para tu lexer/parser
         }
 
         val outputStream = ByteArrayOutputStream()

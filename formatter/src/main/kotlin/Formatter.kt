@@ -18,7 +18,10 @@ class Formatter() {
         val rules: List<FormatRule> = loadRules(configFile)
         var tokens = tokens
         for (rule: FormatRule in rules) {
-            tokens = executeOne(tokens, rule)
+            tokens = executeOne(
+                tokens,
+                rule
+            )
         }
         return tokens
     }

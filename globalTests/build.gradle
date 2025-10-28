@@ -1,15 +1,21 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
-
 }
 
 dependencies {
     implementation(project(":container"))
+    implementation(project(":ast"))
     implementation(project(":token"))
     implementation(project(":tokendata"))
     implementation(project(":lexer"))
     implementation(project(":parser"))
     implementation(project(":interpreter"))
+    implementation(project(":inputprovider"))
     implementation(project(":cli"))
+    implementation(project(":formatter"))
     implementation("org.yaml:snakeyaml:2.0")
+}
+
+tasks.withType(PublishToMavenRepository).configureEach {
+    enabled = false
 }

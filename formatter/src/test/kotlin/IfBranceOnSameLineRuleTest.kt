@@ -2,7 +2,7 @@ package formatter.src.test.kotlin
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import formatter.src.main.kotlin.formatrule.mandatory.IfBraceOnSameLineRule
+import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
@@ -16,7 +16,9 @@ class IfBranceOnSameLineRuleTest {
     private fun containerOf(vararg tokens: Token): Container {
         var c = Container()
         for (t in tokens) {
-            c = c.addContainer(t)
+            c = c.addContainer(
+                t
+            )
         }
         return c
     }
@@ -24,12 +26,30 @@ class IfBranceOnSameLineRuleTest {
     @Test
     fun `keeps brace already on same line`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "if"),
-            token(DataType.OPEN_PARENTHESIS, "("),
-            token(DataType.IDENTIFIER, "z"),
-            token(DataType.CLOSE_PARENTHESIS, ")"),
-            token(DataType.SPACE, " "),
-            token(DataType.OPEN_BRACE, "{")
+            token(
+                DataType.IDENTIFIER,
+                "if"
+            ),
+            token(
+                DataType.OPEN_PARENTHESIS,
+                "("
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "z"
+            ),
+            token(
+                DataType.CLOSE_PARENTHESIS,
+                ")"
+            ),
+            token(
+                DataType.SPACE,
+                " "
+            ),
+            token(
+                DataType.OPEN_BRACE,
+                "{"
+            )
         )
 
         val rule = IfBraceOnSameLineRule()
@@ -45,12 +65,30 @@ class IfBranceOnSameLineRuleTest {
     @Test
     fun `does nothing when no if present`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "while"),
-            token(DataType.OPEN_PARENTHESIS, "("),
-            token(DataType.IDENTIFIER, "x"),
-            token(DataType.CLOSE_PARENTHESIS, ")"),
-            token(DataType.LINE_BREAK, "\n"),
-            token(DataType.OPEN_BRACE, "{")
+            token(
+                DataType.IDENTIFIER,
+                "while"
+            ),
+            token(
+                DataType.OPEN_PARENTHESIS,
+                "("
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ),
+            token(
+                DataType.CLOSE_PARENTHESIS,
+                ")"
+            ),
+            token(
+                DataType.LINE_BREAK,
+                "\n"
+            ),
+            token(
+                DataType.OPEN_BRACE,
+                "{"
+            )
         )
 
         val rule = IfBraceOnSameLineRule()
@@ -66,11 +104,26 @@ class IfBranceOnSameLineRuleTest {
     @Test
     fun `ignores if without brace`() {
         val source = containerOf(
-            token(DataType.IDENTIFIER, "if"),
-            token(DataType.OPEN_PARENTHESIS, "("),
-            token(DataType.IDENTIFIER, "cond"),
-            token(DataType.CLOSE_PARENTHESIS, ")"),
-            token(DataType.IDENTIFIER, "x") // no hay llave
+            token(
+                DataType.IDENTIFIER,
+                "if"
+            ),
+            token(
+                DataType.OPEN_PARENTHESIS,
+                "("
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "cond"
+            ),
+            token(
+                DataType.CLOSE_PARENTHESIS,
+                ")"
+            ),
+            token(
+                DataType.IDENTIFIER,
+                "x"
+            ) // no hay llave
         )
 
         val rule = IfBraceOnSameLineRule()

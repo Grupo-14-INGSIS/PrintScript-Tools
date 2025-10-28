@@ -20,8 +20,16 @@ class AnalayzerCommandTest {
 
         val output = outputStream.toString().trim()
 
-        assertTrue(output.contains("Error: Must specify the source file and the analysis configuration file."))
-        assertTrue(output.contains("Usage: analyzer <source_file> <configuration_file> [version]"))
+        assertTrue(
+            output.contains(
+                "Error: Must specify the source file and the analysis configuration file."
+            )
+        )
+        assertTrue(
+            output.contains(
+                "Usage: analyzer <source_file> <configuration_file> [version]"
+            )
+        )
     }
 
     @Test
@@ -47,25 +55,43 @@ class AnalayzerCommandTest {
         analyzer.execute(listOf("nonexistent.txt", "config.yml"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: The source file 'nonexistent.txt' does not exist."))
+        assertTrue(
+            output.contains(
+                "Error: The source file 'nonexistent.txt' does not exist."
+            )
+        )
     }
 
     @Test
     fun `config file does not exist`() {
-        val sourceFile = File.createTempFile("source", ".txt").apply { writeText("print(1)") }
+        val sourceFile = File.createTempFile("source", ".txt").apply {
+            writeText(
+                "print(1)"
+            )
+        }
         val analyzer = AnalyzerCommand()
         val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
 
-        analyzer.execute(listOf(sourceFile.absolutePath, "missing_config.yml"))
+        analyzer.execute(
+            listOf(sourceFile.absolutePath, "missing_config.yml")
+        )
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Error: The configuration file 'missing_config.yml' does not exist."))
+        assertTrue(
+            output.contains(
+                "Error: The configuration file 'missing_config.yml' does not exist."
+            )
+        )
     }
 
     @Test
     fun `successful analysis with no errors`() {
-        val sourceFile = File.createTempFile("source", ".txt").apply { writeText("print(1)") }
+        val sourceFile = File.createTempFile("source", ".txt").apply {
+            writeText(
+                "print(1)"
+            )
+        }
         val configFile = File.createTempFile("config", ".yml").apply {
             writeText(
                 """
@@ -82,7 +108,9 @@ class AnalayzerCommandTest {
         val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
 
-        analyzer.execute(listOf(sourceFile.absolutePath, configFile.absolutePath))
+        analyzer.execute(
+            listOf(sourceFile.absolutePath, configFile.absolutePath)
+        )
 
         val output = outputStream.toString()
         assertTrue(output.contains("SUCCESS: No issues were found"))

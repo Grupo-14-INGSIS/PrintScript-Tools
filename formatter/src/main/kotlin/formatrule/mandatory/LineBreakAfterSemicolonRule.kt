@@ -6,12 +6,15 @@ import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class LineBreakAfterSemicolonRule : FormatRule {
+class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatRule {
 
     private val semicolon = DataType.SEMICOLON
     private val lineBreak = DataType.LINE_BREAK
+    private val space = DataType.SPACE
 
     override fun format(source: Container): Container {
+        if (!enabled) return source
+
         var tokens = source
         var i = 0
 
@@ -19,17 +22,29 @@ class LineBreakAfterSemicolonRule : FormatRule {
             val token = tokens.get(i) ?: break
 
             if (token.type == semicolon) {
-                val next = tokens.get(i + 1)
+                var hasContentAfter = false
+                var j = i + 1
+                while (j < tokens.size()) {
+                    val nextToken = tokens.get(j) ?: break
+                    if (nextToken.type != lineBreak && nextToken.type != space) {
+                        hasContentAfter = true
+                        break
+                    }
+                    j++
+                }
 
-                // Si no hay token siguiente o no es un salto de línea
-                if (next == null) {
-                    // Agregar salto de línea al final
-                    tokens = tokens.addAt(
-                        Token(lineBreak, "\n", Position(0, 0)),
-                        i + 1
-                    )
-                } else if (next.type != lineBreak) {
-                    // Insertar salto de línea después del punto y coma
+                if (hasContentAfter) {
+                    while (i + 1 < tokens.size()) {
+                        val nextToken = tokens.get(i + 1) ?: break
+                        if (nextToken.type == lineBreak || nextToken.type == space) {
+                            val response = tokens.remove(i + 1)
+                            tokens = response.container
+                            if (response.token == null) break
+                        } else {
+                            break
+                        }
+                    }
+
                     tokens = tokens.addAt(
                         Token(lineBreak, "\n", Position(0, 0)),
                         i + 1

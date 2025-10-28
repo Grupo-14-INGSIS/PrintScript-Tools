@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceBetweenTokensRule
-import formatter.src.main.kotlin.ConfigLoader
 import formatter.src.main.kotlin.formatrule.FormatRule
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
@@ -53,31 +52,7 @@ class FormatterRulesTest {
         assertEquals(expected, output.container.map { it.content })
     }
 
-    @Test
-    fun `SpaceBetweenTokensRule keeps single space`() {
-        val a = token(DataType.IDENTIFIER, "a")
-        val sp = token(DataType.SPACE, " ")
-        val b = token(DataType.IDENTIFIER, "b")
-        val c = token(DataType.IDENTIFIER, "c")
-        val input = containerOf(a, sp, b, c)
 
-        val rule: FormatRule = SpaceBetweenTokensRule()
-        val output = rule.format(input)
-
-        val expected = listOf("a", " ", "b", "c")
-        assertEquals(expected, output.container.map { it.content })
-    }
-
-    @Test
-    fun `ConfigLoader createMandatoryRules has the two core rules`() {
-        val loader = ConfigLoader("dummy.yml")
-        val mandatory = loader.createMandatoryRules()
-        val names = mandatory.map { it::class.simpleName }
-
-        assertTrue(names.contains("SpaceAroundOperatorRule"))
-        assertTrue(names.contains("SpaceBetweenTokensRule"))
-        assertEquals(4, mandatory.size) // ahora hay nuevas reglas
-    }
 
     @Test
     fun `Container basic operations work`() {

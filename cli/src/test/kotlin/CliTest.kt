@@ -12,12 +12,21 @@ import kotlin.test.assertTrue
 class CliTest {
     @Test
     fun `empty args`() {
-        val cli = Cli(mapOf("analyze" to AnalyzerCommand(), "format" to FormatterCommand()))
+        val cli = Cli(
+            mapOf(
+                "analyze" to AnalyzerCommand(),
+                "format" to FormatterCommand()
+            )
+        )
         val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
         cli.run(emptyArray())
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Must specify a command: formatter | analyzer | validation | execution"))
+        assertTrue(
+            output.contains(
+                "Must specify a command: formatter | analyzer | validation | execution"
+            )
+        )
     }
 
     @Test
@@ -26,8 +35,12 @@ class CliTest {
         System.setOut(PrintStream(outputStream))
 
         val mockCommand = object : Command {
-            override fun execute(args: List<String>) {
-                println("Mock command executed with args: ${args.joinToString()}")
+            override fun execute(
+                args: List<String>
+            ) {
+                println(
+                    "Mock command executed with args: ${args.joinToString()}"
+                )
             }
         }
 
@@ -35,7 +48,11 @@ class CliTest {
         cli.run(arrayOf("analyze", "file.txt", "config.yml"))
 
         val output = outputStream.toString().trim()
-        assertTrue(output.contains("Mock command executed with args: file.txt, config.yml"))
+        assertTrue(
+            output.contains(
+                "Mock command executed with args: file.txt, config.yml"
+            )
+        )
     }
 
     @Test

@@ -5,41 +5,48 @@ import tokendata.src.main.kotlin.DataType
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-/** Must have as much one space between tokens */
-class SpaceBetweenTokensRule : FormatRule {
+class SpaceBetweenTokensRule(private val enabled: Boolean = true) : FormatRule {
 
     private val space = DataType.SPACE
+    private val noSpaceBefore = setOf(DataType.SEMICOLON)
+    private val noSpaceAfter = emptySet<DataType>()
 
     override fun format(source: Container): Container {
-        var firstToken: Token?
-        var secondToken: Token?
-        var tokens = source
+        if (!enabled) return source
+
+        var result = Container()
         var i = 0
-        while (i < tokens.size()) {
-            firstToken = tokens.get(i)
-            if (firstToken == null) break
-            /*
-             * Keep every non-space token
-             * Keep a space only if the previous one was not a space
-             * Which means:
-             * Delete every space token that comes after a space token
-             * Continue only if the next token is a non-space token
-             */
-            if (firstToken.type == space) {
-                secondToken = tokens.get(i + 1)
-                if (secondToken == null) {
-                    break // End of tokens
-                } else if (secondToken.type == space) {
-                    val response = tokens.remove(i + 1)
-                    tokens = response.container
-                    if (response.token == null) break
-                } else { // Non-space token after space -> continue
-                    i++
-                }
-            } else {
+
+        while (i < source.size()) {
+            val current = source.get(i)
+            val next = source.get(i + 1)
+
+            if (current == null) {
                 i++
+                continue
             }
+
+            if (current.type == space && next?.type == space) {
+                i++
+                continue
+            }
+
+            result = result.addContainer(current)
+
+            if (
+                current.type != space &&
+                next != null &&
+                next.type != space &&
+                next.type !in noSpaceBefore &&
+                current.type !in noSpaceAfter
+            ) {
+                val spaceToken = Token(space, " ", current.position)
+                result = result.addContainer(spaceToken)
+            }
+
+            i++
         }
-        return tokens
+
+        return result
     }
 }
