@@ -77,7 +77,6 @@ class IfBraceBelowLineRule : FormatRule {
                     }
 
                     // Insertar salto de línea y llave de cierre
-                    tokens = tokens.addAt(Token(lineBreak, "\n", Position(0, 0)), endIndex + 1)
                     tokens = tokens.addAt(Token(closeBrace, "}", Position(0, 0)), endIndex + 2)
                 }
             }
