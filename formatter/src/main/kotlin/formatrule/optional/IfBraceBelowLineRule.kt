@@ -36,18 +36,20 @@ class IfBraceBelowLineRule : FormatRule {
                 if (openBraceIndex != -1) {
                     // 1. Ya tiene llave, moverla a la línea siguiente.
 
-                    // **Lógica de limpieza mejorada (tomada del segundo código):**
                     // Remover todo entre ')' y '{'
                     tokens = removeBetweenParenAndBrace(tokens, closeParenIndex, openBraceIndex)
 
                     // El nuevo índice de la llave de apertura es ahora 'closeParenIndex + 1'
                     val newOpenBraceIndex = closeParenIndex + 1
 
-                    // **Asegurar un solo salto de línea:**
+                    // Asegurar un solo salto de línea:
                     tokens = tokens.addAt(
                         Token(lineBreak, "\n", Position(0, 0)),
                         newOpenBraceIndex
                     )
+
+                    // *** CORRECCIÓN: Aplicar indentación después de mover la llave ***
+                    tokens = addIndentationInsideIf(tokens, newOpenBraceIndex)
                 } else {
                     // 2. No tiene llave, insertarla (Lógica de inserción del primer código).
 
@@ -57,9 +59,13 @@ class IfBraceBelowLineRule : FormatRule {
                     tokens = removeSpacesAndLineBreaks(tokens, insertOpenIndex)
 
                     // Insertar salto de línea y llave de apertura
+                    val openBracePosition = insertOpenIndex + 1
                     tokens = tokens.addAt(Token(lineBreak, "\n", Position(0, 0)), insertOpenIndex)
-                    tokens = tokens.addAt(Token(openBrace, "{", Position(0, 0)), insertOpenIndex + 1)
+                    tokens = tokens.addAt(Token(openBrace, "{", Position(0, 0)), openBracePosition)
                     tokens = tokens.addAt(Token(lineBreak, "\n", Position(0, 0)), insertOpenIndex + 2)
+
+                    // *** CORRECCIÓN: Aplicar indentación después de insertar la llave ***
+                    tokens = addIndentationInsideIf(tokens, openBracePosition)
 
 
                     // Buscar fin de la instrucción (hasta el punto y coma)
@@ -89,7 +95,8 @@ class IfBraceBelowLineRule : FormatRule {
     }
 
     /**
-     * Agrega indentación (4 espacios) a la línea después del '{' (Del primer código original).
+     * Agrega indentación (4 espacios) a la línea después del '{'.
+     * Nótese que usa 4 espacios ("    ").
      */
     private fun addIndentationInsideIf(tokens: Container, openBraceIndex: Int): Container {
         var result = tokens
@@ -101,6 +108,7 @@ class IfBraceBelowLineRule : FormatRule {
             if (t?.type == lineBreak) {
                 val next = result.get(j + 1)
                 if (next != null && next.type != space && next.type != closeBrace) {
+                    // *** Asegurando la indentación de 4 espacios ***
                     result = result.addAt(Token(space, "    ", Position(0, 0)), j + 1)
                 }
                 break
@@ -110,9 +118,7 @@ class IfBraceBelowLineRule : FormatRule {
         return result
     }
 
-    /**
-     * Encuentra el paréntesis de cierre ')' que balancea el 'if'.
-     */
+    // El resto de funciones (findCloseParenthesis, findOpenBrace, removeBetweenParenAndBrace, removeSpacesAndLineBreaks) se mantienen igual.
     private fun findCloseParenthesis(tokens: Container, startIndex: Int): Int {
         var parenCount = 0
         var j = startIndex + 1
@@ -131,10 +137,6 @@ class IfBraceBelowLineRule : FormatRule {
         return -1
     }
 
-    /**
-     * Busca la llave de apertura '{' inmediatamente después del paréntesis de cierre,
-     * ignorando espacios y saltos de línea (Del segundo código).
-     */
     private fun findOpenBrace(tokens: Container, startIndex: Int): Int {
         var j = startIndex + 1
         while (j < tokens.size()) {
@@ -142,40 +144,31 @@ class IfBraceBelowLineRule : FormatRule {
             when (currentToken.type) {
                 openBrace -> return j
                 space, lineBreak -> j++
-                else -> return -1 // Si encuentra cualquier otra cosa antes de la llave, no hay llave
+                else -> return -1
             }
         }
         return -1
     }
 
-    /**
-     * Elimina todos los espacios y saltos de línea entre el paréntesis de cierre ')'
-     * y la llave de apertura '{'. (El corazón de la mejora del segundo código).
-     */
     private fun removeBetweenParenAndBrace(tokens: Container, closeParenIndex: Int, openBraceIndex: Int): Container {
         var result = tokens
         var currentBraceIndex = openBraceIndex
 
-        // El bucle se mantiene mientras haya tokens entre ')' y '{'
         while (closeParenIndex + 1 < currentBraceIndex) {
             val tokenBetween = result.get(closeParenIndex + 1)
 
             if (tokenBetween?.type == lineBreak || tokenBetween?.type == space) {
                 val response = result.remove(closeParenIndex + 1)
                 result = response.container
-                if (response.token == null) break // Seguridad si la remoción falla
-                currentBraceIndex-- // La posición de la llave se ha movido un paso a la izquierda
+                if (response.token == null) break
+                currentBraceIndex--
             } else {
-                break // Encontró algo que no es espacio/salto de línea
+                break
             }
         }
         return result
     }
 
-    /**
-     * Elimina espacios y saltos de línea desde un índice dado hacia adelante hasta encontrar
-     * algo diferente. (Del primer código, usado para el caso de inserción).
-     */
     private fun removeSpacesAndLineBreaks(tokens: Container, startIndex: Int): Container {
         var result = tokens
         var j = startIndex
