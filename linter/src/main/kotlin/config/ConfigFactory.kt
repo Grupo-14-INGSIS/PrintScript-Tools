@@ -12,7 +12,7 @@ class ConfigFactory {
             IdentifierNamingConfig(it["style"] as? String ?: "camelCase")
         }
 
-        val printlnConfig = (rulesMap["mandatory_variable_or_literal_in_println"] as? Map<String, Any>)?.let {
+        val printlnConfig = (rulesMap["mandatory-variable-or-literal-in-println"] as? Map<String, Any>)?.let {
             PrintLnConfig(it["enabled"] as? Boolean ?: true)
         }
 
