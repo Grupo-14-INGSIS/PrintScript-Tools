@@ -98,7 +98,7 @@ class AnalayzerCommandTest {
             rules:
               identifierNaming:
                 style: camelCase
-              printlnArg:
+              mandatory_variable_or_literal_in_println:
                 enabled: false
                 """.trimIndent()
             )

@@ -166,7 +166,7 @@ class Analyzer {
             )
         }
 
-        config.rules.printlnArg?.let {
+        config.rules.mandatory_variable_or_literal_in_println?.let {
             rules += PrintLnRule(
                 it.enabled
             )

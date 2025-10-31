@@ -18,6 +18,6 @@ class LinterConfigTest {
 
         assertEquals(rulesConfig, linterConfig.rules)
         assertEquals(identifierConfig, linterConfig.rules.identifier_format)
-        assertEquals(printlnConfig, linterConfig.rules.printlnArg)
+        assertEquals(printlnConfig, linterConfig.rules.mandatory_variable_or_literal_in_println)
     }
 }

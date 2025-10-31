@@ -8,14 +8,14 @@ class ConfigFactory {
             IdentifierNamingConfig(it["style"] as? String ?: "camelCase")
         }
 
-        val printlnConfig = (rulesMap["printlnArg"] as? Map<String, Any>)?.let {
+        val printlnConfig = (rulesMap["mandatory_variable_or_literal_in_println"] as? Map<String, Any>)?.let {
             PrintLnConfig(it["enabled"] as? Boolean ?: true)
         }
 
         return LinterConfig(
             rules = RulesConfig(
                 identifier_format = identifierConfig,
-                printlnArg = printlnConfig
+                mandatory_variable_or_literal_in_println = printlnConfig
             )
         )
     }
