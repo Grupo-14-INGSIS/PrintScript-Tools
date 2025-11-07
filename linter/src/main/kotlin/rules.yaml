@@ -1,5 +1,5 @@
 rules:
   identifierNaming:
     style: camelCase
-  printlnArg:
+  mandatory-variable-or-literal-in-println:
     enabled: true

@@ -11,6 +11,7 @@ class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatR
     private val semicolon = DataType.SEMICOLON
     private val lineBreak = DataType.LINE_BREAK
     private val space = DataType.SPACE
+    private val closeBrace = DataType.CLOSE_BRACE
 
     override fun format(source: Container): Container {
         if (!enabled) return source
@@ -27,6 +28,10 @@ class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatR
                 while (j < tokens.size()) {
                     val nextToken = tokens.get(j) ?: break
                     if (nextToken.type != lineBreak && nextToken.type != space) {
+                        // *** CORRECCIÓN: No agregar linebreak si viene '}' ***
+                        if (nextToken.type == closeBrace) {
+                            break
+                        }
                         hasContentAfter = true
                         break
                     }
