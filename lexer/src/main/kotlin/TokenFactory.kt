@@ -13,7 +13,7 @@ object TokenFactory {
         pieces.filter { it.isNotEmpty() }
             .forEach { piece ->
                 val type = when (piece) {
-                    " ", "\n" -> DataType.SPACE
+                    " " -> DataType.SPACE
                     else -> TokenMap.classifyTokenMap(piece, version)
                         ?: TokenPattern.classifyTokenPattern(piece)
                 }

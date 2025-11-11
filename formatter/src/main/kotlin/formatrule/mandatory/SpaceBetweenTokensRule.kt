@@ -34,6 +34,8 @@ class SpaceBetweenTokensRule(private val enabled: Boolean = true) : FormatRule {
             result = result.addContainer(current)
 
             if (
+                current.type != DataType.SEMICOLON &&
+                current.type != DataType.LINE_BREAK &&
                 current.type != space &&
                 next != null &&
                 next.type != space &&

@@ -13,6 +13,7 @@ import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceBelowLineRule
+import formatter.src.main.kotlin.formatrule.optional.LineBreakAfterPrintRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
@@ -56,6 +57,10 @@ class ConfigLoader(private val configFile: String) {
                         if (ruleValue as Boolean) SpaceAfterColonRule() else NoSpaceAfterColonRule()
                     }
                     "line-breaks-after-println" -> {
+                        val count = (ruleValue as? Number)?.toInt() ?: 0
+                        if (count > 0) LineBreakAfterPrintRule(count) else null
+                    }
+                    "line-breaks-before-println" -> {
                         val count = (ruleValue as? Number)?.toInt() ?: 0
                         if (count > 0) LineBreakBeforePrintRule(count) else null
                     }

@@ -8,7 +8,7 @@ import formatter.src.main.kotlin.formatrule.FormatRule
 
 class LineBreakAfterPrintRule(private val lineBreakCount: Int = 1) : FormatRule {
 
-    private val identifier = DataType.IDENTIFIER
+    private val identifier = DataType.PRINTLN
     private val lineBreak = DataType.LINE_BREAK
     private val space = DataType.SPACE
     private val semicolon = DataType.SEMICOLON
