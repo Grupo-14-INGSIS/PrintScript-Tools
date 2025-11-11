@@ -5,8 +5,9 @@ import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.LintRule
+import kotlin.jvm.JvmOverloads
 
-class IdentifierNamingRule(private val style: String = "camelCase") : LintRule {
+class IdentifierNamingRule @JvmOverloads constructor(private val style: String = "camelCase") : LintRule {
 
     override fun apply(root: ASTNode): List<LintError> = checkNode(root)
 

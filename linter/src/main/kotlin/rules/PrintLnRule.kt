@@ -5,8 +5,9 @@ import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.LintRule
+import kotlin.jvm.JvmOverloads
 
-class PrintLnRule(private val enabled: Boolean = true) : LintRule {
+class PrintLnRule @JvmOverloads constructor(private val enabled: Boolean = true) : LintRule {
 
     override fun apply(root: ASTNode): List<LintError> =
         if (!enabled) emptyList() else checkNode(root)

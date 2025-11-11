@@ -5,8 +5,10 @@ import container.src.main.kotlin.Container
 import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
+import kotlin.jvm.JvmOverloads
 
-class Parser(
+// JvmOverloads makes simpler constructors for the packages when using default values such as version
+class Parser @JvmOverloads constructor(
     private var tokens: Container,
     private val version: String = "1.0"
 ) {
