@@ -2,8 +2,9 @@ package lexer.src.main.kotlin
 
 import container.src.main.kotlin.Container
 import java.io.File
+import kotlin.jvm.JvmOverloads
 
-class Lexer(val source: CharSource, val version: String = "1.0") {
+class Lexer @JvmOverloads constructor(val source: CharSource, val version: String = "1.0") {
 
     var list = listOf<String>()
 
