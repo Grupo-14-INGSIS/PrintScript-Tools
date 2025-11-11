@@ -3,7 +3,7 @@ package lexer.src.main.kotlin
 import container.src.main.kotlin.Container
 import java.io.File
 
-class Lexer(val source: CharSource) {
+class Lexer(val source: CharSource, val version: String = "1.0") {
 
     var list = listOf<String>()
 
@@ -41,7 +41,7 @@ class Lexer(val source: CharSource) {
     }
 
     fun createToken(list: List<String>): Container {
-        return TokenFactory.createTokens(list)
+        return TokenFactory.createTokens(list, version)
     }
 
 // puede leer un String gracias a...
