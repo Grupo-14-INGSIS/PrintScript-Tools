@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
 
-class LineBreakAfterPrintlnTest {
+class LineBreakBeforePrintlnTest {
 
     @Test
-    fun `test line-breaks-after-println inserts blank line before second println`() {
+    fun `test line-breaks-before-println inserts blank line before println`() {
         val input = """
             let something:string = "a really cool thing";
             println(something);
@@ -20,13 +20,14 @@ class LineBreakAfterPrintlnTest {
 
         val expected = """
             let something:string = "a really cool thing";
+
             println(something);
 
             println("in the way she moves");
         """.trimIndent()
 
         val configContent = """{
-          "line-breaks-after-println": 1
+          "line-breaks-before-println": 1
         }"""
         val configFile = File.createTempFile("test_config", ".json").apply {
             writeText(configContent)
@@ -49,7 +50,7 @@ class LineBreakAfterPrintlnTest {
     }
 
     @Test
-    fun `test line-breaks-after-println deletes blank line before second println`() {
+    fun `test line-breaks-before-println deletes blank line before println`() {
         val input = """
             let something:string = "a really cool thing";
             println(something);
@@ -64,7 +65,7 @@ class LineBreakAfterPrintlnTest {
         """.trimIndent()
 
         val configContent = """{
-          "line-breaks-after-println": 0
+          "line-breaks-before-println": 0
         }"""
         val configFile = File.createTempFile("test_config", ".json").apply {
             writeText(configContent)

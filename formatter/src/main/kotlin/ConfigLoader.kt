@@ -58,11 +58,11 @@ class ConfigLoader(private val configFile: String) {
                     }
                     "line-breaks-after-println" -> {
                         val count = (ruleValue as? Number)?.toInt() ?: 0
-                        if (count > 0) LineBreakAfterPrintRule(count) else null
+                        LineBreakAfterPrintRule(count)
                     }
                     "line-breaks-before-println" -> {
                         val count = (ruleValue as? Number)?.toInt() ?: 0
-                        if (count > 0) LineBreakBeforePrintRule(count) else null
+                        LineBreakBeforePrintRule(count)
                     }
                     "indent-inside-if" -> {
                         val size = (ruleValue as? Number)?.toInt() ?: 2

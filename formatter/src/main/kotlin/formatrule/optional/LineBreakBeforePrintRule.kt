@@ -1,61 +1,36 @@
 package formatter.src.main.kotlin.formatrule.optional
 
 import container.src.main.kotlin.Container
-import tokendata.src.main.kotlin.DataType
-import tokendata.src.main.kotlin.Position
-import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
+import token.src.main.kotlin.Token
+import tokendata.src.main.kotlin.DataType
 
 class LineBreakBeforePrintRule(private val count: Int = 1) : FormatRule {
 
-    private val printlnType = DataType.PRINTLN
-    private val lineBreak = DataType.LINE_BREAK
-
     override fun format(source: Container): Container {
-        var tokens = source
-        var i = 0
-        var previousWasPrintln = false
+        val newTokens = mutableListOf<Token>()
+        val breaksToAdd = count + 1
 
-        while (i < tokens.size()) {
-            val token = tokens.get(i) ?: break
+        for (i in 0 until source.size()) {
+            val currentToken = source.get(i)!!
 
-            if (token.type == printlnType) {
-                // Solo insertar salto si hubo otro println antes
-                if (!previousWasPrintln) {
-                    previousWasPrintln = true
-                    i++
-                    continue
-                }
-
-                // Contar cuántos LINE_BREAK hay antes
-                var lineBreaksBefore = 0
-                var j = i - 1
-                while (j >= 0) {
-                    val prev = tokens.get(j)
-                    if (prev?.type == lineBreak) {
-                        lineBreaksBefore++
-                        j--
-                    } else if (prev?.type == DataType.SPACE) {
-                        j--
-                    } else {
-                        break
-                    }
-                }
-
-                // Insertar los que faltan
-                val missing = count - lineBreaksBefore
-                repeat(missing.coerceAtLeast(0)) {
-                    tokens = tokens.addAt(
-                        Token(lineBreak, "\n", Position(0, 0)),
-                        i
+            if (currentToken.type == DataType.PRINTLN) {
+                // Al encontrar un println, eliminamos los saltos de línea y espacios previos.
+                while (newTokens.isNotEmpty() && (
+                    newTokens.last().type == DataType.LINE_BREAK ||
+                        newTokens.last().type == DataType.SPACE
                     )
-                    i++ // avanzar para no reinsertar en el mismo lugar
+                ) {
+                    newTokens.removeLast()
+                }
+
+                // Añadimos la cantidad correcta de saltos de línea.
+                for (k in 0 until breaksToAdd) {
+                    newTokens.add(Token(DataType.LINE_BREAK, "\n", currentToken.position))
                 }
             }
-
-            i++
+            newTokens.add(currentToken)
         }
-
-        return tokens
+        return Container(newTokens)
     }
 }

@@ -1,99 +1,53 @@
 package formatter.src.main.kotlin.formatrule.optional
 
 import container.src.main.kotlin.Container
-import tokendata.src.main.kotlin.DataType
-import tokendata.src.main.kotlin.Position
-import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
+import token.src.main.kotlin.Token
+import tokendata.src.main.kotlin.DataType
 
-class LineBreakAfterPrintRule(private val lineBreakCount: Int = 1) : FormatRule {
-
-    private val identifier = DataType.PRINTLN
-    private val lineBreak = DataType.LINE_BREAK
-    private val space = DataType.SPACE
-    private val semicolon = DataType.SEMICOLON
-
-    override fun format(source: Container): Container {
-        var tokens = source
+class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
+    override fun format(tokens: Container): Container {
+        val newTokens = mutableListOf<Token>()
         var i = 0
-
         while (i < tokens.size()) {
-            val token = tokens.get(i) ?: break
+            val currentToken = tokens.get(i)!!
+            newTokens.add(currentToken)
 
-            // Buscar "println"
-            if (token.type == identifier && token.content == "println") {
-                // Encontrar el semicolon que cierra este println
-                var semicolonIndex = findSemicolonAfterPrintln(tokens, i)
-
-                if (semicolonIndex == -1) {
-                    i++
-                    continue
-                }
-
-                // Contar cuántos line breaks ya existen DESPUÉS del semicolon
-                var existingLineBreaks = 0
-                var j = semicolonIndex + 1
-
-                // Contar line breaks (pueden estar intercalados con espacios)
-                while (j < tokens.size()) {
-                    val next = tokens.get(j) ?: break
-                    if (next.type == lineBreak) {
-                        existingLineBreaks++
-                        j++
-                    } else if (next.type == space) {
-                        j++
-                    } else {
+            if (currentToken.type == DataType.PRINTLN) {
+                // Encontrar el punto y coma que cierra la sentencia println
+                var semicolonIndex = -1
+                for (j in i + 1 until tokens.size()) {
+                    if (tokens.get(j)!!.type == DataType.SEMICOLON) {
+                        semicolonIndex = j
                         break
                     }
                 }
 
-                // Total de line breaks que queremos: lineBreakCount + 1 (el mandatory)
-                val totalNeeded = lineBreakCount + 1
-                val missing = totalNeeded - existingLineBreaks
+                if (semicolonIndex != -1) {
+                    // Añadir los tokens hasta el punto y coma
+                    for (j in i + 1..semicolonIndex) {
+                        newTokens.add(tokens.get(j)!!)
+                    }
+                    i = semicolonIndex
 
-                if (missing > 0) {
-                    // Insertar después del semicolon, saltando espacios
-                    var insertPos = semicolonIndex + 1
-                    while (insertPos < tokens.size() && tokens.get(insertPos)?.type == space) {
-                        insertPos++
+                    // Avanzar más allá de los saltos de línea existentes para no duplicarlos
+                    var nextTokenIndex = semicolonIndex + 1
+                    while (nextTokenIndex < tokens.size() && tokens.get(nextTokenIndex)!!.type == DataType.LINE_BREAK) {
+                        nextTokenIndex++
                     }
 
-                    // Insertar después de los line breaks existentes
-                    insertPos += existingLineBreaks
-
-                    repeat(missing) {
-                        tokens = tokens.addAt(
-                            Token(lineBreak, "\n", Position(0, 0)),
-                            insertPos
-                        )
+                    // Añadir la cantidad correcta de saltos de línea (config + 1)
+                    val breaksToAdd = lineBreaks + 1
+                    for (k in 0 until breaksToAdd) {
+                        newTokens.add(Token(DataType.LINE_BREAK, "\n", currentToken.position))
                     }
+
+                    // Mover el índice principal al lugar correcto
+                    i = nextTokenIndex - 1
                 }
             }
             i++
         }
-
-        return tokens
-    }
-
-    private fun findSemicolonAfterPrintln(tokens: Container, startIndex: Int): Int {
-        var parenCount = 0
-        var j = startIndex + 1
-
-        while (j < tokens.size()) {
-            val current = tokens.get(j) ?: break
-
-            when (current.type) {
-                DataType.OPEN_PARENTHESIS -> parenCount++
-                DataType.CLOSE_PARENTHESIS -> parenCount--
-                semicolon -> {
-                    if (parenCount == 0) {
-                        return j
-                    }
-                }
-                else -> {}
-            }
-            j++
-        }
-        return -1
+        return Container(newTokens)
     }
 }
