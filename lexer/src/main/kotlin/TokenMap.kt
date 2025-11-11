@@ -40,8 +40,9 @@ object TokenMap {
                 return tokenMapv10[piece]
             }
         } else if (version == "1.1") {
+            System.out.println(tokenMapv11.containsKey(piece))
             if (tokenMapv11.containsKey(piece)) {
-                return tokenMapv10[piece]
+                return tokenMapv11[piece]
             }
         }
         // No version specified or invalid token
