@@ -10,34 +10,38 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
         val newTokens = mutableListOf<Token>()
         var indentationLevel = 0
         val indent = " ".repeat(indentSize)
+        var isAtLineStart = true // Empezamos asumiendo que estamos al inicio de una línea
 
         for (i in 0 until source.size()) {
             val currentToken = source.get(i)!!
 
-            if (currentToken.type == DataType.OPEN_BRACE) {
-                newTokens.add(currentToken)
-                indentationLevel++
-            } else if (currentToken.type == DataType.CLOSE_BRACE) {
-                indentationLevel--
-                // Si la llave de cierre está en una nueva línea, aplicar indentación
-                if (newTokens.lastOrNull()?.type == DataType.LINE_BREAK) {
-                    newTokens.add(Token(DataType.SPACE, indent.repeat(indentationLevel), currentToken.position))
+            if (isAtLineStart) {
+                // Si estamos al inicio de una línea, ignoramos cualquier token de espacio.
+                if (currentToken.type == DataType.SPACE) {
+                    continue
                 }
-                newTokens.add(currentToken)
-            } else if (currentToken.type == DataType.LINE_BREAK) {
-                newTokens.add(currentToken)
-                // Mirar si el siguiente token no es una llave de cierre
-                // Corrected: Check bounds before accessing
-                if (i + 1 < source.size()) { // Check if there's a next token
-                    val nextToken = source.get(i + 1)!! // Now it's safe to get
-                    if (nextToken.type != DataType.CLOSE_BRACE) {
-                        newTokens.add(Token(DataType.SPACE, indent.repeat(indentationLevel), currentToken.position))
-                    }
+
+                // Encontramos el primer token que no es un espacio.
+                // Añadimos la indentación correcta ANTES de este token.
+                isAtLineStart = false
+                val levelForCurrentLine = if (currentToken.type == DataType.CLOSE_BRACE) {
+                    (indentationLevel - 1).coerceAtLeast(0)
                 } else {
-                    // If it's the last token and it's a LINE_BREAK, no indentation needed after it
+                    indentationLevel
                 }
-            } else {
-                newTokens.add(currentToken)
+
+                if (levelForCurrentLine > 0) {
+                    newTokens.add(Token(DataType.SPACE, indent.repeat(levelForCurrentLine), currentToken.position))
+                }
+            }
+
+            newTokens.add(currentToken)
+
+            when (currentToken.type) {
+                DataType.OPEN_BRACE -> indentationLevel++
+                DataType.CLOSE_BRACE -> indentationLevel = (indentationLevel - 1).coerceAtLeast(0)
+                DataType.LINE_BREAK -> isAtLineStart = true
+                else -> { /* No hacer nada */ }
             }
         }
         return Container(newTokens)
