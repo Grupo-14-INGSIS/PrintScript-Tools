@@ -6,18 +6,18 @@ import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
 
 class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
-    override fun format(tokens: Container): Container {
+    override fun format(source: Container): Container {
         val newTokens = mutableListOf<Token>()
         var i = 0
-        while (i < tokens.size()) {
-            val currentToken = tokens.get(i)!!
+        while (i < source.size()) {
+            val currentToken = source.get(i)!!
             newTokens.add(currentToken)
 
             if (currentToken.type == DataType.PRINTLN) {
                 // Encontrar el punto y coma que cierra la sentencia println
                 var semicolonIndex = -1
-                for (j in i + 1 until tokens.size()) {
-                    if (tokens.get(j)!!.type == DataType.SEMICOLON) {
+                for (j in i + 1 until source.size()) {
+                    if (source.get(j)!!.type == DataType.SEMICOLON) {
                         semicolonIndex = j
                         break
                     }
@@ -26,14 +26,14 @@ class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
                 if (semicolonIndex != -1) {
                     // Añadir los tokens hasta el punto y coma
                     for (j in i + 1..semicolonIndex) {
-                        newTokens.add(tokens.get(j)!!)
+                        newTokens.add(source.get(j)!!)
                     }
                     i = semicolonIndex
 
                     // Verificar si es la última sentencia del archivo
                     var isLastStatement = true
-                    for (k in semicolonIndex + 1 until tokens.size()) {
-                        val nextType = tokens.get(k)!!.type
+                    for (k in semicolonIndex + 1 until source.size()) {
+                        val nextType = source.get(k)!!.type
                         if (nextType != DataType.SPACE && nextType != DataType.LINE_BREAK) {
                             isLastStatement = false
                             break
@@ -44,7 +44,7 @@ class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
                     if (!isLastStatement) {
                         // Avanzar más allá de los saltos de línea existentes
                         var nextTokenIndex = semicolonIndex + 1
-                        while (nextTokenIndex < tokens.size() && tokens.get(nextTokenIndex)!!.type == DataType.LINE_BREAK) {
+                        while (nextTokenIndex < source.size() && source.get(nextTokenIndex)!!.type == DataType.LINE_BREAK) {
                             nextTokenIndex++
                         }
 
@@ -58,7 +58,7 @@ class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
                         i = nextTokenIndex - 1
                     } else {
                         // Si es la última sentencia, no se añaden saltos de línea y terminamos
-                        i = tokens.size()
+                        i = source.size()
                     }
                 }
             }
