@@ -495,7 +495,7 @@ class Parser @JvmOverloads constructor(
     }
 
     // Iteration
-    private fun processTokens(symbols: List<PrattToken>): List<PrattToken> {
+    fun processTokens(symbols: List<PrattToken>): List<PrattToken> {
         recursionDepth++
         if (recursionDepth > MAX_RECURSION_DEPTH) {
             println("ERROR: Max recursion depth reached in processTokens")
@@ -529,7 +529,7 @@ class Parser @JvmOverloads constructor(
     }
 
     // Set precedence to operation
-    private fun associateOperation(symbols: List<PrattToken>, operatorIndex: Int): List<PrattToken> {
+    fun associateOperation(symbols: List<PrattToken>, operatorIndex: Int): List<PrattToken> {
         val left = symbols[operatorIndex - 1]
         val right = symbols[operatorIndex + 1]
         val operatorToken = symbols[operatorIndex]
@@ -556,7 +556,7 @@ class Parser @JvmOverloads constructor(
     }
 
     // Turn Tokens into PrattTokens
-    private fun prattify(tokens: Container): List<PrattToken> {
+    fun prattify(tokens: Container): List<PrattToken> {
         val result = mutableListOf<PrattToken>()
         for (i in 0 until tokens.size()) {
             val token = tokens.get(i)
@@ -567,7 +567,7 @@ class Parser @JvmOverloads constructor(
         return result
     }
 
-    private fun highestPrecedIndex(symbols: List<PrattToken>): Int {
+    fun highestPrecedIndex(symbols: List<PrattToken>): Int {
         var outputIndex = -1
         var highestPrecedence = -1
 
@@ -595,7 +595,7 @@ class Parser @JvmOverloads constructor(
         return outputIndex
     }
 
-    private fun prattToAST(symbol: PrattToken): ASTNode {
+    fun prattToAST(symbol: PrattToken): ASTNode {
         val children = symbol.allChildren().map { prattToAST(it) }
 
         return ASTNode(

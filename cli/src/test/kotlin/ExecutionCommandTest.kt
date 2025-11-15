@@ -63,7 +63,7 @@ class ExecutionCommandTest {
         val sourceFile = File.createTempFile("source", ".txt").apply {
             writeText(
                 "print(1)"
-            ) // Asegurate que esto sea válido para tu lexer/parser
+            )
         }
 
         val outputStream = ByteArrayOutputStream()

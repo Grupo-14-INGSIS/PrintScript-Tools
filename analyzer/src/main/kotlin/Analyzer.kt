@@ -61,10 +61,9 @@ class Analyzer {
         )
 
         val progress = MultiStepProgress()
-        progress.initialize(5) // lexer, tokens, parser, load rules, analyze
+        progress.initialize(5)
 
         try {
-            // Paso 1: Análisis léxico
             val lexerStep = progress.startStep(
                 "Performing lexical analysis"
             )
@@ -76,7 +75,6 @@ class Analyzer {
                 "Lexical analysis completed"
             )
 
-            // Paso 2: Generación de tokens
             val tokenStep = progress.startStep(
                 "Generating tokens"
             )
@@ -87,7 +85,6 @@ class Analyzer {
                 "${tokens.size()} tokens generated"
             )
 
-            // Paso 3: Análisis sintáctico
             val parserStep = progress.startStep(
                 "Building Abstract Syntax Tree"
             )
@@ -99,7 +96,6 @@ class Analyzer {
                 "AST built successfully"
             )
 
-            // Paso 4: Cargar reglas de análisis
             val rulesStep = progress.startStep(
                 "Loading analysis rules"
             )
@@ -110,7 +106,6 @@ class Analyzer {
                 "${lintRules.size} rule(s) loaded"
             )
 
-            // Paso 5: Ejecutar análisis
             val analysisStep = progress.startStep(
                 "Executing static code analysis"
             )
@@ -148,7 +143,6 @@ class Analyzer {
             )
             e.printStackTrace()
         }
-        // Comment
     }
 
     private fun loadLintRules(configFile: String): List<LintRule> {
