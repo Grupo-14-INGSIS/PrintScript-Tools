@@ -6,7 +6,7 @@ import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class AssignSpacingRule( //manejo espacio del =
+class AssignSpacingRule( // manejo espacio del =
     private val spaceBefore: Boolean = true,
     private val spaceAfter: Boolean = true
 ) : FormatRule {
