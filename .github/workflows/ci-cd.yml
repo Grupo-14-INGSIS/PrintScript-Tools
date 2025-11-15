@@ -54,7 +54,7 @@ jobs:
           echo "gpr.user=${{ secrets.MY_USER }}" >> gradle.properties
           echo "gpr.key=${{ secrets.MY_TOKEN }}" >> gradle.properties
 
-      - name: Run ktlintFormat
+      - name: Run ktlintFormat # no está en myPlugin ni va a estar por la razón que explico en el archivo del pluginy
         run: |
           CHANGES_BEFORE=$(git diff --name-only)
           ./gradlew ktlintFormat --quiet
@@ -64,17 +64,8 @@ jobs:
             exit 1
           fi
 
-      - name: Run ktlintCheck
-        run: ./gradlew ktlintCheck --quiet
-
-      - name: Run tests
-        run: |
-          ./gradlew test --continue > .git/test-output.log
-          if grep -q "FAILED" .git/test-output.log; then
-            echo "Build blocked: tests failed."
-            cat .git/test-output.log | grep FAILED
-            exit 1
-          fi
+      #elimino tmb el bloque para ktlint Check porque esa acción se enceuntra incluída
+      #en myPlugin. Sería redundante dejar ambas
 
       - name: Verify coverage
         run: |
@@ -85,14 +76,12 @@ jobs:
             exit 1
           fi
 
-      - name: Check
-        run: ./gradlew check
+      #remuevo check porque ya está incluído en el build de abajo. NO así el format
 
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build --continue > .git/test-output.log
 
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish --no-configuration-cache
 
-        #

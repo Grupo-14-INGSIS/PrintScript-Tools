@@ -9,6 +9,10 @@ repositories {
     mavenCentral()
 }
 
+project.gradle.taskGraph.whenReady {
+    project.logger.lifecycle(">>>>> MI PLUGIN ESTÁ FUNCIONANDO <<<<<")
+}
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
