@@ -1,24 +1,21 @@
 package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
-object VarDeclarationAndAssignment : ActionType {
+object ConstDeclarationAndAssignment : ActionType {
     override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
-        require(node.children.size >= 3) {
-            "Invalid variable declaration and assignment: " +
-                "missing arguments. Expected format: let <variableName> : <variableType> = <value>"
-        }
+        require(node.children.size >= 3) { "Declaración de constante con asignación inválida: faltan argumentos" }
 
-        val variableName = node.children[0].content // "x"
-        val variableType = node.children[1].content // "number"
+        val constantName = node.children[0].content // "x"
+        val constantType = node.children[1].content // "number"
         val assignedValue = interpreter.interpret(node.children[2])
 
         // validar que el valor sea compatible con el tipo
         validateTypeCompatibility(
             assignedValue,
-            variableType
+            constantType
         )
 
-        interpreter.declareVariable(variableName, assignedValue)
+        interpreter.declareConstant(constantName, assignedValue)
 
         return Unit
     }

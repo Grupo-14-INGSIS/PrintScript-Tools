@@ -94,9 +94,10 @@ class Executor {
                 version,
                 inputProvider
             )
-            interpreter.executeAST(
+            val executionOutput = interpreter.executeAST(
                 ast
             )
+            executionOutput.forEach { println(it) }
             executionStep.complete(
                 "Program executed successfully"
             )

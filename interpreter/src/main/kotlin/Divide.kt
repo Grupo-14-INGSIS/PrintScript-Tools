@@ -3,22 +3,17 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object Divide : ActionType {
-    override fun interpret(node: ASTNode): Any {
-        val left = node.children[0]
-        val right = node.children[1]
+    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+        val left = interpreter.interpret(node.children[0])
+        val right = interpreter.interpret(node.children[1])
 
-        val leftValue = left.content
-        val rightValue = right.content
-
-        val leftNum = leftValue.toDoubleOrNull()
-        val rightNum = rightValue.toDoubleOrNull()
-
-        if (rightNum == 0.0) {
-            return false
+        if (right.toString().toDouble() == 0.0) {
+            throw IllegalArgumentException("Cannot divide by zero")
         }
-        if (leftNum != null && rightNum != null) {
-            return leftNum / rightNum
+
+        return when {
+            left is Number && right is Number -> left.toString().toDouble() / right.toString().toDouble()
+            else -> throw IllegalArgumentException("Cannot divide types ${left?.javaClass?.simpleName} and ${right?.javaClass?.simpleName}")
         }
-        return false
     }
 }
