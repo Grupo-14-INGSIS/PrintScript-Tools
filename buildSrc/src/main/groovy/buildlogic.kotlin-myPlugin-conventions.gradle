@@ -9,6 +9,10 @@ repositories {
     mavenCentral()
 }
 
+project.gradle.taskGraph.whenReady {
+    project.logger.lifecycle(">>>>> MI PLUGIN ESTÁ FUNCIONANDO <<<<<")
+}
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
@@ -20,9 +24,6 @@ test {
 }
 
 tasks.named("build") {
-    doFirst {
-        println(">>> Ejecutando build modificado por myPlugin")
-    }
     dependsOn "ktlintCheck", "test" //no pongo el de formatt pq cambiaria el archivo y no quier que lo haga aca. Lo corro automatico, pero desde la terminal.
 }
 
