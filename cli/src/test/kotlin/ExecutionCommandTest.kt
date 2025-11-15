@@ -62,8 +62,8 @@ class ExecutionCommandTest {
     fun `successful execution prints completion`() {
         val sourceFile = File.createTempFile("source", ".txt").apply {
             writeText(
-                "print(1)"
-            )
+                "println(1);"
+            ) // Asegurate que esto sea válido para tu lexer/parser
         }
 
         val outputStream = ByteArrayOutputStream()
@@ -74,6 +74,7 @@ class ExecutionCommandTest {
 
         val output = outputStream.toString()
         assertTrue(output.contains("Starting execution of"))
+        assertTrue(output.contains("1"))
         assertTrue(output.contains("Program executed successfully"))
     }
 }

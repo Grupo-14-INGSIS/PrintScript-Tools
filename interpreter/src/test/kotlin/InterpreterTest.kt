@@ -7,38 +7,41 @@ import org.junit.jupiter.api.Test
 import interpreter.src.main.kotlin.Interpreter
 import interpreter.src.main.kotlin.Actions
 
+import tokendata.src.main.kotlin.DataType
+
 class InterpreterTest {
 
-    private fun node(content: String, children: List<ASTNode> = emptyList()) =
-        ASTNode(type = null, content = content, position = Position(1, 1), children)
+    private fun node(content: String, type: DataType, children: List<ASTNode> = emptyList()) =
+        ASTNode(type = type, content = content, position = Position(1, 1), children)
 
     @Test
     fun `determineAction arithmetic`() {
         val interpreter = Interpreter("1.0")
 
-        assertEquals(Actions.ADD, interpreter.determineAction(node("+")))
-        assertEquals(Actions.SUBTRACT, interpreter.determineAction(node("-")))
-        assertEquals(Actions.MULTIPLY, interpreter.determineAction(node("*")))
-        assertEquals(Actions.DIVIDE, interpreter.determineAction(node("/")))
+        assertEquals(Actions.ADD, interpreter.determineAction(node("+", DataType.ADDITION)))
+        assertEquals(Actions.SUBTRACT, interpreter.determineAction(node("-", DataType.SUBTRACTION)))
+        assertEquals(Actions.MULTIPLY, interpreter.determineAction(node("*", DataType.MULTIPLICATION)))
+        assertEquals(Actions.DIVIDE, interpreter.determineAction(node("/", DataType.DIVISION)))
     }
 
     @Test
     fun `determineAction keywords`() {
         val interpreter = Interpreter("1.1")
 
-        assertEquals(Actions.PRINT, interpreter.determineAction(node("println")))
-        assertEquals(Actions.VAR_DECLARATION, interpreter.determineAction(node("var")))
-        assertEquals(Actions.VAR_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("=")))
-        assertEquals(Actions.IF_STATEMENT, interpreter.determineAction(node("if")))
-        assertEquals(Actions.READ_INPUT, interpreter.determineAction(node("readInput")))
-        assertEquals(Actions.READ_ENV, interpreter.determineAction(node("readEnv")))
+        assertEquals(Actions.PRINT, interpreter.determineAction(node("println", DataType.PRINTLN)))
+        assertEquals(Actions.VAR_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("let", DataType.LET_KEYWORD)))
+        assertEquals(Actions.CONST_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("const", DataType.CONST_KEYWORD)))
+        assertEquals(Actions.ASSIGNMENT_TO_EXISTING_VAR, interpreter.determineAction(node("=", DataType.ASSIGNATION)))
+        assertEquals(Actions.IF_STATEMENT, interpreter.determineAction(node("if", DataType.IF_STATEMENT)))
+        assertEquals(Actions.READ_INPUT, interpreter.determineAction(node("readInput", DataType.FUNCTION_CALL)))
+        assertEquals(Actions.READ_ENV, interpreter.determineAction(node("readEnv", DataType.FUNCTION_CALL)))
     }
 
     @Test
     fun `determineAction unknown token throws`() {
         val interpreter = Interpreter("1.0")
         val ex = assertThrows(IllegalArgumentException::class.java) {
-            interpreter.determineAction(node("???"))
+            interpreter.determineAction(node("???", DataType.INVALID))
         }
         assertTrue(ex.message!!.contains("Unknown action"))
     }
@@ -48,7 +51,7 @@ class InterpreterTest {
         val interpreter = Interpreter("1.0")
 
         val ex = assertThrows(IllegalArgumentException::class.java) {
-            interpreter.interpret(node("if"), Actions.IF_STATEMENT)
+            interpreter.interpret(node("if", DataType.IF_STATEMENT))
         }
         assertTrue(ex.message!!.contains("not supported"))
     }
@@ -56,8 +59,8 @@ class InterpreterTest {
     @Test
     fun `if statement works in 1_1`() {
         val interpreter = Interpreter("1.1")
-
-        val result = interpreter.interpret(node("if"), Actions.IF_STATEMENT)
-        assertNotNull(result)
+        val ifNode = node("if", DataType.IF_STATEMENT, listOf(node("true", DataType.BOOLEAN_LITERAL), node("42", DataType.NUMBER_LITERAL)))
+        val result = interpreter.interpret(ifNode)
+        assertEquals(42, result)
     }
 }

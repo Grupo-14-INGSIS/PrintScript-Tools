@@ -3,26 +3,16 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object Add : ActionType {
-    override fun interpret(node: ASTNode): Any {
-        // Acceder directamente al Token (no .token)
-        val left = node.children[0] // Es Token directamente
-        val right = node.children[1] // Es Token directamente
+    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+        val left = interpreter.interpret(node.children[0])
+        val right = interpreter.interpret(node.children[1])
 
-        // Obtener el valor del Token
-        val leftValue = left.content // o left.piece, según tu Token
-        val rightValue = right.content // o right.piece, según tu Token
-
-        // Convertir a números
-        val leftNum = leftValue.toDoubleOrNull()
-        val rightNum = rightValue.toDoubleOrNull()
-
-        // Si ambos son números: sumar
-        if (leftNum != null && rightNum != null) {
-            return leftNum + rightNum
+        return when {
+            left is String || right is String -> left.toString() + right.toString()
+            left is Double || right is Double -> left.toString().toDouble() + right.toString().toDouble()
+            left is Int && right is Int -> left + right
+            else -> throw IllegalArgumentException("Cannot add types ${left?.javaClass?.simpleName} and ${right?.javaClass?.simpleName}")
         }
-
-        // Si no: concatenar
-        return leftValue + rightValue
     }
 }
 
