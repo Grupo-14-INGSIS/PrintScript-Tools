@@ -20,6 +20,9 @@ test {
 }
 
 tasks.named("build") {
+    doFirst {
+        println(">>> Ejecutando build modificado por myPlugin")
+    }
     dependsOn "ktlintCheck", "test" //no pongo el de formatt pq cambiaria el archivo y no quier que lo haga aca. Lo corro automatico, pero desde la terminal.
 }
 
