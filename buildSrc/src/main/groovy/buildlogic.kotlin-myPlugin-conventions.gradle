@@ -9,8 +9,9 @@ repositories {
     mavenCentral()
 }
 
+//verificación de que nuestro plugin está activo
 project.gradle.taskGraph.whenReady {
-    project.logger.lifecycle(">>>>> MI PLUGIN ESTÁ FUNCIONANDO <<<<<")
+    project.logger.lifecycle(">>>>> myPlugin is working <<<<<")
 }
 
 dependencies {

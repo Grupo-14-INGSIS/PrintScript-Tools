@@ -7,7 +7,7 @@ data class LinterConfig(
 
 
 /*
-//---CASO DE USO---
+//CASO DE USO
 val config = loadConfig("config.yaml")
 
 val rules = mutableListOf<LintRule>()

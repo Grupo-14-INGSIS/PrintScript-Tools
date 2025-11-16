@@ -16,7 +16,6 @@ class IfBraceOnSameLineRule : FormatRule {
                 var closingParenIndex = -1
                 var openBraceIndex = -1
 
-                // Encontrar el ')' del if
                 for (j in i + 1 until source.size()) {
                     if (source.get(j)!!.type == DataType.CLOSE_PARENTHESIS) {
                         closingParenIndex = j
@@ -25,7 +24,6 @@ class IfBraceOnSameLineRule : FormatRule {
                 }
 
                 if (closingParenIndex != -1) {
-                    // Buscar el '{' que le sigue, saltando espacios y saltos de línea
                     var nextTokenIndex = closingParenIndex + 1
                     while (nextTokenIndex < source.size() &&
                         (source.get(nextTokenIndex)!!.type == DataType.SPACE || source.get(nextTokenIndex)!!.type == DataType.LINE_BREAK)
@@ -39,16 +37,12 @@ class IfBraceOnSameLineRule : FormatRule {
                 }
 
                 if (openBraceIndex != -1) {
-                    // Añadir todos los tokens desde 'if' hasta ')'
                     for (j in i..closingParenIndex) {
                         newTokens.add(source.get(j)!!)
                     }
-                    // Añadir un espacio
                     newTokens.add(Token(DataType.SPACE, " ", currentToken.position))
-                    // Añadir la llave
                     newTokens.add(source.get(openBraceIndex)!!)
 
-                    // Avanzar el índice principal
                     i = openBraceIndex
                 } else {
                     newTokens.add(currentToken)

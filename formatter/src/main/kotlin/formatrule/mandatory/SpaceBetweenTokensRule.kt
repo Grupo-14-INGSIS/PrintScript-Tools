@@ -5,7 +5,7 @@ import tokendata.src.main.kotlin.DataType
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class SpaceBetweenTokensRule(private val enabled: Boolean = true) : FormatRule {
+class SpaceBetweenTokensRule(val enabled: Boolean = true) : FormatRule {
 
     private val space = DataType.SPACE
     private val noSpaceBefore = setOf(DataType.SEMICOLON)

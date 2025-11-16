@@ -62,7 +62,6 @@ class FormatterAction {
         progress.initialize(4)
 
         try {
-            // Paso 1: Validar archivos
             val validateStep = progress.startStep(
                 "Validating input files"
             )
@@ -79,16 +78,13 @@ class FormatterAction {
                 "Source file loaded ($sourceSize)"
             )
 
-            // Paso 2: Cargar configuración
             val configStep = progress.startStep(
                 "Loading formatting configuration"
             )
-            // Aquí cargarías la configuración del formatter
             configStep.complete(
                 "Configuration loaded from $configFile"
             )
 
-            // Paso 3: Formatear código
             val formatStep = progress.startStep(
                 "Applying formatting rules"
             )
@@ -127,7 +123,6 @@ class FormatterAction {
                 "Formatting rules applied successfully"
             )
 
-            // Paso 4: Guardar resultado (opcional)
             val saveStep = progress.startStep(
                 "Preparing formatted output"
             )
@@ -155,7 +150,7 @@ class FormatterAction {
             println()
             println(
                 "=".repeat(50)
-            ) // no funciona el * como en python para repetri un string
+            )
         } catch (e: Exception) {
             println(
                 "Error during formatting: ${e.message}"

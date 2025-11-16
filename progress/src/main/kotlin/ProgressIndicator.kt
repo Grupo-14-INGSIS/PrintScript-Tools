@@ -26,7 +26,7 @@ class ProgressIndicator(private val message: String) {
     fun stop() {
         isRunning.set(false)
         job?.cancel()
-        print("✓") // abregar \b?
+        print("✓") // agregar \b?
         println()
     }
 

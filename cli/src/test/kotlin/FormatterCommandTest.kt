@@ -71,17 +71,7 @@ class FormatterCommandTest {
                 "print(1)"
             )
         }
-        /*
-        val configFile = File.createTempFile("config", ".yml").apply {
-            writeText(
-                """
-            rules:
-              indentation:
-                style: spaces
-                """.trimIndent()
-            )
-        }
-         */
+
         val configFile = "/format_rules.yaml"
         val originalOut = System.out
         val outputStream = ByteArrayOutputStream()
@@ -97,6 +87,5 @@ class FormatterCommandTest {
 
         assertTrue(output.contains("Starting formatting of")) // Giving false
         assertTrue(output.contains("Applying formatting rules"))
-        // assertTrue(output.contains("Formatted code ready"))
     }
 }

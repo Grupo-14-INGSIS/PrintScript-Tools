@@ -12,7 +12,6 @@ class Interpreter(
     private val constants = mutableMapOf<String, Any?>()
 
     private val actionHandlers: Map<Actions, ActionType> = run {
-        // PrintScript 1.0 handlers
         val v10 = mapOf(
             Actions.ADD to Add,
             Actions.SUBTRACT to Subtract,
@@ -31,7 +30,6 @@ class Interpreter(
                 put(Actions.IF_STATEMENT, IfStatement())
                 put(Actions.VAR_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
                 put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, ConstDeclarationAndAssignment)
-                // acá podés seguir sumando más si aparecen
             }
             v10 + v11
         } else {

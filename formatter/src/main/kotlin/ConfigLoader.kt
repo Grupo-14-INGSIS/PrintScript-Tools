@@ -7,13 +7,13 @@ import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRul
 import formatter.src.main.kotlin.formatrule.optional.AssignSpacingRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceBeforeColonRule
 import formatter.src.main.kotlin.formatrule.optional.NoSpaceAfterColonRule
-import formatter.src.main.kotlin.formatrule.optional.SpaceBeforeColonRule
-import formatter.src.main.kotlin.formatrule.optional.SpaceAfterColonRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakBeforePrintRule
 import formatter.src.main.kotlin.formatrule.optional.IndentationRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceOnSameLineRule
 import formatter.src.main.kotlin.formatrule.optional.IfBraceBelowLineRule
 import formatter.src.main.kotlin.formatrule.optional.LineBreakAfterPrintRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceAfterColonRule
+import formatter.src.main.kotlin.formatrule.optional.SpaceBeforeColonRule
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 

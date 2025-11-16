@@ -14,7 +14,6 @@ class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
             newTokens.add(currentToken)
 
             if (currentToken.type == DataType.PRINTLN) {
-                // Encontrar el punto y coma que cierra la sentencia println
                 var semicolonIndex = -1
                 for (j in i + 1 until source.size()) {
                     if (source.get(j)!!.type == DataType.SEMICOLON) {
@@ -24,13 +23,11 @@ class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
                 }
 
                 if (semicolonIndex != -1) {
-                    // Añadir los tokens hasta el punto y coma
                     for (j in i + 1..semicolonIndex) {
                         newTokens.add(source.get(j)!!)
                     }
                     i = semicolonIndex
 
-                    // Verificar si es la última sentencia del archivo
                     var isLastStatement = true
                     for (k in semicolonIndex + 1 until source.size()) {
                         val nextType = source.get(k)!!.type
@@ -40,24 +37,19 @@ class LineBreakAfterPrintRule(private val lineBreaks: Int) : FormatRule {
                         }
                     }
 
-                    // Si NO es la última sentencia, aplicar la lógica de saltos de línea
                     if (!isLastStatement) {
-                        // Avanzar más allá de los saltos de línea existentes
                         var nextTokenIndex = semicolonIndex + 1
                         while (nextTokenIndex < source.size() && source.get(nextTokenIndex)!!.type == DataType.LINE_BREAK) {
                             nextTokenIndex++
                         }
 
-                        // Añadir la cantidad correcta de saltos de línea (config + 1)
                         val breaksToAdd = lineBreaks + 1
                         for (k in 0 until breaksToAdd) {
                             newTokens.add(Token(DataType.LINE_BREAK, "\n", currentToken.position))
                         }
 
-                        // Mover el índice principal al lugar correcto
                         i = nextTokenIndex - 1
                     } else {
-                        // Si es la última sentencia, no se añaden saltos de línea y terminamos
                         i = source.size()
                     }
                 }

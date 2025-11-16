@@ -3,7 +3,8 @@ package formatter.src.main.kotlin.formatrule
 import container.src.main.kotlin.Container
 
 interface FormatRule {
-    /** Takes a `Container` argument and modifies it, returning true.
-     * If the operation cannot be performed, it returns false */
+    /**Toma un container como arguemtno y lo modifica, devolviendo true.
+     False si no puede llevar a cabo la operación
+     */
     fun format(source: Container): Container
 }

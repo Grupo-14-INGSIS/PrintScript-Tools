@@ -6,7 +6,7 @@ import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class AssignSpacingRule(
+class AssignSpacingRule( // manejo espacio del =
     private val spaceBefore: Boolean = true,
     private val spaceAfter: Boolean = true
 ) : FormatRule {
@@ -23,7 +23,7 @@ class AssignSpacingRule(
             if (token == null) break
 
             if (token.type == equals) {
-                // PRIMERO: Remover TODOS los espacios antes del =
+                // remuevo TODOS los espacios antes del =
                 while (i > 0) {
                     val previous = tokens.get(i - 1)
                     if (previous?.type == space) {
@@ -36,7 +36,7 @@ class AssignSpacingRule(
                     }
                 }
 
-                // SEGUNDO: Remover TODOS los espacios después del =
+                // ahora, después del =
                 while (i + 1 < tokens.size()) {
                     val next = tokens.get(i + 1)
                     if (next?.type == space) {
@@ -48,7 +48,7 @@ class AssignSpacingRule(
                     }
                 }
 
-                // TERCERO: Agregar espacios según la configuración
+                // espaciado dependeindo de la configuración
                 if (spaceAfter) {
                     tokens = tokens.addAt(
                         Token(space, " ", Position(0, 0)),
@@ -61,7 +61,7 @@ class AssignSpacingRule(
                         Token(space, " ", Position(0, 0)),
                         i
                     )
-                    i++ // Ajustar índice porque agregamos antes
+                    i++ // ajuste de índice por agregado previo
                 }
             }
             i++

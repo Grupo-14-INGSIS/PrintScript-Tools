@@ -28,7 +28,6 @@ class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatR
                 while (j < tokens.size()) {
                     val nextToken = tokens.get(j) ?: break
                     if (nextToken.type != lineBreak && nextToken.type != space) {
-                        // *** CORRECCIÓN: No agregar linebreak si viene '}' ***
                         if (nextToken.type == closeBrace) {
                             break
                         }

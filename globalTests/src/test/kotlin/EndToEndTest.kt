@@ -28,46 +28,16 @@ class EndToEndTest {
         val parser = Parser(tokens)
         val ast = parser.parse()
 
-        // Assert - Should parse as multiplication having higher precedence
         assertEquals(DataType.ADDITION, ast.type)
         assertEquals(2, ast.children.size)
 
-        // Left child should be "2"
         assertEquals("2", ast.children[1].content)
 
-        // Right child should be multiplication node "3 * 4"
         assertEquals(DataType.MULTIPLICATION, ast.children[0].type)
         assertEquals("3", ast.children[0].children[1].content)
         assertEquals("4", ast.children[0].children[0].content)
     }
 
-    /*
-    @Test
-    fun `test print statement execution`() {
-        val input = "println \"Hello World\""
-        val originalOut = System.out
-        val outputStream = ByteArrayOutputStream()
-        System.setOut(PrintStream(outputStream))
-
-        try {
-            val lexer = Lexer.from(input)
-            lexer.split()
-            val tokens = lexer.createToken(lexer.list)
-
-            val parser = Parser(tokens)
-            val ast = parser.parse()
-
-            val interpreter = Interpreter()
-            interpreter.interpret(ast, Actions.PRINT)
-
-            val output = outputStream.toString().trim()
-            assertEquals("\"Hello World\"", output)
-        } finally {
-            System.setOut(originalOut)
-        }
-    }
-
-     */
 
     @Test
     fun `test complex expression with parentheses`() {
@@ -79,15 +49,7 @@ class EndToEndTest {
         val parser = Parser(tokens)
         val ast = parser.parse()
 
-        // Assert - Should parse as multiplication with parentheses resolved
         assertEquals(DataType.MULTIPLICATION, ast.type)
-
-        // Left side should be addition (2 + 3)
-//        assertEquals(DataType.ADDITION, ast.children[0].type)
-//        assertEquals("2", ast.children[0].children[0].content)
-//        assertEquals("3", ast.children[0].children[1].content)
-
-        // Right side should be "4"
         assertEquals("4", ast.children[0].content)
     }
 

@@ -16,7 +16,7 @@ class IfBraceBelowLineRule : FormatRule {
                 var closingParenIndex = -1
                 var openBraceIndex = -1
 
-                // Encontrar el ')' del if
+                // encuentro el ')' del if
                 for (j in i + 1 until source.size()) {
                     if (source.get(j)!!.type == DataType.CLOSE_PARENTHESIS) {
                         closingParenIndex = j
@@ -25,7 +25,7 @@ class IfBraceBelowLineRule : FormatRule {
                 }
 
                 if (closingParenIndex != -1) {
-                    // Buscar el '{' que le sigue, saltando solo espacios
+                    // busco el '{' que le sigue, saltando solo espacios
                     var nextTokenIndex = closingParenIndex + 1
                     while (nextTokenIndex < source.size() && source.get(nextTokenIndex)!!.type == DataType.SPACE) {
                         nextTokenIndex++
@@ -37,17 +37,13 @@ class IfBraceBelowLineRule : FormatRule {
                 }
 
                 if (openBraceIndex != -1) {
-                    // Añadir todos los tokens desde 'if' hasta ')'
                     for (j in i..closingParenIndex) {
                         newTokens.add(source.get(j)!!)
                     }
-                    // Insertar el salto de línea
                     newTokens.add(Token(DataType.LINE_BREAK, "\n", currentToken.position))
 
-                    // Añadir la llave
                     newTokens.add(source.get(openBraceIndex)!!)
 
-                    // Avanzar el índice principal para no procesar estos tokens de nuevo
                     i = openBraceIndex
                 } else {
                     newTokens.add(currentToken)

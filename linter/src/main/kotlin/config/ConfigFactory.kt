@@ -7,7 +7,7 @@ class ConfigFactory {
         } else {
             yamlMap // usar el mapa completo como reglas
         }
-        //
+
         val identifierConfig = (rulesMap["identifier_format"] as? Map<String, Any>)?.let {
             IdentifierNamingConfig(it["style"] as? String ?: "camelCase")
         }
