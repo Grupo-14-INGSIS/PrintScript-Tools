@@ -44,7 +44,6 @@ object TokenMap {
                 return tokenMapv11[piece]
             }
         }
-        // No version specified or invalid token
         return tokenMapv10[piece]
     } // si agrego una nueva version solo cambio aca
 }

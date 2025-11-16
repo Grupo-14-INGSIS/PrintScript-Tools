@@ -25,7 +25,6 @@ class SpaceAroundOperatorRule : FormatRule {
             val token = tokens.get(i) ?: break
 
             if (token.type in operators) {
-                // Primero agregar espacio DESPUÉS
                 if (i + 1 < tokens.size()) {
                     val next = tokens.get(i + 1)
                     if (next != null && next.type != space) {
@@ -36,7 +35,6 @@ class SpaceAroundOperatorRule : FormatRule {
                     }
                 }
 
-                // Luego agregar espacio ANTES
                 if (i > 0) {
                     val previous = tokens.get(i - 1)
                     if (previous != null && previous.type != space) {
@@ -44,7 +42,7 @@ class SpaceAroundOperatorRule : FormatRule {
                             Token(space, " ", Position(0, 0)),
                             i
                         )
-                        i++ // Ajustar porque agregamos antes
+                        i++
                     }
                 }
             }

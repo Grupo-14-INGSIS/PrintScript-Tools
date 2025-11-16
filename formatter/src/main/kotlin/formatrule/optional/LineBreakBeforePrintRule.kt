@@ -15,7 +15,6 @@ class LineBreakBeforePrintRule(private val count: Int = 1) : FormatRule {
             val currentToken = source.get(i)!!
 
             if (currentToken.type == DataType.PRINTLN) {
-                // Al encontrar un println, eliminamos los saltos de línea y espacios previos.
                 while (newTokens.isNotEmpty() && (
                     newTokens.last().type == DataType.LINE_BREAK ||
                         newTokens.last().type == DataType.SPACE
@@ -24,7 +23,6 @@ class LineBreakBeforePrintRule(private val count: Int = 1) : FormatRule {
                     newTokens.removeLast()
                 }
 
-                // Añadimos la cantidad correcta de saltos de línea.
                 for (k in 0 until breaksToAdd) {
                     newTokens.add(Token(DataType.LINE_BREAK, "\n", currentToken.position))
                 }

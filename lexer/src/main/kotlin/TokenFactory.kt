@@ -22,7 +22,6 @@ object TokenFactory {
                     val token = Token(type, piece, position)
                     container = container.addContainer(token)
 
-                    // Actualizar posición
                     val lines = piece.split("\n")
                     position = if (lines.size > 1) {
                         Position(

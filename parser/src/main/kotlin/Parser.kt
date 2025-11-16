@@ -7,7 +7,6 @@ import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import kotlin.jvm.JvmOverloads
 
-// JvmOverloads makes simpler constructors for the packages when using default values such as version
 class Parser @JvmOverloads constructor(
     private var tokens: Container,
     private val version: String = "1.0"
@@ -16,13 +15,11 @@ class Parser @JvmOverloads constructor(
     private val features = VersionConfig.getFeatures(version)
     private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
 
-    // General function
     fun parse(): ASTNode {
         val line: Container = format()
         return stmtParse(line)
     }
 
-    // Cut spaces and semicolons
     private fun format(): Container {
         var output = Container()
         val space = DataType.SPACE
@@ -35,9 +32,7 @@ class Parser @JvmOverloads constructor(
         return output
     }
 
-    // GRAMMAR
 
-    // Start iteration
     fun stmtParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
@@ -45,28 +40,23 @@ class Parser @JvmOverloads constructor(
 
         val firstTokenType = tokens.get(0)!!.type
 
-        // Check for IF statement first (PrintScript 1.1)
         if (firstTokenType == DataType.IF_KEYWORD && features.supportsIfElse) {
             return ifStmtParse(tokens)
         }
 
-        // Variable declaration with assignment: let x: type = value
         if (firstTokenType == DataType.LET_KEYWORD || firstTokenType == DataType.CONST_KEYWORD) {
             if (isDeclarationWithAssignment(tokens)) {
                 return parseDeclarationWithAssignment(tokens)
             }
         }
 
-        // Simple assignment: x = value
         if (isSimpleAssignment(tokens)) {
             return parseSimpleAssignment(tokens)
         }
 
-        // Otherwise, it's an expression
         return expParse(tokens)
     }
 
-    // Check statement type
 
     private fun isDeclarationWithAssignment(tokens: Container): Boolean {
         if (tokens.size() < 6) return false
@@ -130,13 +120,10 @@ class Parser @JvmOverloads constructor(
     }
 
     private fun isIf(tokens: Container): Boolean {
-        // It must have at least seven tokens -> if ( bool ) { ... }
         if (tokens.size() < 7) return false
-        // It must start with an IF expression
         if (tokens.first()?.type != DataType.IF_KEYWORD) {
             return false
         }
-        // Ensure it contains a condition
         if (
             tokens.get(1)!!.type != DataType.OPEN_PARENTHESIS &&
             tokens.get(2)!!.type != DataType.BOOLEAN_LITERAL &&
@@ -144,10 +131,8 @@ class Parser @JvmOverloads constructor(
         ) {
             return false
         }
-        // Ensure it contains a {} block
         val opens: Boolean = tokens.get(5)?.type == DataType.OPEN_BRACE
         val closes: Boolean = tokens.last()?.type == DataType.CLOSE_BRACE
-        // Only checking for non-else expressions
         var hasNoElse = true
         var token: Token
         for (i in 5 until tokens.size()) {
@@ -161,13 +146,10 @@ class Parser @JvmOverloads constructor(
     }
 
     private fun isIfElse(tokens: Container): Boolean {
-        // It must have at least eleven tokens -> if ( bool ) { ... } else { ... }
         if (tokens.size() < 11) return false
-        // It must start with an IF expression
         if (tokens.first()?.type != DataType.IF_KEYWORD) {
             return false
         }
-        // Ensure it contains a condition
         if (
             tokens.get(1)!!.type != DataType.OPEN_PARENTHESIS ||
             tokens.get(2)!!.type != DataType.BOOLEAN_LITERAL ||
@@ -175,7 +157,6 @@ class Parser @JvmOverloads constructor(
         ) {
             return false
         }
-        // Only checking for if-else expressions
         var hasNoElse = true
         var elseIndex = -1
         var token: Token
@@ -187,9 +168,7 @@ class Parser @JvmOverloads constructor(
                 break
             }
         }
-        // Ensure it has an else expression
         if (hasNoElse) return false
-        // Ensure there are two blocks
         val openFirst = tokens.get(5)!!.type == DataType.OPEN_BRACE
         val closeFirst = tokens.get(elseIndex - 1)!!.type == DataType.CLOSE_BRACE
         val openSecond = tokens.get(elseIndex + 1)!!.type == DataType.OPEN_BRACE
@@ -197,7 +176,6 @@ class Parser @JvmOverloads constructor(
         return openFirst && closeFirst && openSecond && closeSecond
     }
 
-    // Execute statement parsing
 
     private fun parseDeclarationWithAssignment(tokens: Container): ASTNode {
         val isConst = tokens.get(0)!!.type == DataType.CONST_KEYWORD
@@ -276,7 +254,6 @@ class Parser @JvmOverloads constructor(
 
         val children = mutableListOf(condition, ifBlock)
 
-        // Check for else
         val elseIndex = blockEnd + 1
         if (elseIndex < tokens.size() && tokens.get(elseIndex)!!.type == DataType.ELSE_KEYWORD) {
             val elseBlockStart = findTokenIndex(tokens, DataType.OPEN_BRACE, elseIndex + 1)
@@ -327,7 +304,6 @@ class Parser @JvmOverloads constructor(
 
                 DataType.SEMICOLON -> {
                     if (braceDepth == 0) {
-                        // End of statement at block level
                         if (!currentStmt.isEmpty()) {
                             val stmt = stmtParse(currentStmt)
                             if (stmt.type != DataType.INVALID) {
@@ -336,7 +312,6 @@ class Parser @JvmOverloads constructor(
                             currentStmt = Container()
                         }
                     } else {
-                        // Semicolon inside nested block
                         currentStmt = currentStmt.addContainer(token)
                     }
                 }
@@ -347,7 +322,6 @@ class Parser @JvmOverloads constructor(
             }
         }
 
-        // Handle last statement if no semicolon
         if (!currentStmt.isEmpty()) {
             val stmt = stmtParse(currentStmt)
             if (stmt.type != DataType.INVALID) {
@@ -368,17 +342,14 @@ class Parser @JvmOverloads constructor(
             return invalid
         }
 
-        // Check for function call
         if (isFunctionCall(tokens)) {
             return parseFunctionCall(tokens)
         }
 
-        // Check for arithmetic expressions
         if (isArith(tokens)) {
             return arithParse(tokens)
         }
 
-        // Handle parenthesized expressions
         if (tokens.size() >= 2 &&
             tokens.first()!!.type == DataType.OPEN_PARENTHESIS &&
             tokens.last()!!.type == DataType.CLOSE_PARENTHESIS
@@ -386,7 +357,6 @@ class Parser @JvmOverloads constructor(
             return expParse(tokens.slice(1, tokens.size() - 1))
         }
 
-        // Single identifier
         if (tokens.size() == 1 && tokens.first()!!.type == DataType.IDENTIFIER) {
             return ASTNode(
                 DataType.IDENTIFIER,
@@ -396,7 +366,6 @@ class Parser @JvmOverloads constructor(
             )
         }
 
-        // Literals
         if (isLiteral(tokens)) {
             return ASTNode(
                 tokens.first()!!.type,
@@ -412,7 +381,6 @@ class Parser @JvmOverloads constructor(
     private fun parseFunctionCall(tokens: Container): ASTNode {
         val functionToken = tokens.get(0)!!
 
-        // Extract arguments between parentheses
         val argsTokens = tokens.slice(2, tokens.size() - 1)
 
         return ASTNode(
@@ -423,7 +391,6 @@ class Parser @JvmOverloads constructor(
         )
     }
 
-    // HELPER METHODS
 
     private fun findTokenIndex(tokens: Container, type: DataType, startFrom: Int = 0): Int {
         for (i in startFrom until tokens.size()) {
@@ -468,33 +435,19 @@ class Parser @JvmOverloads constructor(
         return -1
     }
 
-    // PRATT PARSER
 
     private val tokenFactory = PrattTokenFactory(features)
     private var recursionDepth = 0
     private val MAX_RECURSION_DEPTH = 1000
 
-    // General function
     fun arithParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
         }
         return shuntingYard(tokens)
 
-/*
-        recursionDepth = 0
-        val symbols: List<PrattToken> = prattify(tokens)
-        val result = processTokens(symbols)
-
-        return if (result.size == 1) {
-            prattToAST(result[0])
-        } else {
-            invalid
-        }
- */
     }
 
-    // Iteration
     fun processTokens(symbols: List<PrattToken>): List<PrattToken> {
         recursionDepth++
         if (recursionDepth > MAX_RECURSION_DEPTH) {
@@ -502,15 +455,12 @@ class Parser @JvmOverloads constructor(
             return symbols
         }
 
-        // Base case: single token or no operators left
         if (symbols.size <= 1) return symbols
 
         val nextOperator = highestPrecedIndex(symbols)
 
-        // No valid operator found
         if (nextOperator == -1) return symbols
 
-        // Validate operator has left and right operands
         if (nextOperator - 1 < 0 || nextOperator + 1 >= symbols.size) {
             println("ERROR: Operator at invalid position: $nextOperator in list of size ${symbols.size}")
             return symbols
@@ -518,7 +468,6 @@ class Parser @JvmOverloads constructor(
 
         val newSymbols = associateOperation(symbols, nextOperator)
 
-        // Safety check: ensure list is actually getting smaller
         if (newSymbols.size >= symbols.size) {
             println("ERROR: List not reducing in processTokens")
             println("Original size: ${symbols.size}, New size: ${newSymbols.size}")
@@ -528,7 +477,6 @@ class Parser @JvmOverloads constructor(
         return processTokens(newSymbols)
     }
 
-    // Set precedence to operation
     fun associateOperation(symbols: List<PrattToken>, operatorIndex: Int): List<PrattToken> {
         val left = symbols[operatorIndex - 1]
         val right = symbols[operatorIndex + 1]
@@ -536,18 +484,14 @@ class Parser @JvmOverloads constructor(
 
         val associatedToken = operatorToken.associate(listOf(left, right))
 
-        // Build new list without the consumed tokens
         val result = mutableListOf<PrattToken>()
 
-        // Add tokens before the operation
         for (i in 0 until operatorIndex - 1) {
             result.add(symbols[i])
         }
 
-        // Add the associated token
         result.add(associatedToken)
 
-        // Add tokens after the operation
         for (i in operatorIndex + 2 until symbols.size) {
             result.add(symbols[i])
         }
@@ -555,7 +499,6 @@ class Parser @JvmOverloads constructor(
         return result
     }
 
-    // Turn Tokens into PrattTokens
     fun prattify(tokens: Container): List<PrattToken> {
         val result = mutableListOf<PrattToken>()
         for (i in 0 until tokens.size()) {
@@ -575,16 +518,13 @@ class Parser @JvmOverloads constructor(
             val token = symbols[i]
             val currentPrecedence = token.precedence()
 
-            // Skip tokens with no precedence (operands)
             if (currentPrecedence <= 0) continue
 
             when {
-                // Higher precedence found
                 currentPrecedence > highestPrecedence -> {
                     highestPrecedence = currentPrecedence
                     outputIndex = i
                 }
-                // Same precedence, check associativity
                 currentPrecedence == highestPrecedence &&
                     token.associativity() == Association.RIGHT -> {
                     outputIndex = i
@@ -617,27 +557,21 @@ class Parser @JvmOverloads constructor(
     }
 
     private fun shuntingYard(tokens: Container): ASTNode {
-        // Shunting-Yard algorithm for replacing Pratt-Parsing
 
-        // Step 1: convert into post-fix notation
+
         val operators = ArrayDeque<Token>()
         val postFix = ArrayDeque<Token>()
         var nextToken: Token
         for (i in 0 until tokens.size()) {
             nextToken = tokens.get(i)!!
-            // Case operand -> Add directly to operands
             if (nextToken.type == DataType.NUMBER_LITERAL) {
                 postFix.addLast(nextToken)
-                // Case operator
             } else {
-                // Empty -> Directly add and prevent NoSuchElementException
                 if (operators.isEmpty()) {
                     operators.addFirst(nextToken)
                 } else {
-                    // Open Parenthesis -> Add directly to operands
                     if (nextToken.type == DataType.OPEN_PARENTHESIS) {
                         operators.addFirst(nextToken)
-                        // Close Parenthesis -> Add all operands between parenthesis and discard both
                     } else if (nextToken.type == DataType.CLOSE_PARENTHESIS) {
                         try {
                             while (operators.first().type != DataType.OPEN_PARENTHESIS) {
@@ -647,7 +581,6 @@ class Parser @JvmOverloads constructor(
                             return invalid
                         }
                         operators.removeFirst()
-                        // Default case -> While there is an operand with greater or equal precedence, move that to output
                     } else {
                         while (getPrecedence(operators.first()) >= getPrecedence(nextToken)) {
                             postFix.addLast(operators.removeFirst())
@@ -669,17 +602,13 @@ class Parser @JvmOverloads constructor(
             print(" ")
         }
 
-        // Step 2: Create AST from output
         val output = ArrayDeque<ASTNode>()
         var children: List<ASTNode>
         while (postFix.isNotEmpty()) {
             nextToken = postFix.removeFirst()
-            // Case operand -> Turn into leaf node
             if (nextToken.type == DataType.NUMBER_LITERAL) {
                 children = listOf()
-                // Case operator -> Take two last nodes and associate them
             } else {
-                // Ensure there are enough tokens
                 if (output.size < 2) {
                     return invalid
                 } else {

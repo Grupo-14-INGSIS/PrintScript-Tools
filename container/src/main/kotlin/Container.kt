@@ -2,7 +2,6 @@ package container.src.main.kotlin
 
 import token.src.main.kotlin.Token
 
-// Inmutable class
 class Container(
     val container: List<Token> = listOf()
 ) {

@@ -23,7 +23,7 @@ class AssignSpacingRule( // manejo espacio del =
             if (token == null) break
 
             if (token.type == equals) {
-                // PRIMERO: Remover TODOS los espacios antes del =
+                // remuevo TODOS los espacios antes del =
                 while (i > 0) {
                     val previous = tokens.get(i - 1)
                     if (previous?.type == space) {
@@ -36,7 +36,7 @@ class AssignSpacingRule( // manejo espacio del =
                     }
                 }
 
-                // SEGUNDO: Remover TODOS los espacios después del =
+                // ahora, después del =
                 while (i + 1 < tokens.size()) {
                     val next = tokens.get(i + 1)
                     if (next?.type == space) {
@@ -48,7 +48,7 @@ class AssignSpacingRule( // manejo espacio del =
                     }
                 }
 
-                // TERCERO: Agregar espacios según la configuración
+                // espaciado dependeindo de la configuración
                 if (spaceAfter) {
                     tokens = tokens.addAt(
                         Token(space, " ", Position(0, 0)),
@@ -61,7 +61,7 @@ class AssignSpacingRule( // manejo espacio del =
                         Token(space, " ", Position(0, 0)),
                         i
                     )
-                    i++ // Ajustar índice porque agregamos antes
+                    i++ // ajuste de índice por agregado previo
                 }
             }
             i++

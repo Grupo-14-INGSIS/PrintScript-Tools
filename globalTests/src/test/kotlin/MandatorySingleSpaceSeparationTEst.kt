@@ -30,7 +30,6 @@ class MandatorySingleSpaceSeparationTEst {
             deleteOnExit()
         }
 
-        // 1. Lexer: split y tokenización
         val lexer = Lexer(StringCharSource(input))
         lexer.split()
         val tokens = lexer.createToken(lexer.list)
@@ -43,7 +42,6 @@ class MandatorySingleSpaceSeparationTEst {
             }
         }
 
-        // 2. Formatter
         val formatter = Formatter()
         val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
 
@@ -55,14 +53,12 @@ class MandatorySingleSpaceSeparationTEst {
             }
         }
 
-        // 3. Reconstrucción
         val result = containerToString(formattedTokens)
 
         println("\n=== RESULTADO FINAL ===")
         println("Expected:\n$expected")
         println("\nGot:\n$result")
 
-        // 4. Validación
         assertEquals(expected, result.trim())
     }
 

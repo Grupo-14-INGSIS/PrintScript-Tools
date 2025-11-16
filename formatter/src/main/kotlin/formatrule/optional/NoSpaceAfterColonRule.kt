@@ -20,9 +20,7 @@ class NoSpaceAfterColonRule : FormatRule {
                 i
             )
             if (token == null) break
-            /*
-             * Delete every space after a colon token
-             */
+
             if (token.type == colon) {
                 next = tokens.get(
                     i + 1
