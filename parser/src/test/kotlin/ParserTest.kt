@@ -169,4 +169,9 @@ class ParserTest {
         assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
         assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
     }
+
+    @Test
+    fun tckTests() {
+        val container = Container()
+    }
 }
