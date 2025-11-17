@@ -5,7 +5,7 @@ plugins {
 
 
 application{
-    mainClass = 'MainKt'
+    mainClass = 'cli.src.main.kotlin.Main'
 }
 
 dependencies {
@@ -20,6 +20,7 @@ dependencies {
 tasks.named('run', JavaExec) {
     // conecta System.in del proceso Gradle al proceso Java que ejecuta tu Main
     standardInput = System.in
+    workingDir = rootProject.projectDir //paara que no funcione exclusivamente con rutas absolutas y pueda trabajar con archivos dentro del proyecto
 }
 
 kotlin {

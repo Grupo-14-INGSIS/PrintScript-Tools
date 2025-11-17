@@ -7,7 +7,8 @@ object Main {
             mapOf(
                 "formatter" to FormatterCommand(),
                 "analyzer" to AnalyzerCommand(),
-                "execution" to ExecutionCommand()
+                "execution" to ExecutionCommand(),
+                "validation" to ValidationCommand()
             )
         )
         cli.run(args)
