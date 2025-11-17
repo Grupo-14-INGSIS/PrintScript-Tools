@@ -85,20 +85,25 @@ class Interpreter(
         val action = determineAction(node)
         if (!isActionSupportedInVersion(action, version)) {
             throw IllegalArgumentException(
-                "Action $action is not supported in PrintScript version $version"
+                "Action $action is not supported in PrintScript version $version " +
+                    "at line ${node.position.line}, column ${node.position.column}"
             )
         }
 
         val handler = actionHandlers[action]
-            ?: throw IllegalArgumentException("No handler found for action: $action")
+            ?: throw IllegalArgumentException(
+                "No handler found for action: $action " +
+                    "at line ${node.position.line}, column ${node.position.column}"
+            )
 
         return try {
             handler.interpret(node, this)
         } catch (e: Exception) {
-            println("Error during interpretation: ${e.message}")
+            println("Error during interpretation at line ${node.position.line}, column ${node.position.column}: ${e.message}")
             throw e
         }
     }
+
 
     fun determineAction(node: ASTNode): Actions {
         return when (node.type) {
