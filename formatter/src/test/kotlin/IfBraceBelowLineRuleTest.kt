@@ -19,19 +19,21 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test simple if with brace on same line moves brace to next line`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "condition", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.IDENTIFIER, "body", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "condition", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.IDENTIFIER, "body", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)
@@ -46,17 +48,19 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test if with brace already on next line remains unchanged`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.LINE_BREAK, "\n", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.IDENTIFIER, "body", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.LINE_BREAK, "\n", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.IDENTIFIER, "body", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)
@@ -70,16 +74,18 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test if without braces is not affected`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.IDENTIFIER, "statement", pos),
-            Token(DataType.SEMICOLON, ";", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.IDENTIFIER, "statement", pos),
+                Token(DataType.SEMICOLON, ";", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)
@@ -92,23 +98,25 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test multiple if statements each gets processed`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "a", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos),
-            Token(DataType.LINE_BREAK, "\n", pos),
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "b", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "a", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos),
+                Token(DataType.LINE_BREAK, "\n", pos),
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "b", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)
@@ -128,21 +136,23 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test if with complex condition`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.ADDITION, "+", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.IDENTIFIER, "y", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.IDENTIFIER, "body", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.ADDITION, "+", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.IDENTIFIER, "y", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.IDENTIFIER, "body", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)
@@ -162,17 +172,19 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test if with multiple spaces before brace`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)
@@ -194,9 +206,11 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test container with only if keyword`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos)
+            )
+        )
         val result = rule.format(tokens)
         assertEquals(1, result.size())
         assertEquals(DataType.IF_KEYWORD, result.get(0)?.type)
@@ -205,11 +219,13 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test if without closing parenthesis`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos)
+            )
+        )
         val result = rule.format(tokens)
         assertEquals(3, result.size())
     }
@@ -217,14 +233,16 @@ class IfBraceBelowLineRuleTest {
 
     @Test
     fun `test if with brace but no body`() {
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = rule.format(tokens)

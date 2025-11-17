@@ -43,7 +43,7 @@ class ConfigLoaderAndFormatterTest {
 mandatory-single-space-separation: true
 mandatory-space-surrounding-operations: true
 mandatory-line-break-after-statement: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -64,7 +64,7 @@ mandatory-line-break-after-statement: true
 mandatory-single-space-separation: true
 mandatory-space-surrounding-operations: false
 mandatory-line-break-after-statement: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -85,7 +85,7 @@ mandatory-line-break-after-statement: true
 mandatory-single-space-separation: false
 mandatory-space-surrounding-operations: false
 mandatory-line-break-after-statement: false
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -101,7 +101,7 @@ mandatory-line-break-after-statement: false
     fun `ConfigLoader - assign spacing with spaces`() {
         val config = """
 enforce-spacing-around-equals: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -118,7 +118,7 @@ enforce-spacing-around-equals: true
     fun `ConfigLoader - assign spacing without spaces`() {
         val config = """
 enforce-no-spacing-around-equals: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -135,7 +135,7 @@ enforce-no-spacing-around-equals: true
     fun `ConfigLoader - space before colon enabled`() {
         val config = """
 enforce-spacing-before-colon-in-declaration: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -152,7 +152,7 @@ enforce-spacing-before-colon-in-declaration: true
     fun `ConfigLoader - no space before colon`() {
         val config = """
 enforce-spacing-before-colon-in-declaration: false
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -169,7 +169,7 @@ enforce-spacing-before-colon-in-declaration: false
     fun `ConfigLoader - space after colon enabled`() {
         val config = """
 enforce-spacing-after-colon-in-declaration: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -186,7 +186,7 @@ enforce-spacing-after-colon-in-declaration: true
     fun `ConfigLoader - no space after colon`() {
         val config = """
 enforce-spacing-after-colon-in-declaration: false
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -203,7 +203,7 @@ enforce-spacing-after-colon-in-declaration: false
     fun `ConfigLoader - line breaks after println`() {
         val config = """
 line-breaks-after-println: 2
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -220,7 +220,7 @@ line-breaks-after-println: 2
     fun `ConfigLoader - line breaks before println`() {
         val config = """
 line-breaks-before-println: 3
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -237,7 +237,7 @@ line-breaks-before-println: 3
     fun `ConfigLoader - indentation with custom size`() {
         val config = """
 indent-inside-if: 4
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -254,7 +254,7 @@ indent-inside-if: 4
     fun `ConfigLoader - if brace same line enabled`() {
         val config = """
 if-brace-same-line: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -270,7 +270,7 @@ if-brace-same-line: true
     fun `ConfigLoader - if brace same line disabled`() {
         val config = """
 if-brace-same-line: false
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -286,7 +286,7 @@ if-brace-same-line: false
     fun `ConfigLoader - if brace below line enabled`() {
         val config = """
 if-brace-below-line: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -311,7 +311,7 @@ line-breaks-after-println: 1
 line-breaks-before-println: 2
 indent-inside-if: 4
 if-brace-same-line: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -331,7 +331,7 @@ if-brace-same-line: true
 mandatory-single-space-separation: true
 unknown-rule: true
 another-unknown: false
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -381,7 +381,7 @@ another-unknown: false
     fun `ConfigLoader - alternative naming assign-spacing`() {
         val config = """
 assign-spacing-surrounding-equals: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -397,7 +397,7 @@ assign-spacing-surrounding-equals: true
     fun `ConfigLoader - alternative naming assign-no-spacing`() {
         val config = """
 assign-no-spacing-surrounding-equals: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -414,7 +414,7 @@ assign-no-spacing-surrounding-equals: true
         val config = """
 line-breaks-after-println: 0
 line-breaks-before-println: 0
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -432,7 +432,7 @@ line-breaks-before-println: 0
 key1: true
 key2: false
 key3: 5
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -450,7 +450,7 @@ key3: 5
     fun `ConfigLoader - loadConfig with version parameter`() {
         val config = """
 mandatory-single-space-separation: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val file = createConfigFile(config)
@@ -465,11 +465,13 @@ mandatory-single-space-separation: true
 
     @Test
     fun `Formatter - executeOne with SpaceBetweenTokensRule`() {
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos)
+            )
+        )
 
 
         val rule = SpaceBetweenTokensRule(enabled = true)
@@ -482,13 +484,15 @@ mandatory-single-space-separation: true
 
     @Test
     fun `Formatter - executeOne with LineBreakAfterSemicolonRule`() {
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos),
-            Token(DataType.SEMICOLON, ";", pos),
-            Token(DataType.IDENTIFIER, "y", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos),
+                Token(DataType.SEMICOLON, ";", pos),
+                Token(DataType.IDENTIFIER, "y", pos)
+            )
+        )
 
 
         val rule = LineBreakAfterSemicolonRule(enabled = true)
@@ -501,11 +505,13 @@ mandatory-single-space-separation: true
 
     @Test
     fun `Formatter - executeOne with disabled rule`() {
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos)
+            )
+        )
 
 
         val rule = SpaceBetweenTokensRule(enabled = false)
@@ -523,7 +529,7 @@ mandatory-single-space-separation: true
 mandatory-space-surrounding-operations: true
 mandatory-line-break-after-statement: true
 enforce-spacing-around-equals: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
@@ -539,19 +545,21 @@ enforce-spacing-around-equals: true
         val config = """
 mandatory-single-space-separation: true
 mandatory-line-break-after-statement: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos),
-            Token(DataType.SEMICOLON, ";", pos),
-            Token(DataType.IDENTIFIER, "y", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos),
+                Token(DataType.SEMICOLON, ";", pos),
+                Token(DataType.IDENTIFIER, "y", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -565,7 +573,7 @@ mandatory-line-break-after-statement: true
     fun `Formatter - execute with empty tokens`() {
         val config = """
 mandatory-single-space-separation: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
@@ -583,17 +591,19 @@ mandatory-single-space-separation: true
     fun `Formatter - execute with operator spacing`() {
         val config = """
 mandatory-space-surrounding-operations: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.ADDITION, "+", pos),
-            Token(DataType.IDENTIFIER, "y", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.ADDITION, "+", pos),
+                Token(DataType.IDENTIFIER, "y", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -610,17 +620,19 @@ mandatory-space-surrounding-operations: true
         val config = """
 enforce-spacing-before-colon-in-declaration: true
 enforce-spacing-after-colon-in-declaration: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.COLON, ":", pos),
-            Token(DataType.IDENTIFIER, "Int", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.COLON, ":", pos),
+                Token(DataType.IDENTIFIER, "Int", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -636,18 +648,20 @@ enforce-spacing-after-colon-in-declaration: true
     fun `Formatter - execute with indentation`() {
         val config = """
 indent-inside-if: 4
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.LINE_BREAK, "\n", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.LINE_BREAK, "\n", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -661,21 +675,23 @@ indent-inside-if: 4
     fun `Formatter - execute with if brace same line`() {
         val config = """
 if-brace-same-line: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IF_KEYWORD, "if", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.LINE_BREAK, "\n", pos),
-            Token(DataType.OPEN_BRACE, "{", pos),
-            Token(DataType.CLOSE_BRACE, "}", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IF_KEYWORD, "if", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.LINE_BREAK, "\n", pos),
+                Token(DataType.OPEN_BRACE, "{", pos),
+                Token(DataType.CLOSE_BRACE, "}", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -696,20 +712,22 @@ if-brace-same-line: true
     fun `Formatter - execute with println breaks`() {
         val config = """
 line-breaks-after-println: 1
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.PRINTLN, "println", pos),
-            Token(DataType.OPEN_PARENTHESIS, "(", pos),
-            Token(DataType.STRING_LITERAL, "\"test\"", pos),
-            Token(DataType.CLOSE_PARENTHESIS, ")", pos),
-            Token(DataType.SEMICOLON, ";", pos),
-            Token(DataType.IDENTIFIER, "x", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.PRINTLN, "println", pos),
+                Token(DataType.OPEN_PARENTHESIS, "(", pos),
+                Token(DataType.STRING_LITERAL, "\"test\"", pos),
+                Token(DataType.CLOSE_PARENTHESIS, ")", pos),
+                Token(DataType.SEMICOLON, ";", pos),
+                Token(DataType.IDENTIFIER, "x", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -727,20 +745,22 @@ mandatory-space-surrounding-operations: true
 mandatory-line-break-after-statement: true
 enforce-spacing-around-equals: true
 indent-inside-if: 2
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos),
-            Token(DataType.ADDITION, "+", pos),
-            Token(DataType.NUMBER_LITERAL, "3", pos),
-            Token(DataType.SEMICOLON, ";", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos),
+                Token(DataType.ADDITION, "+", pos),
+                Token(DataType.NUMBER_LITERAL, "3", pos),
+                Token(DataType.SEMICOLON, ";", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -754,19 +774,21 @@ indent-inside-if: 2
     fun `Formatter - execute with no spacing around equals`() {
         val config = """
 enforce-no-spacing-around-equals: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.SPACE, " ", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.SPACE, " ", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -783,16 +805,18 @@ enforce-no-spacing-around-equals: true
     fun `Formatter - execute is idempotent`() {
         val config = """
 mandatory-single-space-separation: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.IDENTIFIER, "y", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.IDENTIFIER, "y", pos)
+            )
+        )
 
 
         val result1 = formatter.execute(tokens, configFile.toURI().toURL())
@@ -807,17 +831,19 @@ mandatory-single-space-separation: true
     fun `Formatter - execute with multiplication operator`() {
         val config = """
 mandatory-space-surrounding-operations: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "x", pos),
-            Token(DataType.MULTIPLICATION, "*", pos),
-            Token(DataType.NUMBER_LITERAL, "2", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "x", pos),
+                Token(DataType.MULTIPLICATION, "*", pos),
+                Token(DataType.NUMBER_LITERAL, "2", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -833,17 +859,19 @@ mandatory-space-surrounding-operations: true
     fun `Formatter - execute with division operator`() {
         val config = """
 mandatory-space-surrounding-operations: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.NUMBER_LITERAL, "10", pos),
-            Token(DataType.DIVISION, "/", pos),
-            Token(DataType.NUMBER_LITERAL, "2", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.NUMBER_LITERAL, "10", pos),
+                Token(DataType.DIVISION, "/", pos),
+                Token(DataType.NUMBER_LITERAL, "2", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -859,17 +887,19 @@ mandatory-space-surrounding-operations: true
     fun `Formatter - execute with subtraction operator`() {
         val config = """
 mandatory-space-surrounding-operations: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.NUMBER_LITERAL, "10", pos),
-            Token(DataType.SUBTRACTION, "-", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.NUMBER_LITERAL, "10", pos),
+                Token(DataType.SUBTRACTION, "-", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -887,21 +917,23 @@ mandatory-space-surrounding-operations: true
 mandatory-single-space-separation: true
 mandatory-space-surrounding-operations: true
 mandatory-line-break-after-statement: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
 
 
-        val tokens = Container(listOf(
-            Token(DataType.IDENTIFIER, "result", pos),
-            Token(DataType.ASSIGNATION, "=", pos),
-            Token(DataType.NUMBER_LITERAL, "5", pos),
-            Token(DataType.ADDITION, "+", pos),
-            Token(DataType.NUMBER_LITERAL, "3", pos),
-            Token(DataType.SEMICOLON, ";", pos),
-            Token(DataType.PRINTLN, "println", pos)
-        ))
+        val tokens = Container(
+            listOf(
+                Token(DataType.IDENTIFIER, "result", pos),
+                Token(DataType.ASSIGNATION, "=", pos),
+                Token(DataType.NUMBER_LITERAL, "5", pos),
+                Token(DataType.ADDITION, "+", pos),
+                Token(DataType.NUMBER_LITERAL, "3", pos),
+                Token(DataType.SEMICOLON, ";", pos),
+                Token(DataType.PRINTLN, "println", pos)
+            )
+        )
 
 
         val result = formatter.execute(tokens, configFile.toURI().toURL())
@@ -913,7 +945,8 @@ mandatory-line-break-after-statement: true
         var hasLineBreakAfterSemicolon = false
         for (i in 0 until result.size() - 1) {
             if (result.get(i)?.type == DataType.SEMICOLON &&
-                result.get(i + 1)?.type == DataType.LINE_BREAK) {
+                result.get(i + 1)?.type == DataType.LINE_BREAK
+            ) {
                 hasLineBreakAfterSemicolon = true
                 break
             }
@@ -926,7 +959,7 @@ mandatory-line-break-after-statement: true
     fun `Formatter - execute with all operator types`() {
         val config = """
 mandatory-space-surrounding-operations: true
-       """.trimIndent()
+        """.trimIndent()
 
 
         val configFile = createConfigFile(config)
@@ -941,11 +974,13 @@ mandatory-space-surrounding-operations: true
 
 
         operators.forEach { (type, value) ->
-            val tokens = Container(listOf(
-                Token(DataType.NUMBER_LITERAL, "1", pos),
-                Token(type, value, pos),
-                Token(DataType.NUMBER_LITERAL, "2", pos)
-            ))
+            val tokens = Container(
+                listOf(
+                    Token(DataType.NUMBER_LITERAL, "1", pos),
+                    Token(type, value, pos),
+                    Token(DataType.NUMBER_LITERAL, "2", pos)
+                )
+            )
 
 
             val result = formatter.execute(tokens, configFile.toURI().toURL())

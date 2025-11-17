@@ -1,6 +1,5 @@
 package formatter.src.test.kotlin
 
-
 import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
@@ -11,9 +10,6 @@ import org.junit.jupiter.api.Assertions.*
 import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
-
-
-
 
 class CompleteTest {
 
@@ -28,7 +24,6 @@ class CompleteTest {
         tokens.forEach { container = container.addContainer(it) }
         return container
     }
-
 
 
     @Test
@@ -100,6 +95,7 @@ class CompleteTest {
         val result = rule.format(tokens)
 
 
+        // No debe agregar line break antes de }
         assertEquals(DataType.CLOSE_BRACE, result.get(2)?.type)
     }
 
@@ -137,8 +133,6 @@ class CompleteTest {
 
         assertEquals(2, result.size())
     }
-
-
 
     @Test
     fun `test SpaceAroundOperatorRule adds spaces around addition`() {
@@ -289,6 +283,8 @@ class CompleteTest {
         assertEquals(DataType.SPACE, result.get(1)?.type)
     }
 
+
+
     @Test
     fun `test SpaceBetweenTokensRule adds space between tokens`() {
         val rule = SpaceBetweenTokensRule(true)
@@ -373,6 +369,7 @@ class CompleteTest {
 
         assertEquals(0, result.size())
     }
+
 
 
     @Test
@@ -557,6 +554,7 @@ class CompleteTest {
     }
 
 
+
     @Test
     fun `test NoSpaceAfterColonRule removes space after colon`() {
         val rule = NoSpaceAfterColonRule()
@@ -635,7 +633,6 @@ class CompleteTest {
     }
 
 
-
     @Test
     fun `test SpaceAfterColonRule adds space after colon`() {
         val rule = SpaceAfterColonRule()
@@ -678,8 +675,6 @@ class CompleteTest {
     }
 
 
-
-
     @Test
     fun `test LineBreakBeforePrintRule adds line breaks before println`() {
         val rule = LineBreakBeforePrintRule(1)
@@ -690,7 +685,6 @@ class CompleteTest {
 
 
         val result = rule.format(tokens)
-
 
         var lineBreakCount = 0
         for (i in 0 until result.size()) {
@@ -832,7 +826,6 @@ class CompleteTest {
         assertEquals(1, lineBreakCount)
     }
 
-
     @Test
     fun `test IndentationRule adds indentation after open brace`() {
         val rule = IndentationRule(4)
@@ -871,9 +864,4 @@ class CompleteTest {
 
         assertTrue(result.size() > tokens.size())
     }
-
-
 }
-
-
-

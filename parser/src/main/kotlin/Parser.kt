@@ -445,7 +445,6 @@ class Parser @JvmOverloads constructor(
             return invalid
         }
         return shuntingYard(tokens)
-
     }
 
     fun processTokens(symbols: List<PrattToken>): List<PrattToken> {
@@ -557,8 +556,6 @@ class Parser @JvmOverloads constructor(
     }
 
     private fun shuntingYard(tokens: Container): ASTNode {
-
-
         val operators = ArrayDeque<Token>()
         val postFix = ArrayDeque<Token>()
         var nextToken: Token
