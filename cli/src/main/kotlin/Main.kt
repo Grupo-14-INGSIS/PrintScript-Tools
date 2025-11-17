@@ -5,8 +5,8 @@ object Main {
     fun main(args: Array<String>) {
         val cli = Cli(
             mapOf(
-                "formatter" to FormatterCommand(),
-                "analyzer" to AnalyzerCommand(),
+                "formatter" to FormatterCommand(), // ./gradlew :mainApp:run --args='validation test.ps 1.0
+                "analyzer" to AnalyzerCommand(), // ./gradlew :mainApp:run --args="formatter test.ps format_rules.yaml 1.0"
                 "execution" to ExecutionCommand(),
                 "validation" to ValidationCommand()
             )

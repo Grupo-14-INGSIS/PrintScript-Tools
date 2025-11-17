@@ -8,7 +8,6 @@ import progress.src.main.kotlin.MultiStepProgress
 
 import java.io.File
 import java.io.FileWriter
-import java.net.URL
 
 class FormatterAction {
 
@@ -28,27 +27,21 @@ class FormatterAction {
         val version = if (args.size > 2) args[2] else "1.0"
 
         if (version !in listOf("1.0", "1.1")) {
-            println(
-                "Error: Unsupported version. Only 1.0 is admitted."
-            )
+            println("Error: Unsupported version. Only 1.0 and 1.1 are admitted.")
             return
         }
 
         val sourceFileObj = File(sourceFile)
-        val configFileObj: URL? = this::class.java.getResource(
-            configFile
-        )
+        val configFileObj: File = File(configFile)
+
+        if (!configFileObj.exists()) {
+            println("Error: The configuration file '$configFile' does not exist.")
+            return
+        }
 
         if (!sourceFileObj.exists()) {
             println(
                 "Error: The source file '$sourceFile' does not exist."
-            )
-            return
-        }
-
-        if (configFileObj == null) {
-            println(
-                "Error: The configuration file '$configFile' does not exist."
             )
             return
         }
@@ -98,7 +91,7 @@ class FormatterAction {
             val formatter = Formatter()
             var percentageCompleted: Int
             val rules: List<FormatRule> = formatter.loadRules(
-                configFileObj
+                File(configFile).toURI().toURL()
             )
             for (i in 0 until rules.size) {
                 tokens = formatter.executeOne(
@@ -123,22 +116,16 @@ class FormatterAction {
                 "Formatting rules applied successfully"
             )
 
-            val saveStep = progress.startStep(
-                "Preparing formatted output"
-            )
-            val writer = FileWriter(
-                sourceFile
-            )
-            for (i in 0 until tokens.size()) {
-                writer.append(
-                    tokens.get(
-                        i
-                    )!!.content
-                )
+            val saveStep = progress.startStep("Preparing formatted output")
+
+            FileWriter(sourceFile).use { writer ->
+                for (i in 0 until tokens.size()) {
+                    writer.append(tokens.get(i)!!.content)
+                }
             }
-            saveStep.complete(
-                "Formatted code ready"
-            )
+
+            saveStep.complete("Formatted code ready")
+
 
             progress.complete()
             println(
