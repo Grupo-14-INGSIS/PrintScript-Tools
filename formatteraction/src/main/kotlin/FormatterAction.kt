@@ -116,6 +116,12 @@ class FormatterAction {
                 "Formatting rules applied successfully"
             )
 
+            println("DEBUG – tokens resultantes:")
+            for (i in 0 until tokens.size()) {
+                print(tokens.get(i)!!.content)
+            }
+            println()
+
             val saveStep = progress.startStep("Preparing formatted output")
 
             FileWriter(sourceFile).use { writer ->
