@@ -16,20 +16,29 @@ class Parser @JvmOverloads constructor(
     private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
 
     fun parse(): ASTNode {
-        val line: Container = format()
-        return stmtParse(line)
-    }
-
-    private fun format(): Container {
-        var output = Container()
-        val space = DataType.SPACE
-        val semicolon = DataType.SEMICOLON
+        val statements = mutableListOf<ASTNode>()
+        var currentTokens = Container()
         for (i in 0 until tokens.size()) {
-            if (tokens.get(i)!!.type != space && tokens.get(i)!!.type != semicolon) {
-                output = output.addContainer(tokens.get(i)!!)
+            val token = tokens.get(i)!!
+            if (token.type == DataType.SEMICOLON || token.type == DataType.LINE_BREAK) {
+                if (!currentTokens.isEmpty()) {
+                    val parsedStatement = stmtParse(currentTokens)
+                    if (parsedStatement.type != DataType.INVALID) {
+                        statements.add(parsedStatement)
+                    }
+                }
+                currentTokens = Container()
+            } else if (token.type != DataType.SPACE) {
+                currentTokens = currentTokens.addContainer(token)
             }
         }
-        return output
+        if (!currentTokens.isEmpty()) {
+            val parsedStatement = stmtParse(currentTokens)
+            if (parsedStatement.type != DataType.INVALID) {
+                statements.add(parsedStatement)
+            }
+        }
+        return ASTNode(DataType.SCRIPT, "root", Position(0, 0), statements)
     }
 
 
@@ -178,40 +187,22 @@ class Parser @JvmOverloads constructor(
 
 
     private fun parseDeclarationWithAssignment(tokens: Container): ASTNode {
-        val isConst = tokens.get(0)!!.type == DataType.CONST_KEYWORD
-        val keyword = if (isConst) DataType.CONST_KEYWORD else DataType.LET_KEYWORD
-
+        val keywordToken = tokens.get(0)!!
         val identifierToken = tokens.get(1)!!
-        val typeToken = tokens.get(3)!!
+        val typeToken = tokens.get(3)!! // let x : number = 5
         val assignationIndex = findTokenIndex(tokens, DataType.ASSIGNATION)
 
         val valueTokens = tokens.slice(assignationIndex + 1)
+        val valueNode = expParse(valueTokens)
 
         return ASTNode(
-            DataType.DECLARATION,
-            "=",
-            tokens.get(assignationIndex)!!.position,
+            keywordToken.type, // LET_KEYWORD or CONST_KEYWORD
+            identifierToken.content,
+            keywordToken.position,
             listOf(
-                ASTNode(
-                    keyword,
-                    identifierToken.content,
-                    identifierToken.position,
-                    listOf(
-                        ASTNode(
-                            DataType.IDENTIFIER,
-                            identifierToken.content,
-                            identifierToken.position,
-                            listOf()
-                        ),
-                        ASTNode(
-                            typeToken.type,
-                            typeToken.content,
-                            typeToken.position,
-                            listOf()
-                        )
-                    )
-                ),
-                expParse(valueTokens)
+                ASTNode(DataType.IDENTIFIER, identifierToken.content, identifierToken.position, emptyList()),
+                ASTNode(typeToken.type, typeToken.content, typeToken.position, emptyList()),
+                valueNode
             )
         )
     }
@@ -561,7 +552,7 @@ class Parser @JvmOverloads constructor(
         var nextToken: Token
         for (i in 0 until tokens.size()) {
             nextToken = tokens.get(i)!!
-            if (nextToken.type == DataType.NUMBER_LITERAL) {
+            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER) {
                 postFix.addLast(nextToken)
             } else {
                 if (operators.isEmpty()) {
@@ -603,7 +594,7 @@ class Parser @JvmOverloads constructor(
         var children: List<ASTNode>
         while (postFix.isNotEmpty()) {
             nextToken = postFix.removeFirst()
-            if (nextToken.type == DataType.NUMBER_LITERAL) {
+            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER) {
                 children = listOf()
             } else {
                 if (output.size < 2) {

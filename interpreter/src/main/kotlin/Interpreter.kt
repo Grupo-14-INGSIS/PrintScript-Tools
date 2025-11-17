@@ -20,7 +20,8 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
             Actions.PRINT to Print,
             Actions.VAR_DECLARATION to VarDeclaration,
-            Actions.LITERAL to Literal
+            Actions.LITERAL to Literal,
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment
         )
 
         if (version == "1.1") {
@@ -28,7 +29,6 @@ class Interpreter(
                 inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
                 inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
                 put(Actions.IF_STATEMENT, IfStatement())
-                put(Actions.VAR_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
                 put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, ConstDeclarationAndAssignment)
             }
             v10 + v11
@@ -131,6 +131,7 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR,
             Actions.PRINT,
             Actions.VAR_DECLARATION,
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT,
             Actions.LITERAL
         )
 
@@ -138,7 +139,6 @@ class Interpreter(
             Actions.READ_INPUT,
             Actions.READ_ENV,
             Actions.IF_STATEMENT,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT,
             Actions.CONST_DECLARATION,
             Actions.CONST_DECLARATION_AND_ASSIGNMENT
         )
@@ -151,24 +151,13 @@ class Interpreter(
     }
 
     fun executeAST(ast: ASTNode): List<String> {
-        val output = mutableListOf<String>()
-        val printOutput = { message: Any? -> output.add(message.toString()) }
+        val outputs = mutableListOf<String>()
 
-        val originalOut = System.out
-        // Redirect println to capture output
-        val printStream = object : java.io.PrintStream(originalOut) {
-            override fun println(x: Any?) {
-                printOutput(x)
-            }
-        }
-        System.setOut(printStream)
-
-        try {
-            interpret(ast)
-        } finally {
-            System.setOut(originalOut)
+        for (child in ast.children) {
+            val result = interpret(child)
+            if (result is String) outputs.add(result)
         }
 
-        return output.toList()
+        return outputs
     }
 }
