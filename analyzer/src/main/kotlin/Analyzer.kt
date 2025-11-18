@@ -48,6 +48,8 @@ class Analyzer {
         val progress = MultiStepProgress()
         progress.initialize(3)
 
+        var tokens: Container? = null
+
         try {
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
@@ -55,7 +57,7 @@ class Analyzer {
             lexerStep.complete("Lexical analysis completed")
 
             val tokenStep = progress.startStep("Generating tokens")
-            val tokens: Container = lexer.createToken(lexer.list)
+            tokens = lexer.createToken(lexer.list)
             tokenStep.complete("${tokens.size()} tokens generated")
 
             val parserStep = progress.startStep("Validating syntax")
@@ -84,15 +86,8 @@ class Analyzer {
 
             println("\nSUCCESS: File is syntactically and semantically valid")
         } catch (e: Exception) {
-            println("\nERROR during validation: ${e.message}")
+            ErrorReporter.report("validation", e, tokens)
 
-            // Intentar extraer información de posición si está disponible
-            val stackTrace = e.stackTrace.firstOrNull()
-            if (stackTrace != null) {
-                println("Location: Line ${stackTrace.lineNumber}")
-            }
-
-            // Mostrar más detalles si es un error de parsing conocido
             when {
                 e.message?.contains("syntax", ignoreCase = true) == true -> {
                     println("This appears to be a syntax error. Please check your code structure.")
@@ -142,6 +137,8 @@ class Analyzer {
         val progress = MultiStepProgress()
         progress.initialize(5)
 
+        var tokens: Container? = null
+
         try {
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
@@ -149,7 +146,7 @@ class Analyzer {
             lexerStep.complete("Lexical analysis completed")
 
             val tokenStep = progress.startStep("Generating tokens")
-            val tokens: Container = lexer.createToken(lexer.list)
+            tokens = lexer.createToken(lexer.list)
             tokenStep.complete("${tokens.size()} tokens generated")
 
             val parserStep = progress.startStep("Building Abstract Syntax Tree")
@@ -177,15 +174,8 @@ class Analyzer {
                 }
             }
         } catch (e: Exception) {
-            println("Error during analysis: ${e.message}")
+            ErrorReporter.report("analysis", e, tokens)
 
-            // Intentar extraer información de posición si está disponible
-            val stackTrace = e.stackTrace.firstOrNull()
-            if (stackTrace != null) {
-                println("Location: Line ${stackTrace.lineNumber}")
-            }
-
-            // Mostrar más detalles del error
             when {
                 e.message?.contains("syntax", ignoreCase = true) == true -> {
                     println("This appears to be a syntax error. Please check your code structure.")

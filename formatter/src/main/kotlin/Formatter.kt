@@ -16,13 +16,15 @@ class Formatter() {
 
     fun execute(tokens: Container, configFile: URL): Container {
         val rules: List<FormatRule> = loadRules(configFile)
-        var tokens = tokens
-        for (rule: FormatRule in rules) {
-            tokens = executeOne(
-                tokens,
-                rule
-            )
+        var currentTokens = tokens
+        try {
+            for (rule: FormatRule in rules) {
+                currentTokens = executeOne(currentTokens, rule)
+            }
+        } catch (e: Exception) {
+            ErrorReporter.report("formatting", e, currentTokens)
+            throw e
         }
-        return tokens
+        return currentTokens
     }
 }

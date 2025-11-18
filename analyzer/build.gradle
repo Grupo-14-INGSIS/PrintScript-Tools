@@ -11,4 +11,5 @@ dependencies {
     implementation project(":linter")
     implementation project(":tokendata")
     implementation project(":token") //necesito acceso a la posición para lanzar el error
+    implementation(project ":error")
 }

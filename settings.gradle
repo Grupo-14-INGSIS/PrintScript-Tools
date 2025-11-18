@@ -28,3 +28,4 @@ include 'cli'
 
 include 'globalTests'
 include 'mainApp'
+include 'error'

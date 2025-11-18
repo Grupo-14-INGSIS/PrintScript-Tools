@@ -8,4 +8,6 @@ dependencies {
     implementation(project(":token"))
     implementation(project(":tokendata"))
     implementation("org.yaml:snakeyaml:2.0")
+    implementation(project ":error")
+
 }
