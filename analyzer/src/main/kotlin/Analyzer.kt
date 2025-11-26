@@ -4,10 +4,10 @@ import progress.src.main.kotlin.MultiStepProgress
 import lexer.src.main.kotlin.Lexer
 
 import parser.src.main.kotlin.Parser
-import ast.src.main.kotlin.ASTNode
+
 import linter.src.main.kotlin.Linter
 import linter.src.main.kotlin.LintRule
-import linter.src.main.kotlin.LintError
+
 import linter.src.main.kotlin.config.ConfigFactory
 import linter.src.main.kotlin.config.ConfigLoader
 import linter.src.main.kotlin.rules.IdentifierNamingRule
@@ -74,13 +74,12 @@ class Analyzer {
             rulesStep.complete("${lintRules.size} rule(s) loaded")
             val analysisStep = progress.startStep("Executing static code analysis")
             val linter = Linter(lintRules)
-            val allLintErrors = mutableListOf<LintError>()
 
-            for (statement in statements) {
-                val parser = Parser(statement)
-                val ast: ASTNode = parser.parse()
-                allLintErrors.addAll(linter.all(ast))
+            val asts = statements.map { statement ->
+                val parser = Parser(statement, version)
+                parser.parse()
             }
+            val allLintErrors = linter.lint(asts)
             analysisStep.complete("Analysis completed")
 
             progress.complete()
