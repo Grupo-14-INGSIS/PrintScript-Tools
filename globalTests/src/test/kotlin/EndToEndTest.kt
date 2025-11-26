@@ -8,6 +8,10 @@ import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.Parser
 import lexer.src.main.kotlin.Lexer
 import container.src.main.kotlin.Container
+import lexer.src.main.kotlin.StringCharSource
+import interpreter.src.main.kotlin.Interpreter // Import the Interpreter
+import kotlin.jvm.kotlin
+
 
 class EndToEndTest {
 
@@ -22,8 +26,7 @@ class EndToEndTest {
     fun `test arithmetic expression parsing and evaluation`() {
         val input = "2 + 3 * 4"
         val lexer = Lexer.from(input)
-        lexer.split()
-        val tokens: Container = lexer.createToken(lexer.list)
+        val tokens: Container = lexer.lexIntoStatements().first()
 
         val parser = Parser(tokens)
         val ast = parser.parse()
@@ -43,8 +46,7 @@ class EndToEndTest {
     fun `test complex expression with parentheses`() {
         val input = "5 * 4"
         val lexer = Lexer.from(input)
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val tokens = lexer.lexIntoStatements().first()
 
         val parser = Parser(tokens)
         val ast = parser.parse()
@@ -71,8 +73,7 @@ class EndToEndTest {
     fun `test lexer token classification`() {
         val input = "let x : number = 42;"
         val lexer = Lexer.from(input)
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val tokens = lexer.lexIntoStatements().first()
 
         val expectedTypes = listOf(
             DataType.LET_KEYWORD,
@@ -104,8 +105,7 @@ class EndToEndTest {
     fun `test string literal with quotes`() {
         val input = "\"This is a string with spaces\""
         val lexer = Lexer.from(input)
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val tokens = lexer.lexIntoStatements().first()
 
         assertEquals(1, tokens.size())
         assertEquals(DataType.STRING_LITERAL, tokens.get(0)?.type)
@@ -123,8 +123,7 @@ class EndToEndTest {
 
         testCases.forEach { (input, _) ->
             val lexer = Lexer.from(input)
-            lexer.split()
-            val tokens = lexer.createToken(lexer.list)
+            val tokens = lexer.lexIntoStatements().first()
 
             val parser = Parser(tokens)
             val ast = parser.parse()
@@ -150,11 +149,11 @@ class EndToEndTest {
         """.trimIndent()
 
         val lexer = Lexer.from(program)
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
+        val allTokens = statements.flatMap { it.container }
 
-        assertNotNull(tokens)
-        assertTrue(tokens.size() > 10)
+        assertNotNull(allTokens)
+        assertTrue(allTokens.size > 10)
     }
 
     @Test
@@ -167,17 +166,16 @@ class EndToEndTest {
         """.trimIndent()
 
         val lexer = Lexer.from(fileContent)
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
+        val allTokens = statements.flatMap { it.container }
 
-        assertTrue(tokens.size() > 20)
+        assertTrue(allTokens.size > 20)
 
         var letCount = 0
         var numberCount = 0
 
-        for (i in 0 until tokens.size()) {
-            val token = tokens.get(i)
-            when (token?.type) {
+        for (token in allTokens) {
+            when (token.type) {
                 DataType.LET_KEYWORD -> letCount++
                 DataType.NUMBER_TYPE -> numberCount++
                 else -> {}
@@ -191,8 +189,7 @@ class EndToEndTest {
     private fun executeFullPipeline(input: String): Boolean {
         return try {
             val lexer = Lexer.from(input)
-            lexer.split()
-            val tokens = lexer.createToken(lexer.list)
+            val tokens = lexer.lexIntoStatements().first()
 
             val parser = Parser(tokens)
             val ast = parser.parse()
@@ -203,4 +200,32 @@ class EndToEndTest {
             false
         }
     }
+
+    @Test
+    fun `invalid if statement condition throws exception`() {
+        val sourceCode = """
+            if(21) {
+                println("this should fail");
+            }
+        """.trimIndent()
+        val version = "1.1"
+
+        val ex = assertThrows(IllegalStateException::class.java) {
+            executeFullPipelineAndThrow(sourceCode, version)
+        }
+        assertTrue(ex.message!!.contains("La condición de un 'if' debe ser booleana"))
+    }
+
+    private fun executeFullPipelineAndThrow(input: String, version: String) {
+        val lexer = Lexer(StringCharSource(input), version)
+        val statements = lexer.lexIntoStatements()
+
+        val interpreter = Interpreter(version)
+        for (statement in statements) {
+            val parser = Parser(statement, version)
+            val ast = parser.parse()
+            interpreter.executeAST(ast)
+        }
+    }
 }
+

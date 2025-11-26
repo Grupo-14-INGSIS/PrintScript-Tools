@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
 
-class MandatorySingleSpaceSeparationTEst {
+class MandatorySingleSpaceSeparationTest {
 
     @Test
     fun `test mandatory-single-space-separation normalizes all spacing`() {
@@ -31,8 +31,15 @@ class MandatorySingleSpaceSeparationTEst {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
+
+        var flatContainer = Container()
+        for (statement in statements) {
+            for (token in statement.container) {
+                flatContainer = flatContainer.addContainer(token)
+            }
+        }
+        val tokens = flatContainer
 
         println("=== TOKENS DESPUÉS DEL LEXER ===")
         for (i in 0 until tokens.size()) {

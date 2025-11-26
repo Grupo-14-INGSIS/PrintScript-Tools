@@ -1,7 +1,7 @@
 package executor.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import container.src.main.kotlin.Container
+
 import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
 import interpreter.src.main.kotlin.Interpreter
@@ -50,57 +50,31 @@ class Executor {
         progress.initialize(4)
 
         try {
-            // Paso 1: Análisis léxico
-            val lexerStep = progress.startStep(
-                "Performing lexical analysis"
-            )
-            val lexer = Lexer.from(
-                source
-            )
-            lexer.split()
-            lexerStep.complete(
-                "Lexical analysis completed"
-            )
+            // Paso 1: Análisis léxico y de tokens
+            val lexerStep = progress.startStep("Performing lexical and token analysis")
+            val lexer = Lexer.from(source)
+            val statements = lexer.lexIntoStatements() // Returns List<Container>
+            lexerStep.complete("Lexical and token analysis completed: ${statements.size} statements found")
 
-            // Paso 2: Generación de tokens
-            val tokenStep = progress.startStep(
-                "Generating tokens"
-            )
-            val tokens: Container = lexer.createToken(
-                lexer.list
-            )
-            tokenStep.complete(
-                "${tokens.size()} tokens generated"
-            )
-
-            // Paso 3: Análisis sintáctico
-            val parserStep = progress.startStep(
-                "Parsing source code..."
-            )
-            val parser = Parser(
-                tokens
-            )
-            val ast: ASTNode = parser.parse()
-            parserStep.complete(
-                "AST built successfully"
-            )
-
-            // Paso 4: Ejecución
-            val executionStep = progress.startStep(
-                "Executing program"
-            )
+            // Pasos 2, 3 y 4: Parseo, y Ejecución por cada sentencia
+            val executionStep = progress.startStep("Parsing, and executing program")
             val inputProvider = ConsoleInputProvider()
-            val interpreter = Interpreter(
-                version,
-                inputProvider
-            )
-            val executionOutput = interpreter.executeAST(
-                ast
-            )
-            executionOutput.forEach { println(it) }
-            executionStep.complete(
-                "Program executed successfully"
-            )
+            val interpreter = Interpreter(version, inputProvider)
+            val finalOutput = mutableListOf<String>()
+
+            for (statement in statements) {
+                // No se necesita un paso de "generación de tokens" porque ya están en el container
+                // Análisis sintáctico
+                val parser = Parser(statement)
+                val ast: ASTNode = parser.parse()
+
+                // Ejecución
+                val executionOutput = interpreter.executeAST(ast)
+                finalOutput.addAll(executionOutput)
+            }
+
+            finalOutput.forEach { println(it) }
+            executionStep.complete("Program executed successfully")
 
             progress.complete()
         } catch (e: Exception) {

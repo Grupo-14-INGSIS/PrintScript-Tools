@@ -34,11 +34,17 @@ class LineBreakAfterPrintlnTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
+
+        var flatContainer = Container()
+        for (statement in statements) {
+            for (token in statement.container) {
+                flatContainer = flatContainer.addContainer(token)
+            }
+        }
 
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
+        val formattedTokens = formatter.execute(flatContainer, configFile.toURI().toURL())
         val result = containerToString(formattedTokens)
 
         println("\n=== RESULTADO FINAL ===")
@@ -72,11 +78,17 @@ class LineBreakAfterPrintlnTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
+
+        var flatContainer = Container()
+        for (statement in statements) {
+            for (token in statement.container) {
+                flatContainer = flatContainer.addContainer(token)
+            }
+        }
 
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
+        val formattedTokens = formatter.execute(flatContainer, configFile.toURI().toURL())
         val result = containerToString(formattedTokens)
 
         println("\n=== RESULTADO FINAL ===")

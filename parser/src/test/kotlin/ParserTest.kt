@@ -172,6 +172,25 @@ class ParserTest {
 
     @Test
     fun tckTests() {
-        val container = Container()
+        var container = Container()
+        val sentence = listOf("let", " ", "a", ":", " ", "number", " ", "=", " ", "21", ";")
+        val dataTypes = listOf(
+            DataType.LET_KEYWORD,
+            DataType.SPACE,
+            DataType.IDENTIFIER,
+            DataType.COLON,
+            DataType.SPACE,
+            DataType.NUMBER_TYPE,
+            DataType.SPACE,
+            DataType.ASSIGNATION,
+            DataType.SPACE,
+            DataType.NUMBER_LITERAL,
+            DataType.SEMICOLON
+        )
+        for (i in sentence.indices) {
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+        }
+        val parser = Parser(container)
+        val root = parser.parse()
     }
 }

@@ -47,7 +47,6 @@ enum class DataType {
 
     // Control FLow 1.1
     IF_STATEMENT,
-    ELSE_STATEMENT,
 
     // Punctuation -> May be useful for Formatter
     SPACE,

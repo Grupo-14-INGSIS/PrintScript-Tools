@@ -59,98 +59,52 @@ class FormatterAction {
         )
 
         val progress = MultiStepProgress()
-        progress.initialize(4)
+        progress.initialize(5)
 
         try {
-            val validateStep = progress.startStep(
-                "Validating input files"
-            )
+            val validateStep = progress.startStep("Validating input files")
             val sourceSize = (source.length / 1024.0).let {
                 if (it < 1) {
                     "${source.length} bytes"
                 } else {
-                    "%.1f KB".format(
-                        it
-                    )
+                    "%.1f KB".format(it)
                 }
             }
-            validateStep.complete(
-                "Source file loaded ($sourceSize)"
-            )
+            validateStep.complete("Source file loaded ($sourceSize)")
 
-            val configStep = progress.startStep(
-                "Loading formatting configuration"
-            )
-            configStep.complete(
-                "Configuration loaded from $configFile"
-            )
-
-            val formatStep = progress.startStep(
-                "Applying formatting rules"
-            )
-            val lexer = Lexer.from(
-                source
-            )
-            lexer.split()
-            var tokens: Container = lexer.createToken(
-                lexer.list
-            )
+            val configStep = progress.startStep("Loading formatting configuration")
             val formatter = Formatter()
-            var percentageCompleted: Int
-            val rules: List<FormatRule> = formatter.loadRules(
-                configFileObj
-            )
-            for (i in 0 until rules.size) {
-                tokens = formatter.executeOne(
-                    tokens,
-                    rules[i]
-                )
-                percentageCompleted = i * 100 / rules.size
-                print(
-                    percentageCompleted
-                )
-                print(
-                    "%"
-                )
-                if (i < rules.size) {
-                    print(
-                        "....."
-                    )
+            val rules: List<FormatRule> = formatter.loadRules(configFileObj)
+            configStep.complete("Configuration loaded from $configFile")
+
+            val lexerStep = progress.startStep("Lexing source file")
+            val lexer = Lexer.from(source)
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Source file lexed into ${statements.size} statements")
+
+            val formatStep = progress.startStep("Applying formatting rules")
+            val formattedStatements = mutableListOf<Container>()
+            for (statement in statements) {
+                var currentContainer = statement
+                for (rule in rules) {
+                    currentContainer = formatter.executeOne(currentContainer, rule)
+                }
+                formattedStatements.add(currentContainer)
+            }
+            formatStep.complete("Formatting rules applied successfully")
+
+            val saveStep = progress.startStep("Saving formatted output")
+            val writer = FileWriter(sourceFile)
+            for (statement in formattedStatements) {
+                for (i in 0 until statement.size()) {
+                    writer.append(statement.get(i)!!.content)
                 }
             }
-            println("100%")
-            formatStep.complete(
-                "Formatting rules applied successfully"
-            )
-
-            val saveStep = progress.startStep(
-                "Preparing formatted output"
-            )
-            val writer = FileWriter(
-                sourceFile
-            )
-            for (i in 0 until tokens.size()) {
-                writer.append(
-                    tokens.get(
-                        i
-                    )!!.content
-                )
-            }
-            saveStep.complete(
-                "Formatted code ready"
-            )
+            writer.close() // Important: close the writer
+            saveStep.complete("Formatted code saved to $sourceFile")
 
             progress.complete()
-            println(
-                "\nFormatted code:"
-            )
-            println(
-                "=".repeat(50)
-            )
-            println()
-            println(
-                "=".repeat(50)
-            )
+            println("\nSUCCESS: '$sourceFile' has been formatted.")
         } catch (e: Exception) {
             println(
                 "Error during formatting: ${e.message}"

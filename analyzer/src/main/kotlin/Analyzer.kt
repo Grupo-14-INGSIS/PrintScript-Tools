@@ -2,7 +2,7 @@ package analyzer.src.main.kotlin
 
 import progress.src.main.kotlin.MultiStepProgress
 import lexer.src.main.kotlin.Lexer
-import container.src.main.kotlin.Container
+
 import parser.src.main.kotlin.Parser
 import ast.src.main.kotlin.ASTNode
 import linter.src.main.kotlin.Linter
@@ -61,86 +61,40 @@ class Analyzer {
         )
 
         val progress = MultiStepProgress()
-        progress.initialize(5)
+        progress.initialize(3)
 
         try {
-            val lexerStep = progress.startStep(
-                "Performing lexical analysis"
-            )
-            val lexer = Lexer.from(
-                source
-            )
-            lexer.split()
-            lexerStep.complete(
-                "Lexical analysis completed"
-            )
+            val lexerStep = progress.startStep("Performing lexical analysis")
+            val lexer = Lexer.from(source)
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Lexical analysis completed")
 
-            val tokenStep = progress.startStep(
-                "Generating tokens"
-            )
-            val tokens: Container = lexer.createToken(
-                lexer.list
-            )
-            tokenStep.complete(
-                "${tokens.size()} tokens generated"
-            )
+            val rulesStep = progress.startStep("Loading analysis rules")
+            val lintRules: List<LintRule> = loadLintRules(configFile)
+            rulesStep.complete("${lintRules.size} rule(s) loaded")
+            val analysisStep = progress.startStep("Executing static code analysis")
+            val linter = Linter(lintRules)
+            val allLintErrors = mutableListOf<LintError>()
 
-            val parserStep = progress.startStep(
-                "Building Abstract Syntax Tree"
-            )
-            val parser = Parser(
-                tokens
-            )
-            val ast: ASTNode = parser.parse()
-            parserStep.complete(
-                "AST built successfully"
-            )
+            for (statement in statements) {
+                val parser = Parser(statement)
+                val ast: ASTNode = parser.parse()
+                allLintErrors.addAll(linter.all(ast))
+            }
+            analysisStep.complete("Analysis completed")
 
-            val rulesStep = progress.startStep(
-                "Loading analysis rules"
-            )
-            val lintRules: List<LintRule> = loadLintRules(
-                configFile
-            )
-            rulesStep.complete(
-                "${lintRules.size} rule(s) loaded"
-            )
+            progress.complete()
 
-            val analysisStep = progress.startStep(
-                "Executing static code analysis"
-            )
-            val linter = Linter(
-                lintRules
-            )
-            val lintErrors: List<LintError> = linter.all(
-                ast
-            )
-
-            if (lintErrors.isEmpty()) {
-                analysisStep.complete(
-                    "Analysis completed"
-                )
-                progress.complete()
-                println(
-                    "\nSUCCESS: No issues were found"
-                )
+            if (allLintErrors.isEmpty()) {
+                println("\nSUCCESS: No issues were found")
             } else {
-                analysisStep.complete(
-                    "Analysis completed"
-                )
-                println(
-                    "\nANALYSIS RESULTS: ${lintErrors.size} issue(s) found:"
-                )
-                lintErrors.forEach { error ->
-                    println(
-                        "$error: $error"
-                    )
+                println("\nANALYSIS RESULTS: ${allLintErrors.size} issue(s) found:")
+                allLintErrors.forEach { error ->
+                    println("$error: $error")
                 }
             }
         } catch (e: Exception) {
-            println(
-                "Error during analysis: ${e.message}"
-            )
+            println("Error during analysis: ${e.message}")
             e.printStackTrace()
         }
     }

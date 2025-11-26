@@ -12,8 +12,7 @@ class IntegrationTest {
         val input = "let x: number;"
         val lexer = Lexer.from(input) // Directamente con string
 
-        lexer.split() // Sin parámetros, usa el CharSource interno
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(7, container.container.size)
 
@@ -42,8 +41,7 @@ class IntegrationTest {
         tempFile.writeText(input)
 
         val lexer = Lexer.from(tempFile) // Directamente con file
-        lexer.split() // Sin parámetros, usa el CharSource interno
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(7, container.container.size)
 
@@ -61,8 +59,7 @@ class IntegrationTest {
         val input = "let x: number = 42;"
         val lexer = Lexer.from(input)
 
-        lexer.split()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(11, container.container.size)
 
@@ -83,8 +80,7 @@ class IntegrationTest {
         val input = "x + y * 2;"
         val lexer = Lexer.from(input)
 
-        lexer.split()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(10, container.container.size)
 
@@ -104,13 +100,15 @@ class IntegrationTest {
     fun `test file processing with custom buffer size`() {
         val content = "let x: number = 42;\n".repeat(100)
         val tempFile = createTempFile("large_test", ".txt")
-        tempFile.writeText(content)
+        tempFile.writeText(content.trim())
 
         val lexer = Lexer.from(tempFile)
         lexer.split(512) // Buffer personalizado solo funciona con archivos
-        val container = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
 
-        val letTokens = container.container.filter { it.type == DataType.LET_KEYWORD }
+        assertEquals(100, statements.size)
+
+        val letTokens = statements.flatMap { it.container }.filter { it.type == DataType.LET_KEYWORD }
         assertEquals(100, letTokens.size)
 
         tempFile.delete()

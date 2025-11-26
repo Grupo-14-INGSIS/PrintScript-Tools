@@ -69,6 +69,21 @@ class LineBreakAfterSemicolonRuleTest {
     }
 
     @Test
+    fun `test LineBreakAfterSemicolonRule does nothing when disabled`() {
+        val rule = LineBreakAfterSemicolonRule(false)
+        val tokens = containerOf(
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.SEMICOLON, ";"),
+            token(DataType.IDENTIFIER, "y")
+        )
+
+        val result = rule.format(tokens)
+
+        assertEquals(tokens.size(), result.size())
+    }
+
+
+    @Test
     fun `does nothing if line break already present`() {
         val source = containerOf(
             token(

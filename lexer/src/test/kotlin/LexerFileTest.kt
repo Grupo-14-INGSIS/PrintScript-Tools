@@ -146,9 +146,7 @@ class LexerFileTest {
     fun `createToken should work after split`() {
         val source = fileSource("let x = 10", "token.txt")
         val lexer = Lexer(source)
-        lexer.split()
-
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
         assertNotNull(container)
         assertEquals(7, container.size())
     }

@@ -20,7 +20,8 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
             Actions.PRINT to Print,
             Actions.VAR_DECLARATION to VarDeclaration,
-            Actions.LITERAL to Literal
+            Actions.LITERAL to Literal,
+            Actions.BLOCK to Block()
         )
 
         if (version == "1.1") {
@@ -112,6 +113,7 @@ class Interpreter(
             DataType.ASSIGNATION -> Actions.ASSIGNMENT_TO_EXISTING_VAR
             DataType.IF_STATEMENT -> Actions.IF_STATEMENT
             DataType.DECLARATION -> Actions.VAR_DECLARATION
+            DataType.BLOCK -> Actions.BLOCK
             DataType.FUNCTION_CALL -> when (node.content) {
                 "readInput" -> Actions.READ_INPUT
                 "readEnv" -> Actions.READ_ENV
@@ -131,7 +133,8 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR,
             Actions.PRINT,
             Actions.VAR_DECLARATION,
-            Actions.LITERAL
+            Actions.LITERAL,
+            Actions.BLOCK
         )
 
         val v11OnlyActions = setOf(

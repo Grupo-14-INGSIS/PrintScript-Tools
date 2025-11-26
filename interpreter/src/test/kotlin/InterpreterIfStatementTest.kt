@@ -25,7 +25,7 @@ class InterpreterIfStatementTest {
     }
 
     @Test
-    fun `if statement with false condition and no else block does nothing`() {
+    fun `if statement with false condition does nothing`() {
         val interpreter = Interpreter("1.1")
         val ifNode = ASTNode(
             DataType.IF_STATEMENT,
@@ -38,22 +38,5 @@ class InterpreterIfStatementTest {
         )
         val result = interpreter.interpret(ifNode)
         assertEquals(Unit, result)
-    }
-
-    @Test
-    fun `if statement with false condition executes else block`() {
-        val interpreter = Interpreter("1.1")
-        val ifNode = ASTNode(
-            DataType.IF_STATEMENT,
-            "if",
-            Position(1, 0),
-            listOf(
-                ASTNode(DataType.BOOLEAN_LITERAL, "false", Position(1, 1), emptyList()),
-                ASTNode(DataType.STRING_LITERAL, "then block", Position(1, 2), emptyList()),
-                ASTNode(DataType.STRING_LITERAL, "else block", Position(1, 3), emptyList())
-            )
-        )
-        val result = interpreter.interpret(ifNode)
-        assertEquals("else block", result)
     }
 }
