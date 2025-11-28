@@ -36,16 +36,9 @@ class LineBreakAfterPrintlnTest {
         val lexer = Lexer(StringCharSource(input))
         val statements = lexer.lexIntoStatements()
 
-        var flatContainer = Container()
-        for (statement in statements) {
-            for (token in statement.container) {
-                flatContainer = flatContainer.addContainer(token)
-            }
-        }
-
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(flatContainer, configFile.toURI().toURL())
-        val result = containerToString(formattedTokens)
+        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
+        val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")
         println("Expected:\n$expected")
@@ -80,16 +73,9 @@ class LineBreakAfterPrintlnTest {
         val lexer = Lexer(StringCharSource(input))
         val statements = lexer.lexIntoStatements()
 
-        var flatContainer = Container()
-        for (statement in statements) {
-            for (token in statement.container) {
-                flatContainer = flatContainer.addContainer(token)
-            }
-        }
-
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(flatContainer, configFile.toURI().toURL())
-        val result = containerToString(formattedTokens)
+        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
+        val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")
         println("Expected:\n$expected")
@@ -98,14 +84,9 @@ class LineBreakAfterPrintlnTest {
         assertEquals(expected, result.trim())
     }
 
-    private fun containerToString(container: Container): String {
-        val result = StringBuilder()
-        for (i in 0 until container.size()) {
-            val token = container.get(i)
-            if (token != null) {
-                result.append(token.content)
-            }
+    private fun statementsToString(statements: List<Container>): String {
+        return statements.joinToString(separator = "") { statement ->
+            statement.container.joinToString(separator = "") { it.content }
         }
-        return result.toString()
     }
 }

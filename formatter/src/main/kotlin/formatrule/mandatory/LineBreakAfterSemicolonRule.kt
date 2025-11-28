@@ -13,12 +13,15 @@ class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatR
     private val space = DataType.SPACE
     private val closeBrace = DataType.CLOSE_BRACE
 
-    override fun format(source: Container): Container {
-        if (!enabled) return source
+    override fun format(statements: List<Container>): List<Container> {
+        if (!enabled) return statements
 
+        // 1. Flatten to a single source
+        val source = Container(statements.flatMap { it.container })
+
+        // 2. Apply original logic
         var tokens = source
         var i = 0
-
         while (i < tokens.size()) {
             val token = tokens.get(i) ?: break
 
@@ -57,7 +60,7 @@ class LineBreakAfterSemicolonRule(private val enabled: Boolean = true) : FormatR
             }
             i++
         }
-
-        return tokens
+        // 3. Return the single, modified container inside a list
+        return listOf(tokens)
     }
 }

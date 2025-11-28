@@ -26,18 +26,12 @@ class LineBreakAfterSemicolonRuleTest {
     @Test
     fun `does NOT add line break after semicolon at end of file`() {
         val source = containerOf(
-            token(
-                DataType.IDENTIFIER,
-                "x"
-            ),
-            token(
-                DataType.SEMICOLON,
-                ";"
-            )
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.SEMICOLON, ";")
         )
 
         val rule = LineBreakAfterSemicolonRule()
-        val result = rule.format(source)
+        val result = rule.format(listOf(source)).first()
 
         assertEquals(";", result.get(1)!!.content)
         assertEquals(2, result.size()) // Solo 2 tokens, sin salto de línea añadido
@@ -46,22 +40,13 @@ class LineBreakAfterSemicolonRuleTest {
     @Test
     fun `inserts line break when missing after semicolon`() {
         val source = containerOf(
-            token(
-                DataType.IDENTIFIER,
-                "x"
-            ),
-            token(
-                DataType.SEMICOLON,
-                ";"
-            ),
-            token(
-                DataType.IDENTIFIER,
-                "y"
-            )
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.SEMICOLON, ";"),
+            token(DataType.IDENTIFIER, "y")
         )
 
         val rule = LineBreakAfterSemicolonRule()
-        val result = rule.format(source)
+        val result = rule.format(listOf(source)).first()
 
         assertEquals(";", result.get(1)!!.content)
         assertEquals("\n", result.get(2)!!.content) // salto agregado
@@ -77,7 +62,7 @@ class LineBreakAfterSemicolonRuleTest {
             token(DataType.IDENTIFIER, "y")
         )
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
         assertEquals(tokens.size(), result.size())
     }
@@ -86,26 +71,14 @@ class LineBreakAfterSemicolonRuleTest {
     @Test
     fun `does nothing if line break already present`() {
         val source = containerOf(
-            token(
-                DataType.IDENTIFIER,
-                "x"
-            ),
-            token(
-                DataType.SEMICOLON,
-                ";"
-            ),
-            token(
-                DataType.LINE_BREAK,
-                "\n"
-            ),
-            token(
-                DataType.IDENTIFIER,
-                "y"
-            )
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.SEMICOLON, ";"),
+            token(DataType.LINE_BREAK, "\n"),
+            token(DataType.IDENTIFIER, "y")
         )
 
         val rule = LineBreakAfterSemicolonRule()
-        val result = rule.format(source)
+        val result = rule.format(listOf(source)).first()
 
         assertEquals(source.size(), result.size()) // no cambia nada
         assertEquals(";", result.get(1)!!.content)
@@ -117,18 +90,12 @@ class LineBreakAfterSemicolonRuleTest {
     @Test
     fun `does nothing when no semicolon present`() {
         val source = containerOf(
-            token(
-                DataType.IDENTIFIER,
-                "x"
-            ),
-            token(
-                DataType.IDENTIFIER,
-                "y"
-            )
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.IDENTIFIER, "y")
         )
 
         val rule = LineBreakAfterSemicolonRule()
-        val result = rule.format(source)
+        val result = rule.format(listOf(source)).first()
 
         assertEquals(source.size(), result.size())
         assertEquals("x", result.get(0)!!.content)

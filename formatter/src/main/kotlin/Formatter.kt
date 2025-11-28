@@ -6,23 +6,16 @@ import java.net.URL
 
 class Formatter() {
 
-    fun executeOne(tokens: Container, rule: FormatRule): Container {
-        return rule.format(tokens)
-    }
-
     fun loadRules(configFile: URL): List<FormatRule> {
         return ConfigLoader(configFile.path).loadConfig()
     }
 
-    fun execute(tokens: Container, configFile: URL): Container {
+    fun execute(statements: List<Container>, configFile: URL): List<Container> {
         val rules: List<FormatRule> = loadRules(configFile)
-        var tokens = tokens
-        for (rule: FormatRule in rules) {
-            tokens = executeOne(
-                tokens,
-                rule
-            )
+        var currentStatements = statements
+        for (rule in rules) {
+            currentStatements = rule.format(currentStatements)
         }
-        return tokens
+        return currentStatements
     }
 }

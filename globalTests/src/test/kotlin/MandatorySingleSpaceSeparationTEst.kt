@@ -33,34 +33,25 @@ class MandatorySingleSpaceSeparationTest {
         val lexer = Lexer(StringCharSource(input))
         val statements = lexer.lexIntoStatements()
 
-        var flatContainer = Container()
-        for (statement in statements) {
-            for (token in statement.container) {
-                flatContainer = flatContainer.addContainer(token)
-            }
-        }
-        val tokens = flatContainer
-
         println("=== TOKENS DESPUÉS DEL LEXER ===")
-        for (i in 0 until tokens.size()) {
-            val token = tokens.get(i)
-            if (token != null) {
-                println("Token $i: type=${token.type}, content='${token.content}', position=${token.position}")
+        statements.forEachIndexed { index, statement ->
+            println("  Statement $index:")
+            statement.container.forEach { token ->
+                println("    Token: type=${token.type}, content='${token.content}', position=${token.position}")
             }
         }
-
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
+        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
 
         println("\n=== TOKENS DESPUÉS DEL FORMATTER ===")
-        for (i in 0 until formattedTokens.size()) {
-            val token = formattedTokens.get(i)
-            if (token != null) {
-                println("Token $i: type=${token.type}, content='${token.content}', position=${token.position}")
+        formattedStatements.forEachIndexed { index, statement ->
+            println("  Statement $index:")
+            statement.container.forEach { token ->
+                println("    Token: type=${token.type}, content='${token.content}', position=${token.position}")
             }
         }
 
-        val result = containerToString(formattedTokens)
+        val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")
         println("Expected:\n$expected")
@@ -69,14 +60,9 @@ class MandatorySingleSpaceSeparationTest {
         assertEquals(expected, result.trim())
     }
 
-    private fun containerToString(container: Container): String {
-        val result = StringBuilder()
-        for (i in 0 until container.size()) {
-            val token = container.get(i)
-            if (token != null) {
-                result.append(token.content)
-            }
+    private fun statementsToString(statements: List<Container>): String {
+        return statements.joinToString(separator = "") { statement ->
+            statement.container.joinToString(separator = "") { it.content }
         }
-        return result.toString()
     }
 }

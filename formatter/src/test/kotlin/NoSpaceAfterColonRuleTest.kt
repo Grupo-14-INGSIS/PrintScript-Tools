@@ -25,7 +25,7 @@ class NoSpaceAfterColonRuleTest {
             token(DataType.IDENTIFIER, "x", 1, 2)
         )
 
-        val result = rule.format(input)
+        val result = rule.format(listOf(input)).first()
 
         assertEquals(2, result.size())
         assertEquals(":", result.get(0)?.content)
@@ -40,7 +40,7 @@ class NoSpaceAfterColonRuleTest {
             token(DataType.IDENTIFIER, "y", 2, 1)
         )
 
-        val result = rule.format(input)
+        val result = rule.format(listOf(input)).first()
 
         assertEquals(2, result.size())
         assertEquals(":", result.get(0)?.content)
@@ -56,7 +56,7 @@ class NoSpaceAfterColonRuleTest {
         input = input.addContainer(token(DataType.SPACE, " ", 3, 1))
         input = input.addContainer(token(DataType.COLON, ":", 3, 2))
 
-        val result = rule.format(input)
+        val result = rule.format(listOf(input)).first()
 
         assertEquals(3, result.size())
         assertEquals("a", result.get(0)?.content)
@@ -69,7 +69,7 @@ class NoSpaceAfterColonRuleTest {
         var input = Container()
         input = input.addContainer(token(DataType.COLON, ":", 4, 0))
 
-        val result = rule.format(input)
+        val result = rule.format(listOf(input)).first()
 
         assertEquals(1, result.size())
         assertEquals(":", result.get(0)?.content)
@@ -84,7 +84,7 @@ class NoSpaceAfterColonRuleTest {
             token(DataType.IDENTIFIER, "z", 5, 2)
         )
 
-        val result = rule.format(input)
+        val result = rule.format(listOf(input)).first()
 
         assertEquals(Position(5, 0), result.get(0)?.position)
         assertEquals(Position(5, 2), result.get(1)?.position)

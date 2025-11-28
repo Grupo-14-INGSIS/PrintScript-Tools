@@ -31,7 +31,7 @@ class FormatterRulesTest {
         val input = containerOf(a, sp1, plus, sp2, b)
 
         val rule: FormatRule = SpaceAroundOperatorRule()
-        val output = rule.format(input)
+        val output = rule.format(listOf(input)).first()
 
         val expected = listOf("a", " ", "+", " ", "b")
         assertEquals(expected, output.container.map { it.content })
@@ -46,7 +46,7 @@ class FormatterRulesTest {
         val input = containerOf(a, sp1, sp2, b)
 
         val rule: FormatRule = SpaceBetweenTokensRule()
-        val output = rule.format(input)
+        val output = rule.format(listOf(input)).first()
 
         val expected = listOf("a", " ", "b")
         assertEquals(expected, output.container.map { it.content })

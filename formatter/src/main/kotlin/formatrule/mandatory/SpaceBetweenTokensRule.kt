@@ -11,12 +11,13 @@ class SpaceBetweenTokensRule(val enabled: Boolean = true) : FormatRule {
     private val noSpaceBefore = setOf(DataType.SEMICOLON)
     private val noSpaceAfter = emptySet<DataType>()
 
-    override fun format(source: Container): Container {
-        if (!enabled) return source
+    override fun format(statements: List<Container>): List<Container> {
+        if (!enabled) return statements
+
+        val source = Container(statements.flatMap { it.container })
 
         var result = Container()
         var i = 0
-
         while (i < source.size()) {
             val current = source.get(i)
             val next = source.get(i + 1)
@@ -48,7 +49,6 @@ class SpaceBetweenTokensRule(val enabled: Boolean = true) : FormatRule {
 
             i++
         }
-
-        return result
+        return listOf(result)
     }
 }

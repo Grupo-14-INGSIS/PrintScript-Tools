@@ -1,9 +1,9 @@
 package formatteraction.src.main.kotlin
 
-import container.src.main.kotlin.Container
+
 import formatter.src.main.kotlin.Formatter
 import lexer.src.main.kotlin.Lexer
-import formatter.src.main.kotlin.formatrule.FormatRule
+
 import progress.src.main.kotlin.MultiStepProgress
 
 import java.io.File
@@ -59,7 +59,7 @@ class FormatterAction {
         )
 
         val progress = MultiStepProgress()
-        progress.initialize(5)
+        progress.initialize(4)
 
         try {
             val validateStep = progress.startStep("Validating input files")
@@ -72,25 +72,14 @@ class FormatterAction {
             }
             validateStep.complete("Source file loaded ($sourceSize)")
 
-            val configStep = progress.startStep("Loading formatting configuration")
-            val formatter = Formatter()
-            val rules: List<FormatRule> = formatter.loadRules(configFileObj)
-            configStep.complete("Configuration loaded from $configFile")
-
             val lexerStep = progress.startStep("Lexing source file")
             val lexer = Lexer.from(source)
             val statements = lexer.lexIntoStatements()
             lexerStep.complete("Source file lexed into ${statements.size} statements")
 
             val formatStep = progress.startStep("Applying formatting rules")
-            val formattedStatements = mutableListOf<Container>()
-            for (statement in statements) {
-                var currentContainer = statement
-                for (rule in rules) {
-                    currentContainer = formatter.executeOne(currentContainer, rule)
-                }
-                formattedStatements.add(currentContainer)
-            }
+            val formatter = Formatter()
+            val formattedStatements = formatter.execute(statements, configFileObj)
             formatStep.complete("Formatting rules applied successfully")
 
             val saveStep = progress.startStep("Saving formatted output")

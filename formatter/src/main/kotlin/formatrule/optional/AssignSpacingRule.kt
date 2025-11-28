@@ -6,7 +6,7 @@ import tokendata.src.main.kotlin.Position
 import token.src.main.kotlin.Token
 import formatter.src.main.kotlin.formatrule.FormatRule
 
-class AssignSpacingRule( // manejo espacio del =
+class AssignSpacingRule(
     private val spaceBefore: Boolean = true,
     private val spaceAfter: Boolean = true
 ) : FormatRule {
@@ -14,16 +14,16 @@ class AssignSpacingRule( // manejo espacio del =
     private val equals = DataType.ASSIGNATION
     private val space = DataType.SPACE
 
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         var tokens = source
         var i = 0
-
         while (i < tokens.size()) {
             val token = tokens.get(i)
             if (token == null) break
 
             if (token.type == equals) {
-                // remuevo TODOS los espacios antes del =
                 while (i > 0) {
                     val previous = tokens.get(i - 1)
                     if (previous?.type == space) {
@@ -36,7 +36,6 @@ class AssignSpacingRule( // manejo espacio del =
                     }
                 }
 
-                // ahora, después del =
                 while (i + 1 < tokens.size()) {
                     val next = tokens.get(i + 1)
                     if (next?.type == space) {
@@ -48,7 +47,6 @@ class AssignSpacingRule( // manejo espacio del =
                     }
                 }
 
-                // espaciado dependeindo de la configuración
                 if (spaceAfter) {
                     tokens = tokens.addAt(
                         Token(space, " ", Position(0, 0)),
@@ -61,12 +59,11 @@ class AssignSpacingRule( // manejo espacio del =
                         Token(space, " ", Position(0, 0)),
                         i
                     )
-                    i++ // ajuste de índice por agregado previo
+                    i++
                 }
             }
             i++
         }
-
-        return tokens
+        return listOf(tokens)
     }
 }

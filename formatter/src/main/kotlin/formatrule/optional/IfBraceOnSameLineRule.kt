@@ -6,7 +6,9 @@ import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
 
 class IfBraceOnSameLineRule : FormatRule {
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         val newTokens = mutableListOf<Token>()
         var i = 0
         while (i < source.size()) {
@@ -25,8 +27,12 @@ class IfBraceOnSameLineRule : FormatRule {
 
                 if (closingParenIndex != -1) {
                     var nextTokenIndex = closingParenIndex + 1
-                    while (nextTokenIndex < source.size() &&
-                        (source.get(nextTokenIndex)!!.type == DataType.SPACE || source.get(nextTokenIndex)!!.type == DataType.LINE_BREAK)
+                    while (
+                        nextTokenIndex < source.size() &&
+                        (
+                            source.get(nextTokenIndex)!!.type == DataType.SPACE ||
+                                source.get(nextTokenIndex)!!.type == DataType.LINE_BREAK
+                            )
                     ) {
                         nextTokenIndex++
                     }
@@ -52,6 +58,7 @@ class IfBraceOnSameLineRule : FormatRule {
             }
             i++
         }
-        return Container(newTokens)
+        return listOf(Container(newTokens))
     }
 }
+
