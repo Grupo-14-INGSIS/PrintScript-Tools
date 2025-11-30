@@ -69,7 +69,7 @@ jobs:
 
       - name: Verify coverage
         run: |
-          ./gradlew jacocoTestCoverageVerification --quiet
+          ./gradlew jacocoTestCoverageVerification
           if [ $? -ne 0 ]; then
             echo "Build blocked: code coverage below 80%."
             ./gradlew jacocoTestReport
@@ -79,7 +79,7 @@ jobs:
       #remuevo check porque ya está incluído en el build de abajo. NO así el format
 
       - name: Build
-        run: ./gradlew build --continue #> .git/test-output.log
+        run: ./gradlew build --continue > .git/test-output.log
 
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'
