@@ -6,9 +6,10 @@ object Print : ActionType {
         val value = interpreter.interpret(node.children[0])
         if (value is Double && value % 1 == 0.0) {
             interpreter.printer(value.toInt())
+            return value.toInt().toString()
         } else {
             interpreter.printer(value)
+            return value.toString()
         }
-        return Unit
     }
 }

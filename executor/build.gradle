@@ -11,4 +11,5 @@ dependencies{
     implementation project(":ast")
     implementation project(":progress")
     implementation project(":inputprovider")
+    implementation(project ":error")
 }

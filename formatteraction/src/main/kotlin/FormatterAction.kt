@@ -1,14 +1,11 @@
 package formatteraction.src.main.kotlin
 
-
 import formatter.src.main.kotlin.Formatter
 import lexer.src.main.kotlin.Lexer
-
 import progress.src.main.kotlin.MultiStepProgress
 
 import java.io.File
 import java.io.FileWriter
-import java.net.URL
 
 class FormatterAction {
 
@@ -28,27 +25,21 @@ class FormatterAction {
         val version = if (args.size > 2) args[2] else "1.0"
 
         if (version !in listOf("1.0", "1.1")) {
-            println(
-                "Error: Unsupported version. Only 1.0 is admitted."
-            )
+            println("Error: Unsupported version. Only 1.0 and 1.1 are admitted.")
             return
         }
 
         val sourceFileObj = File(sourceFile)
-        val configFileObj: URL? = this::class.java.getResource(
-            configFile
-        )
+        val configFileObj: File = File(configFile)
+
+        if (!configFileObj.exists()) {
+            println("Error: The configuration file '$configFile' does not exist.")
+            return
+        }
 
         if (!sourceFileObj.exists()) {
             println(
                 "Error: The source file '$sourceFile' does not exist."
-            )
-            return
-        }
-
-        if (configFileObj == null) {
-            println(
-                "Error: The configuration file '$configFile' does not exist."
             )
             return
         }
@@ -72,6 +63,13 @@ class FormatterAction {
             }
             validateStep.complete("Source file loaded ($sourceSize)")
 
+            val configStep = progress.startStep(
+                "Loading formatting configuration"
+            )
+            configStep.complete(
+                "Configuration loaded from $configFile"
+            )
+
             val lexerStep = progress.startStep("Lexing source file")
             val lexer = Lexer.from(source)
             val statements = lexer.lexIntoStatements()
@@ -80,20 +78,34 @@ class FormatterAction {
             val formatStep = progress.startStep("Applying formatting rules")
             val formatter = Formatter()
             val formattedStatements = formatter.execute(statements, configFileObj)
-            formatStep.complete("Formatting rules applied successfully")
+            formatStep.complete(
+                "Formatting rules applied successfully"
+            )
 
-            val saveStep = progress.startStep("Saving formatted output")
-            val writer = FileWriter(sourceFile)
-            for (statement in formattedStatements) {
-                for (i in 0 until statement.size()) {
-                    writer.append(statement.get(i)!!.content)
+            val saveStep = progress.startStep("Preparing formatted output")
+
+            FileWriter(sourceFile).use { writer ->
+                formattedStatements.forEach { container ->
+                    container.container.forEach { token ->
+                        writer.append(token.content)
+                    }
                 }
             }
-            writer.close() // Important: close the writer
-            saveStep.complete("Formatted code saved to $sourceFile")
+
+            saveStep.complete("Formatted code ready")
+
 
             progress.complete()
-            println("\nSUCCESS: '$sourceFile' has been formatted.")
+            println(
+                "\nFormatted code:"
+            )
+            println(
+                "=".repeat(50)
+            )
+            println()
+            println(
+                "=".repeat(50)
+            )
         } catch (e: Exception) {
             println(
                 "Error during formatting: ${e.message}"

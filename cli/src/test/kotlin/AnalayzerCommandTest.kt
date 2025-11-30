@@ -43,7 +43,7 @@ class AnalayzerCommandTest {
 
         val output = outputStream.toString().trim()
 
-        assertTrue(output.contains("Error: Unsupported version."))
+        assertTrue(output.contains("Error: Unsupported version '1.3'."))
     }
 
     @Test

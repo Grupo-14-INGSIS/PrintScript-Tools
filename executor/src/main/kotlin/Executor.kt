@@ -1,7 +1,6 @@
 package executor.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
-
 import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
 import interpreter.src.main.kotlin.Interpreter
@@ -13,82 +12,69 @@ class Executor {
 
     fun execute(args: List<String>) {
         if (args.isEmpty()) {
-            println(
-                "Must specify the source file."
-            )
-            println(
-                "Usage: execution <source_file> [version]"
-            )
+            println("Must specify the source file.")
+            println("Usage: execution <source_file> [version]")
             return
         }
 
         val sourceFile = args[0]
-
         val version = if (args.size > 1) args[1] else "1.0"
 
         if (version !in listOf("1.0", "1.1")) {
-            println(
-                "Error: Unsupported version. Only 1.0 and 1.1 are supported."
-            )
+            println("Error: Unsupported version. Only 1.0 and 1.1 are supported.")
             return
         }
 
         val file = File(sourceFile)
         if (!file.exists()) {
-            println(
-                "Error: The source file '$sourceFile' does not exist."
-            )
+            println("Error: The source file '$sourceFile' does not exist.")
             return
         }
 
         val source = file.readText()
-        println(
-            "Starting execution of '$sourceFile' with PrintScript $version"
-        )
+        println("Starting execution of '$sourceFile' with PrintScript $version")
 
         val progress = MultiStepProgress()
-        progress.initialize(4)
+        progress.initialize(3) // Now 3 steps: Lexing, Parsing+Execution
 
         try {
-            // Paso 1: Análisis léxico y de tokens
-            val lexerStep = progress.startStep("Performing lexical and token analysis")
+            // Paso 1: Análisis léxico
+            val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            val statements = lexer.lexIntoStatements() // Returns List<Container>
-            lexerStep.complete("Lexical and token analysis completed: ${statements.size} statements found")
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
 
-            // Pasos 2, 3 y 4: Parseo, y Ejecución por cada sentencia
-            val executionStep = progress.startStep("Parsing, and executing program")
+            // Pasos 2 y 3: Parseo y Ejecución por cada sentencia
+            val executionStep = progress.startStep("Parsing and executing program")
             val inputProvider = ConsoleInputProvider()
-            val interpreter = Interpreter(version, inputProvider)
+            val interpreter = Interpreter(version, inputProvider) // Default printer used here
 
-            val finalOutput = mutableListOf<String>()
-            val printOutput = { message: Any? -> finalOutput.add(message.toString()) }
             val originalOut = System.out
+            val capturedOutput = mutableListOf<String>()
             val printStream = object : java.io.PrintStream(originalOut) {
                 override fun println(x: Any?) {
-                    printOutput(x)
+                    capturedOutput.add(x.toString())
                 }
             }
             System.setOut(printStream)
 
             try {
                 for (statement in statements) {
-                    val parser = Parser(statement)
+                    val parser = Parser(statement, version) // Parser takes a single statement
                     val ast: ASTNode = parser.parse()
                     interpreter.interpret(ast)
                 }
             } finally {
-                System.setOut(originalOut)
+                System.setOut(originalOut) // Restore System.out
             }
 
-            finalOutput.forEach { println(it) }
+            capturedOutput.forEach { println(it) } // Print captured output to actual console
             executionStep.complete("Program executed successfully")
 
             progress.complete()
         } catch (e: Exception) {
-            println(
-                "Error during execution: ${e.message}"
-            )
+            // ErrorReporter.report("execution", e, tokens) // 'tokens' is not available here, report general error
+            println("Error during execution: ${e.message}")
             e.printStackTrace()
         }
     }

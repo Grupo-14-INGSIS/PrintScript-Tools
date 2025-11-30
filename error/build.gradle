@@ -1,0 +1,11 @@
+plugins {
+    id 'buildlogic.kotlin-myPlugin-conventions'
+}
+
+dependencies {
+    implementation(project ":token")
+
+    implementation(project ":tokendata")
+    implementation(project ":container")
+
+}

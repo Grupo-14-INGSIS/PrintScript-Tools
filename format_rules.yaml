@@ -1,11 +1,6 @@
-rules:
-  switch:
-    NoSpaceBeforeColon: true
-    NoSpaceAfterColon: true
-    NoSpaceBeforeEquals: true
-    NoSpaceAfterEquals: true
+enforce-spacing-before-colon-in-declaration: false
+enforce-spacing-after-colon-in-declaration: true
 
-  setValue:
-    # Any value in {0, 1, 2}
-    lineBreakBeforePrint: 2
+enforce-no-spacing-around-equals: true
 
+line-breaks-before-println: 2

@@ -105,17 +105,24 @@ class Interpreter(
         val action = determineAction(node)
         if (!isActionSupportedInVersion(action, version)) {
             throw IllegalArgumentException(
-                "Action $action is not supported in PrintScript version $version"
+                "Action $action is not supported in PrintScript version $version " +
+                    "at line ${node.position.line}, column ${node.position.column}"
             )
         }
 
         val handler = actionHandlers[action]
-            ?: throw IllegalArgumentException("No handler found for action: $action")
+            ?: throw IllegalArgumentException(
+                "No handler found for action: $action " +
+                    "at line ${node.position.line}, column ${node.position.column}"
+            )
 
         return try {
             handler.interpret(node, this)
         } catch (e: Exception) {
-            println("Error during interpretation: ${e.message}")
+            println(
+                "Error during interpretation at line ${node.position.line}, " +
+                    "column ${node.position.column}: ${e.message}"
+            )
             throw e
         }
     }
@@ -157,13 +164,15 @@ class Interpreter(
             Actions.PRINT,
             Actions.VAR_DECLARATION_AND_ASSIGNMENT,
             Actions.LITERAL,
-            Actions.BLOCK
+            Actions.BLOCK,
+            Actions.VAR_DECLARATION
         )
 
         val v11OnlyActions = setOf(
             Actions.READ_INPUT,
             Actions.READ_ENV,
             Actions.IF_STATEMENT,
+            Actions.CONST_DECLARATION,
             Actions.CONST_DECLARATION_AND_ASSIGNMENT
         )
 
@@ -172,5 +181,16 @@ class Interpreter(
             "1.1" -> action in v10Actions || action in v11OnlyActions
             else -> false
         }
+    }
+
+    fun executeAST(ast: ASTNode): List<String> {
+        val outputs = mutableListOf<String>()
+
+        for (child in ast.children) {
+            val result = interpret(child)
+            if (result is String) outputs.add(result)
+        }
+
+        return outputs
     }
 }

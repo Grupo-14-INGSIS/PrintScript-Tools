@@ -1,0 +1,6 @@
+rules:
+  identifier_format:
+    style: camelCase
+
+  mandatory_variable_or_literal_in_println:
+    enabled: true

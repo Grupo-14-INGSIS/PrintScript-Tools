@@ -61,5 +61,6 @@ enum class DataType {
     CLOSE_BRACE,
 
     INVALID,
-    BLOCK
+    BLOCK,
+    SCRIPT
 }

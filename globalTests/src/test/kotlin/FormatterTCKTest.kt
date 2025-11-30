@@ -23,7 +23,7 @@ class FormatterTCKTest {
         val statements = lexer.lexIntoStatements()
 
         val formatter = Formatter()
-        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
+        val formattedStatements = formatter.execute(statements, configFile)
 
         val result = statementsToString(formattedStatements)
 

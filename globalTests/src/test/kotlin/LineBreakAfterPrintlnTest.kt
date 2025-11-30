@@ -37,7 +37,7 @@ class LineBreakAfterPrintlnTest {
         val statements = lexer.lexIntoStatements()
 
         val formatter = Formatter()
-        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
+        val formattedStatements = formatter.execute(statements, configFile)
         val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")
@@ -74,7 +74,7 @@ class LineBreakAfterPrintlnTest {
         val statements = lexer.lexIntoStatements()
 
         val formatter = Formatter()
-        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
+        val formattedStatements = formatter.execute(statements, configFile)
         val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")

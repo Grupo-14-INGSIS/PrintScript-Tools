@@ -5,9 +5,10 @@ object Main {
     fun main(args: Array<String>) {
         val cli = Cli(
             mapOf(
-                "formatter" to FormatterCommand(),
-                "analyzer" to AnalyzerCommand(),
-                "execution" to ExecutionCommand()
+                "formatter" to FormatterCommand(), // ./gradlew :mainApp:run --args="formatter test.ps format_rules.yaml 1.0"
+                "analyzer" to AnalyzerCommand(), // ./gradlew :mainApp:run --args="analyzer test.ps analyzer_rules.yaml 1.0
+                "execution" to ExecutionCommand(), // ./gradlew :mainApp:run --args="execution test.ps 1.0"
+                "validation" to ValidationCommand() // ./gradlew :mainApp:run --args='validation test.ps 1.0
             )
         )
         cli.run(args)

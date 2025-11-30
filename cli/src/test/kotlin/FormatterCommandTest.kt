@@ -40,7 +40,7 @@ class FormatterCommandTest {
         val output = outputStream.toString().trim()
         assertTrue(
             output.contains(
-                "Error: Unsupported version. Only 1.0 is admitted."
+                "Error: Unsupported version. Only 1.0 and 1.1 are admitted."
             )
         )
     }
@@ -72,20 +72,27 @@ class FormatterCommandTest {
             )
         }
 
-        val configFile = "/format_rules.yaml"
+        val configFile = File.createTempFile("config", ".yml").apply {
+            writeText(
+                """
+            rules:
+              mandatory-single-space-separation: true
+                """.trimIndent()
+            )
+        }
         val originalOut = System.out
         val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
 
         val command = FormatterCommand()
-        command.execute(listOf(sourceFile.absolutePath, configFile))
+        command.execute(listOf(sourceFile.absolutePath, configFile.absolutePath))
 
         val output = outputStream.toString()
 
         System.setOut(originalOut)
         println(output)
 
-        assertTrue(output.contains("Starting formatting of")) // Giving false
+        assertTrue(output.contains("Starting formatting of"))
         assertTrue(output.contains("Applying formatting rules"))
     }
 }

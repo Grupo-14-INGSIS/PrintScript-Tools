@@ -1,5 +1,6 @@
 package analyzer.src.main.kotlin
 
+import ast.src.main.kotlin.ASTNode
 import progress.src.main.kotlin.MultiStepProgress
 import lexer.src.main.kotlin.Lexer
 
@@ -12,17 +13,88 @@ import linter.src.main.kotlin.config.ConfigFactory
 import linter.src.main.kotlin.config.ConfigLoader
 import linter.src.main.kotlin.rules.IdentifierNamingRule
 import linter.src.main.kotlin.rules.PrintLnRule
+import tokendata.src.main.kotlin.DataType
 import java.io.File
 
 class Analyzer {
+
+    // Modo validación: solo sintaxis y semántica
+    fun executeValidation(args: List<String>) {
+        if (args.isEmpty()) {
+            println("Error: Must specify the source file.")
+            println("Usage: validation <source_file> [version]")
+            return
+        }
+
+        val sourceFile = args[0]
+        val version = if (args.size > 1) args[1] else "1.0"
+
+        val supportedVersions = setOf("1.0", "1.1")
+        if (version !in supportedVersions) {
+            println("Error: Unsupported version '$version'.")
+            println("Supported versions: ${supportedVersions.joinToString(", ")}")
+            return
+        }
+
+        val sourceFileObj = File(sourceFile)
+
+        if (!sourceFileObj.exists()) {
+            println("Error: The source file '$sourceFile' does not exist.")
+            return
+        }
+
+        val source = sourceFileObj.readText()
+        println("Starting validation of '$sourceFile' (PrintScript $version)")
+
+        val progress = MultiStepProgress()
+        progress.initialize(3)
+
+        var hasError = false
+
+        try {
+            val lexerStep = progress.startStep("Performing lexical analysis")
+            val lexer = Lexer.from(source)
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
+
+            val parserStep = progress.startStep("Validating syntax")
+            for (statement in statements) {
+                val parser = Parser(statement, version)
+                val ast: ASTNode = parser.parse()
+
+                if (ast.type == DataType.INVALID) { // Check for invalid AST directly
+                    hasError = true
+                    parserStep.complete("Syntax validation failed for statement")
+                    println("\nSYNTAX ERROR: Invalid syntax detected in statement")
+                    ErrorReporter.report("validation", Exception("Invalid AST for statement"), statement)
+                    break // Stop validation on first error
+                }
+            }
+
+            if (!hasError) {
+                parserStep.complete("Syntax validation completed")
+                progress.complete()
+                println("\nSUCCESS: File is syntactically and semantically valid")
+            }
+        } catch (e: Exception) {
+            ErrorReporter.report("validation", e, null) // 'tokens' is not available here anymore
+
+            when {
+                e.message?.contains("syntax", ignoreCase = true) == true -> {
+                    println("This appears to be a syntax error. Please check your code structure.")
+                }
+                e.message?.contains("unexpected", ignoreCase = true) == true -> {
+                    println("Unexpected token found. Please review the syntax near the error location.")
+                }
+            }
+        }
+    }
+
+    // Modo análisis: sintaxis + semántica + linting
     fun execute(args: List<String>) {
         if (args.size < 2) {
-            println(
-                "Error: Must specify the source file and the analysis configuration file."
-            )
-            println(
-                "Usage: analyzer <source_file> <configuration_file> [version]"
-            )
+            println("Error: Must specify the source file and the analysis configuration file.")
+            println("Usage: analyzer <source_file> <configuration_file> [version]")
             return
         }
 
@@ -32,9 +104,8 @@ class Analyzer {
 
         val supportedVersions = setOf("1.0", "1.1")
         if (version !in supportedVersions) {
-            println(
-                "Error: Unsupported version."
-            )
+            println("Error: Unsupported version '$version'.")
+            println("Supported versions: ${supportedVersions.joinToString(", ")}")
             return
         }
 
@@ -42,23 +113,17 @@ class Analyzer {
         val configFileObj = File(configFile)
 
         if (!sourceFileObj.exists()) {
-            println(
-                "Error: The source file '$sourceFile' does not exist."
-            )
+            println("Error: The source file '$sourceFile' does not exist.")
             return
         }
 
         if (!configFileObj.exists()) {
-            println(
-                "Error: The configuration file '$configFile' does not exist."
-            )
+            println("Error: The configuration file '$configFile' does not exist.")
             return
         }
 
         val source = sourceFileObj.readText()
-        println(
-            "Starting analysis of '$sourceFile' (PrintScript $version)"
-        )
+        println("Starting analysis of '$sourceFile' (PrintScript $version)")
 
         val progress = MultiStepProgress()
         progress.initialize(3)
@@ -93,8 +158,16 @@ class Analyzer {
                 }
             }
         } catch (e: Exception) {
-            println("Error during analysis: ${e.message}")
-            e.printStackTrace()
+            ErrorReporter.report("analysis", e, null) // 'tokens' is not available here anymore
+
+            when {
+                e.message?.contains("syntax", ignoreCase = true) == true -> {
+                    println("This appears to be a syntax error. Please check your code structure.")
+                }
+                e.message?.contains("config", ignoreCase = true) == true -> {
+                    println("Configuration file error. Please verify the YAML format.")
+                }
+            }
         }
     }
 
@@ -108,15 +181,11 @@ class Analyzer {
         val rules = mutableListOf<LintRule>()
 
         config.rules.identifier_format?.let {
-            rules += IdentifierNamingRule(
-                it.style
-            )
+            rules += IdentifierNamingRule(it.style)
         }
 
         config.rules.mandatory_variable_or_literal_in_println?.let {
-            rules += PrintLnRule(
-                it.enabled
-            )
+            rules += PrintLnRule(it.enabled)
         }
 
         return rules

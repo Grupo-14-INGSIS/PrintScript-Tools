@@ -192,7 +192,7 @@ class Parser @JvmOverloads constructor(
         val keyword = if (isConst) DataType.CONST_KEYWORD else DataType.LET_KEYWORD
 
         val identifierToken = tokens.get(1)!!
-        val typeToken = tokens.get(3)!!
+        val typeToken = tokens.get(3)!! // let x : number = 5
         val assignationIndex = findTokenIndex(tokens, DataType.ASSIGNATION)
 
         val valueTokens = tokens.slice(assignationIndex + 1)

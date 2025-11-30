@@ -41,7 +41,7 @@ class MandatorySingleSpaceSeparationTest {
             }
         }
         val formatter = Formatter()
-        val formattedStatements = formatter.execute(statements, configFile.toURI().toURL())
+        val formattedStatements = formatter.execute(statements, configFile)
 
         println("\n=== TOKENS DESPUÉS DEL FORMATTER ===")
         formattedStatements.forEachIndexed { index, statement ->

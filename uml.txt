@@ -1,81 +1,64 @@
 @startuml
-' ### INTERPRETER ###
+'top to bottom direction
 
-class Lexer {
-' Toma la String y la convierte en una lista de Tokens. Se encarga de identificar las palabras claves
-Token[] process(String text)
+' ==== Core ====
+rectangle token
+rectangle tokendata
+
+together {
+  rectangle ast
+  rectangle container
+  rectangle inputprovider
+  rectangle progress
+  rectangle error
 }
 
-class Token {
-Keyword type
-String content
-Position position
+' ==== Tools ====
+together {
+  rectangle lexer
+  rectangle parser
+  rectangle interpreter
+  rectangle linter
+  rectangle formatter
 }
 
-class Position {
-int line
-int column
-}
+' ==== Commands ====
+rectangle commands
 
-enum Keyword {}
+' ==== CLI ====
+rectangle cli
 
-class Parser {
-' Toma la lista de Tokens y verifica si forman una estructura válida. De ser así, devuelve un AST
-Command parse(Token[] tokens)
-}
+' ==== App ====
+rectangle mainapp
 
-class VariableStorage {
-Map<String, Any> variables
-' Almacena el nombre de la variable y su valor
-VariableStorage getInstance()
-' Singleton
-Any get(String variable)
-Any storage(String variable, Any value)
-' Agrega o actualiza una variable
-Any delete(String vaiable)
-}
 
-class CommandFactory {
-Map<Keyword, Command> commands
-Command getCommand(ParseNode node)
-}
 
-interface Command {
-void execute()
-}
+' ==== App ====
+mainapp -right-> cli
+cli -right-> commands
 
-class ParseNode {
-Token token
-Token[] children
-}
+' ==== Commands ====
+commands -down-> lexer
+commands -down-> parser
+commands -down-> interpreter
+commands -down-> linter
+commands -down-> formatter
+commands -down-> progress
 
-class Interpreter {
-' Ejecuta el AST
-void execute(ASTNode tree)
-}
+' ==== Tools ====
+lexer -down-> container
+parser -down-> container
+parser -down-> ast
+interpreter -down-> container
+interpreter -down-> ast
+interpreter -down-> inputprovider
+linter -down-> container
+formatter -down-> container
+formatter -down-> error
 
-' ### FORMATTER ###
-
-class Formatter {
-' Aplica formato y convenciones al código, sin cambiar su funcionalidad
-}
-
-' ### STATIC CODE ANALYZER ###
-
-class StaticCodeAnalyzer {
-' Busca errores y malas prácticas
-}
-
-Lexer -right-> Token
-Token -down-> Keyword
-Token -up-> Position
-Token <--right-- Parser
-Parser -right> Command
-Parser <-down-> CommandFactory
-Parser -down-> ParseNode
-ParseNode -right-> CommandFactory
-Keyword <-right- CommandFactory
-CommandFactory -up-> Command
-CommandFactory -right-> VariableStorage
-Command <-right- Interpreter
+' ==== Core ====
+container -down-> token
+token -left-> tokendata
+ast -down-> tokendata
+error -> container
 @enduml
