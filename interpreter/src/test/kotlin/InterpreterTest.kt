@@ -29,8 +29,16 @@ class InterpreterTest {
         val interpreter = Interpreter("1.1")
 
         assertEquals(Actions.PRINT, interpreter.determineAction(node("println", DataType.PRINTLN)))
-        assertEquals(Actions.VAR_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("let", DataType.LET_KEYWORD)))
-        assertEquals(Actions.CONST_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("const", DataType.CONST_KEYWORD)))
+
+        val letNode = node("let", DataType.LET_KEYWORD)
+        assertEquals(Actions.VAR_DECLARATION_AND_ASSIGNMENT, interpreter.determineAction(node("=", DataType.DECLARATION, listOf(letNode))))
+
+        val constNode = node("const", DataType.CONST_KEYWORD)
+        assertEquals(
+            Actions.CONST_DECLARATION_AND_ASSIGNMENT,
+            interpreter.determineAction(node("=", DataType.DECLARATION, listOf(constNode)))
+        )
+
         assertEquals(Actions.ASSIGNMENT_TO_EXISTING_VAR, interpreter.determineAction(node("=", DataType.ASSIGNATION)))
         assertEquals(Actions.IF_STATEMENT, interpreter.determineAction(node("if", DataType.IF_STATEMENT)))
         assertEquals(Actions.READ_INPUT, interpreter.determineAction(node("readInput", DataType.FUNCTION_CALL)))

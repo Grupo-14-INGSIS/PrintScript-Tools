@@ -68,7 +68,7 @@ class FormatterCommandTest {
     fun `successful formatting prints completion`() {
         val sourceFile = File.createTempFile("source", ".txt").apply {
             writeText(
-                "print(1)"
+                "print(1);"
             )
         }
 

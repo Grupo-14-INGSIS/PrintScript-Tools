@@ -60,17 +60,25 @@ class Executor {
             val executionStep = progress.startStep("Parsing, and executing program")
             val inputProvider = ConsoleInputProvider()
             val interpreter = Interpreter(version, inputProvider)
+
             val finalOutput = mutableListOf<String>()
+            val printOutput = { message: Any? -> finalOutput.add(message.toString()) }
+            val originalOut = System.out
+            val printStream = object : java.io.PrintStream(originalOut) {
+                override fun println(x: Any?) {
+                    printOutput(x)
+                }
+            }
+            System.setOut(printStream)
 
-            for (statement in statements) {
-                // No se necesita un paso de "generación de tokens" porque ya están en el container
-                // Análisis sintáctico
-                val parser = Parser(statement)
-                val ast: ASTNode = parser.parse()
-
-                // Ejecución
-                val executionOutput = interpreter.executeAST(ast)
-                finalOutput.addAll(executionOutput)
+            try {
+                for (statement in statements) {
+                    val parser = Parser(statement)
+                    val ast: ASTNode = parser.parse()
+                    interpreter.interpret(ast)
+                }
+            } finally {
+                System.setOut(originalOut)
             }
 
             finalOutput.forEach { println(it) }

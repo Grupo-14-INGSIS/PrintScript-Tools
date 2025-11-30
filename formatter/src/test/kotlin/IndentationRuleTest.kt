@@ -44,7 +44,7 @@ class IndentationRuleTest {
         val source = containerOf(
             token(DataType.LET_KEYWORD, "let"), token(DataType.SPACE, " "),
             token(DataType.IDENTIFIER, "something"), token(DataType.COLON, ":"), token(DataType.SPACE, " "),
-            token(DataType.BOOBLEAN_TYPE, "boolean"), token(DataType.SPACE, " "),
+            token(DataType.BOOLEAN_TYPE, "boolean"), token(DataType.SPACE, " "),
             token(DataType.ASSIGNATION, "="), token(DataType.SPACE, " "),
             token(DataType.BOOLEAN_LITERAL, "true"), token(DataType.SEMICOLON, ";"), token(DataType.LINE_BREAK, "\n"),
 

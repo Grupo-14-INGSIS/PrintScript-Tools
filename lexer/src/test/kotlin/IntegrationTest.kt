@@ -113,4 +113,29 @@ class IntegrationTest {
 
         tempFile.delete()
     }
+
+    @Test
+    fun `test lexer splits multiple statements correctly`() {
+        val input = "let x = 1; let y = 2;"
+        val lexer = Lexer.from(input)
+
+        val statements = lexer.lexIntoStatements()
+
+        assertEquals(2, statements.size)
+
+        // Check first statement: "let x = 1;"
+        val firstStatement = statements[0]
+        assertEquals(DataType.LET_KEYWORD, firstStatement.container[0].type)
+        assertEquals("x", firstStatement.container[2].content)
+        assertEquals("1", firstStatement.container[6].content)
+        assertEquals(DataType.SEMICOLON, firstStatement.container.last().type)
+
+        // Check second statement: " let y = 2;" (note the leading space)
+        val secondStatement = statements[1]
+        assertEquals(DataType.SPACE, secondStatement.container[0].type)
+        assertEquals(DataType.LET_KEYWORD, secondStatement.container[1].type)
+        assertEquals("y", secondStatement.container[3].content)
+        assertEquals("2", secondStatement.container[7].content)
+        assertEquals(DataType.SEMICOLON, secondStatement.container.last().type)
+    }
 }

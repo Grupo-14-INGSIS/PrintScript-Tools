@@ -22,7 +22,7 @@ enum class DataType {
     NUMBER_TYPE,
 
     // Types PrintScript 1.1
-    BOOBLEAN_TYPE,
+    BOOLEAN_TYPE,
 
     // Literals
     STRING_LITERAL,

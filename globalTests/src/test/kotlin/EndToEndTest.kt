@@ -10,6 +10,7 @@ import lexer.src.main.kotlin.Lexer
 import container.src.main.kotlin.Container
 import lexer.src.main.kotlin.StringCharSource
 import interpreter.src.main.kotlin.Interpreter // Import the Interpreter
+import inputprovider.src.main.kotlin.ConsoleInputProvider
 import kotlin.jvm.kotlin
 
 
@@ -24,7 +25,7 @@ class EndToEndTest {
 
     @Test
     fun `test arithmetic expression parsing and evaluation`() {
-        val input = "2 + 3 * 4"
+        val input = "2 + 3 * 4;"
         val lexer = Lexer.from(input)
         val tokens: Container = lexer.lexIntoStatements().first()
 
@@ -44,7 +45,7 @@ class EndToEndTest {
 
     @Test
     fun `test complex expression with parentheses`() {
-        val input = "5 * 4"
+        val input = "5 * 4;"
         val lexer = Lexer.from(input)
         val tokens = lexer.lexIntoStatements().first()
 
@@ -103,11 +104,11 @@ class EndToEndTest {
 
     @Test
     fun `test string literal with quotes`() {
-        val input = "\"This is a string with spaces\""
+        val input = "\"This is a string with spaces\";"
         val lexer = Lexer.from(input)
         val tokens = lexer.lexIntoStatements().first()
 
-        assertEquals(1, tokens.size())
+        assertEquals(2, tokens.size())
         assertEquals(DataType.STRING_LITERAL, tokens.get(0)?.type)
         assertEquals("\"This is a string with spaces\"", tokens.get(0)?.content)
     }
@@ -115,10 +116,10 @@ class EndToEndTest {
     @Test
     fun `test arithmetic operations evaluation`() {
         val testCases = mapOf(
-            "5 + 3" to 8.0,
-            "10 - 4" to 6.0,
-            "6 * 7" to 42.0,
-            "15 / 3" to 5.0
+            "5 + 3;" to 8.0,
+            "10 - 4;" to 6.0,
+            "6 * 7;" to 42.0,
+            "15 / 3;" to 5.0
         )
 
         testCases.forEach { (input, _) ->
@@ -216,16 +217,160 @@ class EndToEndTest {
         assertTrue(ex.message!!.contains("La condición de un 'if' debe ser booleana"))
     }
 
+    @Test
+    fun `parsing if statement with version 1_0 fails`() {
+        val sourceCode = """
+            if(true) {
+                println("this should fail");
+            }
+        """.trimIndent()
+        val version = "1.0"
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            executeFullPipelineAndThrow(sourceCode, version)
+        }
+        assertEquals("Unknown action for node type: 'INVALID'", exception.message)
+    }
+
     private fun executeFullPipelineAndThrow(input: String, version: String) {
         val lexer = Lexer(StringCharSource(input), version)
         val statements = lexer.lexIntoStatements()
 
-        val interpreter = Interpreter(version)
+        // For this helper, we don't care about output, so we can use the default printer
+        val interpreter = Interpreter(version, ConsoleInputProvider())
         for (statement in statements) {
             val parser = Parser(statement, version)
             val ast = parser.parse()
-            interpreter.executeAST(ast)
+            interpreter.interpret(ast)
         }
+    }
+
+    private fun executeAndGetOutput(input: String, version: String = "1.0"): List<String> {
+        val lexer = Lexer(StringCharSource(input), version)
+        val statements = lexer.lexIntoStatements()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+
+        val interpreter = Interpreter(version, ConsoleInputProvider(), testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, version)
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        return output
+    }
+
+    @Test
+    fun `executing multiple statements maintains state`() {
+        val sourceCode = """
+                let x: number = 10;
+                let y: number = 5;
+                x = x + y;
+                println(x);
+        """.trimIndent()
+
+        val output = executeAndGetOutput(sourceCode, "1.0")
+
+        assertEquals(listOf("15"), output)
+    }
+
+    @Test
+    fun `complex arithmetic with variables`() {
+        val sourceCode = """
+                let x: number = 10;
+                let y: number = 5;
+                let z: number = 2;
+                println((x + y) * z);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.0")
+        assertEquals(listOf("30"), output)
+    }
+
+    @Test
+    fun `multiple reassignments`() {
+        val sourceCode = """
+                let x: number = 10;
+                x = x + 5;
+                x = x * 2;
+                println(x);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.0")
+        assertEquals(listOf("30"), output)
+    }
+
+    @Test
+    fun `using constants`() {
+        val sourceCode = """
+                const PI: number = 3.14;
+                let radius: number = 10;
+                println(PI * radius * radius);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("314"), output)
+    }
+
+    @Test
+    fun `reassigning a constant fails`() {
+        val sourceCode = """
+            const PI: number = 3.14;
+            PI = 3.14159;
+        """.trimIndent()
+        val ex = assertThrows(IllegalStateException::class.java) {
+            executeFullPipelineAndThrow(sourceCode, "1.1")
+        }
+        assertTrue(ex.message!!.contains("Cannot reassign a constant"))
+    }
+
+    @Test
+    fun `using an undeclared variable fails`() {
+        val sourceCode = "println(x);"
+        val ex = assertThrows(IllegalStateException::class.java) {
+            executeAndGetOutput(sourceCode, "1.0")
+        }
+        assertTrue(ex.message!!.contains("Variable 'x' not declared"))
+    }
+
+    @Test
+    fun `type mismatch on assignment fails`() {
+        val sourceCode = """
+            let x: number = 10;
+            x = "hello";
+        """.trimIndent()
+        val ex = assertThrows(IllegalArgumentException::class.java) {
+            executeAndGetOutput(sourceCode, "1.0")
+        }
+        println(ex.message)
+        assertTrue(ex.message!!.contains("""is not compatible with type 'number'"""))
+    }
+
+    @Test
+    fun `if statement with true condition executes block`() {
+        val sourceCode = """
+            let x: number = 5;
+            if (true) {
+                x = 10;
+                println(x);
+            }
+            println(x);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("10", "10"), output)
+    }
+
+    @Test
+    fun `if statement with false condition skips block`() {
+        val sourceCode = """
+            let x: number = 5;
+            if (false) {
+                x = 10;
+                println(x);
+            }
+            println(x);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("5"), output)
     }
 }
 

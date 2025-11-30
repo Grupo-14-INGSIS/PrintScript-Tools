@@ -5,9 +5,9 @@ object Print : ActionType {
     override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
         val value = interpreter.interpret(node.children[0])
         if (value is Double && value % 1 == 0.0) {
-            println(value.toInt())
+            interpreter.printer(value.toInt())
         } else {
-            println(value)
+            interpreter.printer(value)
         }
         return Unit
     }

@@ -15,7 +15,7 @@ object ConstDeclarationAndAssignment : ActionType {
             constantType
         )
 
-        interpreter.declareConstant(constantName, assignedValue)
+        interpreter.declareConstant(constantName, assignedValue, constantType)
 
         return Unit
     }

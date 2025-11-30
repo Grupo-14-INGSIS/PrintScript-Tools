@@ -23,9 +23,10 @@ class Parser @JvmOverloads constructor(
     private fun format(): Container {
         var output = Container()
         val space = DataType.SPACE
-        val semicolon = DataType.SEMICOLON
+        val lineBreak = DataType.LINE_BREAK
         for (i in 0 until tokens.size()) {
-            if (tokens.get(i)!!.type != space && tokens.get(i)!!.type != semicolon) {
+            val tokenType = tokens.get(i)!!.type
+            if (tokenType != space && tokenType != lineBreak) {
                 output = output.addContainer(tokens.get(i)!!)
             }
         }
@@ -38,23 +39,32 @@ class Parser @JvmOverloads constructor(
             return invalid
         }
 
-        val firstTokenType = tokens.get(0)!!.type
+        var tokensToParse = tokens
+        if (tokens.last()?.type == DataType.SEMICOLON) {
+            tokensToParse = tokens.slice(0, tokens.size() - 1)
+        }
+
+        if (tokensToParse.isEmpty()) {
+            return invalid
+        }
+
+        val firstTokenType = tokensToParse.get(0)!!.type
 
         if (firstTokenType == DataType.IF_KEYWORD && features.supportsIfElse) {
-            return ifStmtParse(tokens)
+            return ifStmtParse(tokensToParse)
         }
 
         if (firstTokenType == DataType.LET_KEYWORD || firstTokenType == DataType.CONST_KEYWORD) {
-            if (isDeclarationWithAssignment(tokens)) {
-                return parseDeclarationWithAssignment(tokens)
+            if (isDeclarationWithAssignment(tokensToParse)) {
+                return parseDeclarationWithAssignment(tokensToParse)
             }
         }
 
-        if (isSimpleAssignment(tokens)) {
-            return parseSimpleAssignment(tokens)
+        if (isSimpleAssignment(tokensToParse)) {
+            return parseSimpleAssignment(tokensToParse)
         }
 
-        return expParse(tokens)
+        return expParse(tokensToParse)
     }
 
 
@@ -153,7 +163,7 @@ class Parser @JvmOverloads constructor(
         if (
             tokens.get(1)!!.type != DataType.OPEN_PARENTHESIS ||
             tokens.get(2)!!.type != DataType.BOOLEAN_LITERAL ||
-            tokens.get(3)!!.type != DataType.CLOSE_PARENTHESIS
+            tokens.get(3)!!.type == DataType.CLOSE_PARENTHESIS
         ) {
             return false
         }
@@ -561,7 +571,7 @@ class Parser @JvmOverloads constructor(
         var nextToken: Token
         for (i in 0 until tokens.size()) {
             nextToken = tokens.get(i)!!
-            if (nextToken.type == DataType.NUMBER_LITERAL) {
+            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER) {
                 postFix.addLast(nextToken)
             } else {
                 if (operators.isEmpty()) {
@@ -594,16 +604,11 @@ class Parser @JvmOverloads constructor(
             postFix.addLast(operators.removeFirst())
         }
 
-        for (token in postFix) {
-            print(token.type)
-            print(" ")
-        }
-
         val output = ArrayDeque<ASTNode>()
         var children: List<ASTNode>
         while (postFix.isNotEmpty()) {
             nextToken = postFix.removeFirst()
-            if (nextToken.type == DataType.NUMBER_LITERAL) {
+            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER) {
                 children = listOf()
             } else {
                 if (output.size < 2) {

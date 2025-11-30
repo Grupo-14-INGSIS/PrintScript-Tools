@@ -89,7 +89,7 @@ class AnalayzerCommandTest {
     fun `successful analysis with no errors`() {
         val sourceFile = File.createTempFile("source", ".txt").apply {
             writeText(
-                "print(1)"
+                "print(1);"
             )
         }
         val configFile = File.createTempFile("config", ".yml").apply {

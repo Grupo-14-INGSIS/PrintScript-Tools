@@ -79,9 +79,17 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
 
         // Add any remaining tokens as a final statement
         if (currentStatementStrings.isNotEmpty()) {
-            val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
-            if (finalContainer.size() > 0) {
-                statements.add(finalContainer)
+            val meaningfulPieces = currentStatementStrings.filter { it.isNotBlank() }
+            if (meaningfulPieces.isNotEmpty()) {
+                val lastPiece = meaningfulPieces.last()
+                if (lastPiece != ";" && lastPiece != "}") {
+                    throw IllegalStateException("Statement must end with a semicolon or closing brace.")
+                }
+                // If the check passes, add the statement
+                val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
+                if (finalContainer.size() > 0) {
+                    statements.add(finalContainer)
+                }
             }
         }
 
