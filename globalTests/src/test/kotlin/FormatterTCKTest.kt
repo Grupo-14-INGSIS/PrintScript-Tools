@@ -7,14 +7,22 @@ import lexer.src.main.kotlin.StringCharSource
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.io.FileNotFoundException
 
 class FormatterTCKTest {
 
     private fun runFormatterTckTest(testCasePath: String, version: String = "1.0") {
-        val basePath = "../../printscript-tck/src/test/resources/formatter/"
-        val sourceFile = File(basePath + testCasePath + "/main.ps")
-        val configFile = File(basePath + testCasePath + "/config.json")
-        val goldenFile = File(basePath + testCasePath + "/golden.ps")
+        val basePath = "formatter-tck/$testCasePath"
+        val sourceUrl = this::class.java.classLoader.getResource("$basePath/main.ps")
+            ?: throw FileNotFoundException("File not found in resources: $basePath/main.ps")
+        val configUrl = this::class.java.classLoader.getResource("$basePath/config.json")
+            ?: throw FileNotFoundException("File not found in resources: $basePath/config.json")
+        val goldenUrl = this::class.java.classLoader.getResource("$basePath/golden.ps")
+            ?: throw FileNotFoundException("File not found in resources: $basePath/golden.ps")
+
+        val sourceFile = File(sourceUrl.toURI())
+        val configFile = File(configUrl.toURI())
+        val goldenFile = File(goldenUrl.toURI())
 
         val sourceContent = sourceFile.readText()
         val goldenContent = goldenFile.readText()
