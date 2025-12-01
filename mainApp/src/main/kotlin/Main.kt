@@ -1,10 +1,7 @@
-import cli.src.main.kotlin.AnalyzerCommand
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
 import picocli.CommandLine.Command
 import cli.src.main.kotlin.Cli
-import cli.src.main.kotlin.ExecutionCommand
-import cli.src.main.kotlin.FormatterCommand
 
 // Guardar cambios con ./gradlew :mainApp:installDist
 
@@ -18,13 +15,7 @@ import cli.src.main.kotlin.FormatterCommand
     description = ["CLI principal de PrintScript - Grupo 14"]
 )
 class RootCommand : Runnable {
-    val cli = Cli(
-        mapOf(
-            "formatter" to FormatterCommand(),
-            "analyzer" to AnalyzerCommand(),
-            "execution" to ExecutionCommand()
-        )
-    )
+    val cli = Cli()
 
     fun startInteractiveMode() {
         val terminal = TerminalBuilder.builder()
@@ -62,7 +53,7 @@ class RootCommand : Runnable {
 
             try {
                 // CLI usa Array<String>, no List<String>
-                cli.run(args.toTypedArray())
+                cli.run(args)
             } catch (e: Exception) {
                 System.err.println("Error: ${e.message}")
             }
@@ -83,7 +74,7 @@ fun main(args: Array<String>) {
 
     if (args.isNotEmpty()) {
         try {
-            app.cli.run(args)
+            app.cli.run(args.toList())
         } catch (e: Exception) {
             System.err.println("Error: ${e.message}")
             System.exit(1)
