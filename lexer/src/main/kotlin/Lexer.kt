@@ -42,7 +42,6 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
     }
 
     fun lexIntoStatements(): List<Container> {
-        // Ensure the raw string pieces are generated
         if (this.list.isEmpty()) {
             this.split()
         }
@@ -56,29 +55,28 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
             val piece = this.list[i]
             currentStatementStrings.add(piece)
 
-            when (piece) { // Always update braceDepth, regardless of version
+            when (piece) {
                 "{" -> braceDepth++
                 "}" -> braceDepth--
             }
 
-            // Condition to finalize a statement
+            // Finalización de sentencia
             var shouldFinalize = false
 
-            // For v1.1 if-else: if it's '}' and braceDepth == 0, check for 'else'
+            // En la v1.1 chequea si despues de un '}' (el de un 'if') hay un 'else'
             if (version == "1.1" && piece == "}" && braceDepth == 0) {
-                // Manually find the next non-blank piece
                 var j = i + 1
-                while (j < this.list.size && this.list[j].isBlank()) {
-                    currentStatementStrings.add(this.list[j]) // Add whitespace to currentStatementStrings
+                while (j < this.list.size && this.list[j].isBlank()) { // Busca el siguiente elemento que no sea un " "
+                    currentStatementStrings.add(this.list[j])
                     j++
                 }
                 val nextNonBlankPiece = if (j < this.list.size) this.list[j] else null
 
-                if (nextNonBlankPiece != "else") { // If no 'else' follows, then finalize
+                if (nextNonBlankPiece != "else") {
                     shouldFinalize = true
                 }
-                // If 'else' follows, shouldFinalize remains false, and loop continues to consume 'else'
-            } else if (piece == ";" && braceDepth == 0) { // For semicolon, always finalize if braceDepth is 0
+                // Se sigue procesando la sentencia al encontrar un 'else'
+            } else if (piece == ";" && braceDepth == 0) {
                 shouldFinalize = true
             }
 
@@ -90,7 +88,7 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
             i++
         }
 
-        // Add any remaining tokens as a final statement
+        // Tokens restantes se añaden como una "nueva sentencia"
         if (currentStatementStrings.isNotEmpty()) {
             val meaningfulPieces = currentStatementStrings.filter { it.isNotBlank() }
             if (meaningfulPieces.isNotEmpty()) {
@@ -98,7 +96,6 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
                 if (lastPiece != ";" && lastPiece != "}") {
                     throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")
                 }
-                // If the check passes, add the statement
                 val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
                 if (finalContainer.size() > 0) {
                     statements.add(finalContainer)
