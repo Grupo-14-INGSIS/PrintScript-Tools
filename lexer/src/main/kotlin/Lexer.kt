@@ -55,28 +55,34 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
         while (i < this.list.size) {
             val piece = this.list[i]
             currentStatementStrings.add(piece)
-            if (version == "1.1") {
-                when (piece) {
-                    "{" -> braceDepth++
-                    "}" -> {
-                        braceDepth--
-                        if (braceDepth == 0) {
-                            val nextNonBlankPiece = findNextNonBlankPiece(i + 1, this.list)
-                            if (nextNonBlankPiece == "else") {
-                                // Do nothing, continue to consume 'else' and its block
-                                // The statement will be finalized after the 'else' block
-                            } else {
-                                // No 'else' follows (or it's not a v1.1 else), so finalize the statement
-                                val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
-                                statements.add(statementContainer)
-                                currentStatementStrings = mutableListOf()
-                            }
-                        }
-                    }
-                }
+
+            when (piece) { // Always update braceDepth, regardless of version
+                "{" -> braceDepth++
+                "}" -> braceDepth--
             }
 
-            if (piece == ";" && braceDepth == 0) { // Finalize statement if semicolon and braceDepth is 0 (for both versions)
+            // Condition to finalize a statement
+            var shouldFinalize = false
+
+            // For v1.1 if-else: if it's '}' and braceDepth == 0, check for 'else'
+            if (version == "1.1" && piece == "}" && braceDepth == 0) {
+                // Manually find the next non-blank piece
+                var j = i + 1
+                while (j < this.list.size && this.list[j].isBlank()) {
+                    currentStatementStrings.add(this.list[j]) // Add whitespace to currentStatementStrings
+                    j++
+                }
+                val nextNonBlankPiece = if (j < this.list.size) this.list[j] else null
+
+                if (nextNonBlankPiece != "else") { // If no 'else' follows, then finalize
+                    shouldFinalize = true
+                }
+                // If 'else' follows, shouldFinalize remains false, and loop continues to consume 'else'
+            } else if (piece == ";" && braceDepth == 0) { // For semicolon, always finalize if braceDepth is 0
+                shouldFinalize = true
+            }
+
+            if (shouldFinalize) {
                 val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
                 statements.add(statementContainer)
                 currentStatementStrings = mutableListOf()
@@ -90,7 +96,7 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
             if (meaningfulPieces.isNotEmpty()) {
                 val lastPiece = meaningfulPieces.last()
                 if (lastPiece != ";" && lastPiece != "}") {
-                    throw IllegalStateException("Statement must end with a semicolon or closing brace.")
+                    throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")
                 }
                 // If the check passes, add the statement
                 val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
@@ -100,17 +106,6 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
             }
         }
         return statements
-    }
-
-    private fun findNextNonBlankPiece(startIndex: Int, pieces: List<String>): String? {
-        var j = startIndex
-        while (j < pieces.size) {
-            if (pieces[j].isNotBlank()) {
-                return pieces[j]
-            }
-            j++
-        }
-        return null
     }
 
 // puede leer un String gracias a...
