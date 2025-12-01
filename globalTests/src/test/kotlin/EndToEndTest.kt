@@ -11,10 +11,103 @@ import container.src.main.kotlin.Container
 import lexer.src.main.kotlin.StringCharSource
 import interpreter.src.main.kotlin.Interpreter // Import the Interpreter
 import inputprovider.src.main.kotlin.ConsoleInputProvider
+import java.io.File
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.jvm.kotlin
 
 
 class EndToEndTest {
+
+    private class MockInputProvider(
+        private val testPrinter: (Any?) -> Unit,
+        private val inputs: Queue<String> = LinkedList(),
+        private val envVars: Map<String, String> = emptyMap()
+    ) : inputprovider.src.main.kotlin.InputProvider {
+        override fun readInput(prompt: String): String {
+            testPrinter(prompt)
+            return inputs.poll() ?: ""
+        }
+
+        override fun readEnv(varName: String): String? {
+            return envVars[varName]
+        }
+    }
+
+    private fun executeWithMockInput(
+        input: String,
+        version: String,
+        inputProvider: inputprovider.src.main.kotlin.InputProvider
+    ): List<String> {
+        val lexer = Lexer(StringCharSource(input), version)
+        val statements = lexer.lexIntoStatements()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+
+        // The mock provider needs the test printer. This is a bit of a chicken-and-egg problem.
+        // For this to work, the MockInputProvider must be initialized with the testPrinter.
+        // We assume the caller of this function has already done so.
+        val interpreter = Interpreter(version, inputProvider, testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, version)
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        return output
+    }
+
+    @Test
+    fun readInputTest() {
+        val testDir = "src/test/resources/e2e/read-input/"
+        val sourceCode = File(testDir + "main.ps").readText()
+        val inputLines = File(testDir + "input.txt").readLines()
+        val expectedOutput = File(testDir + "output.txt").readLines()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+
+        val mockInputProvider = MockInputProvider(testPrinter, LinkedList(inputLines))
+        val lexer = Lexer(StringCharSource(sourceCode), "1.1")
+        val statements = lexer.lexIntoStatements()
+        val interpreter = Interpreter("1.1", mockInputProvider, testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, "1.1")
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        // The prompt from readInput is also printed, so we need to account for that.
+        // The TCK prints "Name:" and then the program prints "Hello world!".
+        // Our mock provider prints the prompt, which is collected.
+        // So we expect ["Name:", "Hello world!"]
+        assertEquals(expectedOutput, output)
+    }
+
+    @Test
+    fun readEnvTest() {
+        val testDir = "src/test/resources/e2e/read-env/"
+        val sourceCode = File(testDir + "main.ps").readText()
+        val expectedOutput = File(testDir + "output.txt").readLines()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+        val envVars = mapOf("BEST_FOOTBALL_CLUB" to "San Lorenzo")
+
+        val mockInputProvider = MockInputProvider(testPrinter, LinkedList(), envVars)
+
+        val lexer = Lexer(StringCharSource(sourceCode), "1.1")
+        val statements = lexer.lexIntoStatements()
+        val interpreter = Interpreter("1.1", mockInputProvider, testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, "1.1")
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        assertEquals(expectedOutput, output)
+    }
 
     @Test
     fun `test simple variable declaration and assignment`() {
@@ -360,7 +453,7 @@ class EndToEndTest {
             executeAndGetOutput(sourceCode, "1.0")
         }
         println(ex.message)
-        assertTrue(ex.message!!.contains("""is not compatible with type 'number'"""))
+        assertTrue(ex.message!!.contains("""no se puede convertir a número"""))
     }
 
     @Test

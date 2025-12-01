@@ -459,7 +459,7 @@ class Parser @JvmOverloads constructor(
         val argsTokens = tokens.slice(2, tokens.size() - 1)
 
         return ASTNode(
-            functionToken.type,
+            DataType.FUNCTION_CALL,
             functionToken.content,
             functionToken.position,
             if (argsTokens.isEmpty()) emptyList() else listOf(expParse(argsTokens))
@@ -636,7 +636,9 @@ class Parser @JvmOverloads constructor(
         var nextToken: Token
         for (i in 0 until tokens.size()) {
             nextToken = tokens.get(i)!!
-            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER) {
+            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER ||
+                nextToken.type == DataType.STRING_LITERAL
+            ) {
                 postFix.addLast(nextToken)
             } else {
                 if (operators.isEmpty()) {
@@ -673,7 +675,9 @@ class Parser @JvmOverloads constructor(
         var children: List<ASTNode>
         while (postFix.isNotEmpty()) {
             nextToken = postFix.removeFirst()
-            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER) {
+            if (nextToken.type == DataType.NUMBER_LITERAL || nextToken.type == DataType.IDENTIFIER ||
+                nextToken.type == DataType.STRING_LITERAL
+            ) {
                 children = listOf()
             } else {
                 if (output.size < 2) {

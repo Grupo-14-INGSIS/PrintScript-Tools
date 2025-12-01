@@ -147,6 +147,7 @@ class Interpreter(
             DataType.IF_STATEMENT -> Actions.IF_STATEMENT
             DataType.BLOCK -> Actions.BLOCK
             DataType.FUNCTION_CALL -> when (node.content) {
+                "println" -> Actions.PRINT
                 "readInput" -> Actions.READ_INPUT
                 "readEnv" -> Actions.READ_ENV
                 else -> throw IllegalArgumentException("Unknown function call: '${node.content}'")

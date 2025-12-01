@@ -93,7 +93,7 @@ class MoreParserTest {
 
         val parser = Parser(tokens)
         val result = parser.expParse(tokens)
-        assertEquals(DataType.PRINTLN, result.type)
+        assertEquals(DataType.FUNCTION_CALL, result.type)
         assertEquals("println", result.content)
         assertEquals("\"msg\"", result.children.first().content)
     }

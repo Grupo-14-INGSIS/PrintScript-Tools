@@ -5,13 +5,13 @@ import inputprovider.src.main.kotlin.InputProvider
 
 class ReadEnv(private val inputProvider: InputProvider) : ActionType {
     override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
-        val varName = interpreter.interpret(node.children[0]).toString()
-        val envValue = inputProvider.readEnv(varName) ?: throw IllegalArgumentException("Environment variable '$varName' not found")
+        require(node.children.size == 1) { "readEnv expects 1 argument" }
 
-        return when {
-            envValue.toBooleanStrictOrNull() != null -> envValue.toBoolean()
-            envValue.toDoubleOrNull() != null -> envValue.toDouble()
-            else -> envValue
-        }
+        val rawVarName = interpreter.interpret(node.children[0])?.toString()
+            ?: throw IllegalArgumentException("Environment variable name cannot be null")
+        val varName = rawVarName.removeSurrounding("\"")
+
+        return inputProvider.readEnv(varName)
+            ?: throw IllegalArgumentException("Environment variable '$varName' not found")
     }
 }
