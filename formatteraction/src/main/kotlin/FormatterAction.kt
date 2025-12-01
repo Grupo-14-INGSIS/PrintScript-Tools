@@ -1,9 +1,7 @@
 package formatteraction.src.main.kotlin
 
-import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.Formatter
 import lexer.src.main.kotlin.Lexer
-import formatter.src.main.kotlin.formatrule.FormatRule
 import progress.src.main.kotlin.MultiStepProgress
 
 import java.io.File
@@ -55,21 +53,15 @@ class FormatterAction {
         progress.initialize(4)
 
         try {
-            val validateStep = progress.startStep(
-                "Validating input files"
-            )
+            val validateStep = progress.startStep("Validating input files")
             val sourceSize = (source.length / 1024.0).let {
                 if (it < 1) {
                     "${source.length} bytes"
                 } else {
-                    "%.1f KB".format(
-                        it
-                    )
+                    "%.1f KB".format(it)
                 }
             }
-            validateStep.complete(
-                "Source file loaded ($sourceSize)"
-            )
+            validateStep.complete("Source file loaded ($sourceSize)")
 
             val configStep = progress.startStep(
                 "Loading formatting configuration"
@@ -78,55 +70,25 @@ class FormatterAction {
                 "Configuration loaded from $configFile"
             )
 
-            val formatStep = progress.startStep(
-                "Applying formatting rules"
-            )
-            val lexer = Lexer.from(
-                source
-            )
-            lexer.split()
-            var tokens: Container = lexer.createToken(
-                lexer.list
-            )
+            val lexerStep = progress.startStep("Lexing source file")
+            val lexer = Lexer.from(source)
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Source file lexed into ${statements.size} statements")
+
+            val formatStep = progress.startStep("Applying formatting rules")
             val formatter = Formatter()
-            var percentageCompleted: Int
-            val rules: List<FormatRule> = formatter.loadRules(
-                File(configFile).toURI().toURL()
-            )
-            for (i in 0 until rules.size) {
-                tokens = formatter.executeOne(
-                    tokens,
-                    rules[i]
-                )
-                percentageCompleted = i * 100 / rules.size
-                print(
-                    percentageCompleted
-                )
-                print(
-                    "%"
-                )
-                if (i < rules.size) {
-                    print(
-                        "....."
-                    )
-                }
-            }
-            println("100%")
+            val formattedStatements = formatter.execute(statements, configFileObj)
             formatStep.complete(
                 "Formatting rules applied successfully"
             )
 
-            println("DEBUG – tokens resultantes:")
-            for (i in 0 until tokens.size()) {
-                print(tokens.get(i)!!.content)
-            }
-            println()
-
             val saveStep = progress.startStep("Preparing formatted output")
 
             FileWriter(sourceFile).use { writer ->
-                for (i in 0 until tokens.size()) {
-                    writer.append(tokens.get(i)!!.content)
+                formattedStatements.forEach { container ->
+                    container.container.forEach { token ->
+                        writer.append(token.content)
+                    }
                 }
             }
 

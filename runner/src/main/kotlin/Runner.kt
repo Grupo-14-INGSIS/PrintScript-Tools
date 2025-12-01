@@ -16,12 +16,12 @@ class Runner {
         analyzer.execute(args)
     }
 
-    fun formatterCommand(args: List<String>){
+    fun formatterCommand(args: List<String>) {
         val formatter = FormatterAction()
         formatter.execute(args)
     }
 
-    fun validationCommand(args: List<String>){
+    fun validationCommand(args: List<String>) {
         val analyzer = Analyzer()
         analyzer.executeValidation(args)
     }

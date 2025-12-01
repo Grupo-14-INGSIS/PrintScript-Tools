@@ -36,7 +36,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SEMICOLON, result.get(1)?.type)
@@ -55,7 +55,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(tokens.size(), result.size())
@@ -74,7 +74,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.LINE_BREAK, result.get(2)?.type)
@@ -92,7 +92,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         // No debe agregar line break antes de }
@@ -112,7 +112,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertTrue(result.size() > tokens.size())
@@ -128,7 +128,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(2, result.size())
@@ -144,7 +144,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -163,7 +163,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -182,7 +182,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -201,8 +201,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
-
+        val result = rule.format(listOf(tokens)).first()
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
         assertEquals(DataType.DIVISION, result.get(2)?.type)
@@ -222,7 +221,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var spaceCount = 0
@@ -245,7 +244,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertTrue(result.size() > tokens.size())
@@ -261,7 +260,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -277,7 +276,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -294,7 +293,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.LET_KEYWORD, result.get(0)?.type)
@@ -312,7 +311,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(tokens.size(), result.size())
@@ -328,7 +327,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.IDENTIFIER, result.get(0)?.type)
@@ -347,7 +346,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var spaceCount = 0
@@ -364,7 +363,7 @@ class CompleteTest {
         val tokens = Container()
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(0, result.size())
@@ -382,7 +381,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -403,7 +402,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.IDENTIFIER, result.get(0)?.type)
@@ -422,7 +421,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -441,7 +440,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.IDENTIFIER, result.get(0)?.type)
@@ -464,7 +463,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var spaceCount = 0
@@ -488,7 +487,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertTrue(result.size() > tokens.size())
@@ -507,7 +506,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.IDENTIFIER, result.get(0)?.type)
@@ -529,7 +528,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.IDENTIFIER, result.get(0)?.type)
@@ -547,7 +546,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(tokens.size(), result.size())
@@ -566,7 +565,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.COLON, result.get(1)?.type)
@@ -586,7 +585,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.COLON, result.get(1)?.type)
@@ -605,7 +604,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -625,7 +624,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
@@ -643,7 +642,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.COLON, result.get(1)?.type)
@@ -664,7 +663,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var spaceCount = 0
@@ -684,7 +683,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
         var lineBreakCount = 0
         for (i in 0 until result.size()) {
@@ -705,7 +704,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -725,7 +724,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -745,7 +744,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -769,7 +768,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -792,7 +791,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -816,7 +815,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -837,7 +836,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.SPACE, result.get(2)?.type)
@@ -859,7 +858,7 @@ class CompleteTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertTrue(result.size() > tokens.size())

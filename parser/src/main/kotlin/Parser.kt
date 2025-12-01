@@ -16,29 +16,21 @@ class Parser @JvmOverloads constructor(
     private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
 
     fun parse(): ASTNode {
-        val statements = mutableListOf<ASTNode>()
-        var currentTokens = Container()
+        val line: Container = format()
+        return stmtParse(line)
+    }
+
+    private fun format(): Container {
+        var output = Container()
+        val space = DataType.SPACE
+        val lineBreak = DataType.LINE_BREAK
         for (i in 0 until tokens.size()) {
-            val token = tokens.get(i)!!
-            if (token.type == DataType.SEMICOLON || token.type == DataType.LINE_BREAK) {
-                if (!currentTokens.isEmpty()) {
-                    val parsedStatement = stmtParse(currentTokens)
-                    if (parsedStatement.type != DataType.INVALID) {
-                        statements.add(parsedStatement)
-                    }
-                }
-                currentTokens = Container()
-            } else if (token.type != DataType.SPACE) {
-                currentTokens = currentTokens.addContainer(token)
+            val tokenType = tokens.get(i)!!.type
+            if (tokenType != space && tokenType != lineBreak) {
+                output = output.addContainer(tokens.get(i)!!)
             }
         }
-        if (!currentTokens.isEmpty()) {
-            val parsedStatement = stmtParse(currentTokens)
-            if (parsedStatement.type != DataType.INVALID) {
-                statements.add(parsedStatement)
-            }
-        }
-        return ASTNode(DataType.SCRIPT, "root", Position(0, 0), statements)
+        return output
     }
 
 
@@ -47,23 +39,32 @@ class Parser @JvmOverloads constructor(
             return invalid
         }
 
-        val firstTokenType = tokens.get(0)!!.type
+        var tokensToParse = tokens
+        if (tokens.last()?.type == DataType.SEMICOLON) {
+            tokensToParse = tokens.slice(0, tokens.size() - 1)
+        }
+
+        if (tokensToParse.isEmpty()) {
+            return invalid
+        }
+
+        val firstTokenType = tokensToParse.get(0)!!.type
 
         if (firstTokenType == DataType.IF_KEYWORD && features.supportsIfElse) {
-            return ifStmtParse(tokens)
+            return ifStmtParse(tokensToParse)
         }
 
         if (firstTokenType == DataType.LET_KEYWORD || firstTokenType == DataType.CONST_KEYWORD) {
-            if (isDeclarationWithAssignment(tokens)) {
-                return parseDeclarationWithAssignment(tokens)
+            if (isDeclarationWithAssignment(tokensToParse)) {
+                return parseDeclarationWithAssignment(tokensToParse)
             }
         }
 
-        if (isSimpleAssignment(tokens)) {
-            return parseSimpleAssignment(tokens)
+        if (isSimpleAssignment(tokensToParse)) {
+            return parseSimpleAssignment(tokensToParse)
         }
 
-        return expParse(tokens)
+        return expParse(tokensToParse)
     }
 
 
@@ -162,7 +163,7 @@ class Parser @JvmOverloads constructor(
         if (
             tokens.get(1)!!.type != DataType.OPEN_PARENTHESIS ||
             tokens.get(2)!!.type != DataType.BOOLEAN_LITERAL ||
-            tokens.get(3)!!.type != DataType.CLOSE_PARENTHESIS
+            tokens.get(3)!!.type == DataType.CLOSE_PARENTHESIS
         ) {
             return false
         }
@@ -187,22 +188,40 @@ class Parser @JvmOverloads constructor(
 
 
     private fun parseDeclarationWithAssignment(tokens: Container): ASTNode {
-        val keywordToken = tokens.get(0)!!
+        val isConst = tokens.get(0)!!.type == DataType.CONST_KEYWORD
+        val keyword = if (isConst) DataType.CONST_KEYWORD else DataType.LET_KEYWORD
+
         val identifierToken = tokens.get(1)!!
         val typeToken = tokens.get(3)!! // let x : number = 5
         val assignationIndex = findTokenIndex(tokens, DataType.ASSIGNATION)
 
         val valueTokens = tokens.slice(assignationIndex + 1)
-        val valueNode = expParse(valueTokens)
 
         return ASTNode(
-            keywordToken.type, // LET_KEYWORD or CONST_KEYWORD
-            identifierToken.content,
-            keywordToken.position,
+            DataType.DECLARATION,
+            "=",
+            tokens.get(assignationIndex)!!.position,
             listOf(
-                ASTNode(DataType.IDENTIFIER, identifierToken.content, identifierToken.position, emptyList()),
-                ASTNode(typeToken.type, typeToken.content, typeToken.position, emptyList()),
-                valueNode
+                ASTNode(
+                    keyword,
+                    identifierToken.content,
+                    identifierToken.position,
+                    listOf(
+                        ASTNode(
+                            DataType.IDENTIFIER,
+                            identifierToken.content,
+                            identifierToken.position,
+                            listOf()
+                        ),
+                        ASTNode(
+                            typeToken.type,
+                            typeToken.content,
+                            typeToken.position,
+                            listOf()
+                        )
+                    )
+                ),
+                expParse(valueTokens)
             )
         )
     }
@@ -585,11 +604,6 @@ class Parser @JvmOverloads constructor(
             postFix.addLast(operators.removeFirst())
         }
 
-        for (token in postFix) {
-            print(token.type)
-            print(" ")
-        }
-
         val output = ArrayDeque<ASTNode>()
         var children: List<ASTNode>
         while (postFix.isNotEmpty()) {
@@ -600,10 +614,9 @@ class Parser @JvmOverloads constructor(
                 if (output.size < 2) {
                     return invalid
                 } else {
-                    children = listOf(
-                        output.removeFirst(),
-                        output.removeFirst()
-                    )
+                    val right = output.removeFirst()
+                    val left = output.removeFirst()
+                    children = listOf(left, right)
                 }
             }
             output.addFirst(

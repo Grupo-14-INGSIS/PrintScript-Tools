@@ -35,12 +35,11 @@ class LineBreakBeforePrintlnTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
 
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
-        val result = containerToString(formattedTokens)
+        val formattedStatements = formatter.execute(statements, configFile)
+        val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")
         println("Expected:\n$expected")
@@ -73,12 +72,11 @@ class LineBreakBeforePrintlnTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        lexer.split()
-        val tokens = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
 
         val formatter = Formatter()
-        val formattedTokens = formatter.execute(tokens, configFile.toURI().toURL())
-        val result = containerToString(formattedTokens)
+        val formattedStatements = formatter.execute(statements, configFile)
+        val result = statementsToString(formattedStatements)
 
         println("\n=== RESULTADO FINAL ===")
         println("Expected:\n$expected")
@@ -87,14 +85,9 @@ class LineBreakBeforePrintlnTest {
         assertEquals(expected, result.trim())
     }
 
-    private fun containerToString(container: Container): String {
-        val result = StringBuilder()
-        for (i in 0 until container.size()) {
-            val token = container.get(i)
-            if (token != null) {
-                result.append(token.content)
-            }
+    private fun statementsToString(statements: List<Container>): String {
+        return statements.joinToString(separator = "") { statement ->
+            statement.container.joinToString(separator = "") { it.content }
         }
-        return result.toString()
     }
 }

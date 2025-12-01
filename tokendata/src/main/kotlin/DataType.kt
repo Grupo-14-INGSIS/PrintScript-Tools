@@ -22,7 +22,7 @@ enum class DataType {
     NUMBER_TYPE,
 
     // Types PrintScript 1.1
-    BOOBLEAN_TYPE,
+    BOOLEAN_TYPE,
 
     // Literals
     STRING_LITERAL,
@@ -47,7 +47,6 @@ enum class DataType {
 
     // Control FLow 1.1
     IF_STATEMENT,
-    ELSE_STATEMENT,
 
     // Punctuation -> May be useful for Formatter
     SPACE,

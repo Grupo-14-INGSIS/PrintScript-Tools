@@ -11,47 +11,32 @@ class IndentationRuleTest {
     @Test
     fun `ignores line break at the end of file`() {
         val source = containerOf(
-            token(
-                DataType.IDENTIFIER,
-                "x"
-            ),
-            token(
-                DataType.LINE_BREAK,
-                "\n"
-            )
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.LINE_BREAK, "\n")
         )
 
         val rule = IndentationRule(indentSize = 2)
-        val result = rule.format(source)
+        val result = rule.format(listOf(source)).first()
 
         // No debería agregar espacios inútiles después de un salto final
-        assertEquals("\n", result.last()!!.content)
+        assertEquals("\n", result.container.last().content)
     }
 
     @Test
     fun `does not break tokens without line breaks`() {
         val source = containerOf(
-            token(
-                DataType.IDENTIFIER,
-                "x"
-            ),
-            token(
-                DataType.SPACE,
-                " "
-            ),
-            token(
-                DataType.IDENTIFIER,
-                "y"
-            )
+            token(DataType.IDENTIFIER, "x"),
+            token(DataType.SPACE, " "),
+            token(DataType.IDENTIFIER, "y")
         )
 
         val rule = IndentationRule(indentSize = 2)
-        val result = rule.format(source)
+        val result = rule.format(listOf(source)).first()
 
         // No debería tocar nada si no hay saltos de línea
-        assertEquals("x", result.get(0)!!.content)
-        assertEquals(" ", result.get(1)!!.content)
-        assertEquals("y", result.get(2)!!.content)
+        assertEquals("x", result.container[0].content)
+        assertEquals(" ", result.container[1].content)
+        assertEquals("y", result.container[2].content)
     }
 
     @Test
@@ -59,34 +44,25 @@ class IndentationRuleTest {
         val source = containerOf(
             token(DataType.LET_KEYWORD, "let"), token(DataType.SPACE, " "),
             token(DataType.IDENTIFIER, "something"), token(DataType.COLON, ":"), token(DataType.SPACE, " "),
-            token(DataType.BOOBLEAN_TYPE, "boolean"), token(DataType.SPACE, " "),
+            token(DataType.BOOLEAN_TYPE, "boolean"), token(DataType.SPACE, " "),
             token(DataType.ASSIGNATION, "="), token(DataType.SPACE, " "),
             token(DataType.BOOLEAN_LITERAL, "true"), token(DataType.SEMICOLON, ";"), token(DataType.LINE_BREAK, "\n"),
 
             token(DataType.IF_KEYWORD, "if"), token(DataType.SPACE, " "),
             token(DataType.OPEN_PARENTHESIS, "("), token(DataType.IDENTIFIER, "something"), token(DataType.CLOSE_PARENTHESIS, ")"),
-            token(
-                DataType.SPACE,
-                " "
-            ),
+            token(DataType.SPACE, " "),
             token(DataType.OPEN_BRACE, "{"), token(DataType.LINE_BREAK, "\n"),
 
             token(DataType.SPACE, "  "), // Existing indentation in input
             token(DataType.IF_KEYWORD, "if"), token(DataType.SPACE, " "),
             token(DataType.OPEN_PARENTHESIS, "("), token(DataType.IDENTIFIER, "something"), token(DataType.CLOSE_PARENTHESIS, ")"),
-            token(
-                DataType.SPACE,
-                " "
-            ),
+            token(DataType.SPACE, " "),
             token(DataType.OPEN_BRACE, "{"), token(DataType.LINE_BREAK, "\n"),
 
             token(DataType.SPACE, "    "), // Existing indentation in input
             token(DataType.PRINTLN, "println"), token(DataType.OPEN_PARENTHESIS, "("),
             token(DataType.STRING_LITERAL, "\"Entered two ifs\""), token(DataType.CLOSE_PARENTHESIS, ")"), token(DataType.SEMICOLON, ";"),
-            token(
-                DataType.LINE_BREAK,
-                "\n"
-            ),
+            token(DataType.LINE_BREAK, "\n"),
 
             token(DataType.SPACE, "  "), // Existing indentation in input
             token(DataType.CLOSE_BRACE, "}"), token(DataType.LINE_BREAK, "\n"),
@@ -104,8 +80,8 @@ class IndentationRuleTest {
         """.trimIndent()
 
         val rule = IndentationRule(indentSize = 4)
-        val formattedTokens = rule.format(source)
-        val result = containerToString(formattedTokens)
+        val formattedStatements = rule.format(listOf(source))
+        val result = statementsToString(formattedStatements)
 
         assertEquals(expected, result)
     }
@@ -118,14 +94,9 @@ class IndentationRuleTest {
         return Token(type, content, Position(0, 0))
     }
 
-    private fun containerToString(container: Container): String {
-        val result = StringBuilder()
-        for (i in 0 until container.size()) {
-            val token = container.get(i)
-            if (token != null) {
-                result.append(token.content)
-            }
+    private fun statementsToString(statements: List<Container>): String {
+        return statements.joinToString(separator = "") { statement ->
+            statement.container.joinToString(separator = "") { it.content }
         }
-        return result.toString()
     }
 }

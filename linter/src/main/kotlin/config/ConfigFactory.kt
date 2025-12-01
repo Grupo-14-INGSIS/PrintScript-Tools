@@ -16,10 +16,15 @@ class ConfigFactory {
             PrintLnConfig(it["enabled"] as? Boolean ?: true)
         }
 
+        val readInputConfig = (rulesMap["mandatory-variable-or-literal-in-readInput"] as? Map<String, Any>)?.let {
+            ReadInputConfig(it["enabled"] as? Boolean ?: true)
+        }
+
         return LinterConfig(
             rules = RulesConfig(
                 identifier_format = identifierConfig,
-                mandatory_variable_or_literal_in_println = printlnConfig
+                mandatory_variable_or_literal_in_println = printlnConfig,
+                mandatory_variable_or_literal_in_readInput = readInputConfig
             )
         )
     }

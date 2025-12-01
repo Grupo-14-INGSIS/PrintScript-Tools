@@ -12,8 +12,7 @@ class IntegrationTest {
         val input = "let x: number;"
         val lexer = Lexer.from(input) // Directamente con string
 
-        lexer.split() // Sin parámetros, usa el CharSource interno
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(7, container.container.size)
 
@@ -42,8 +41,7 @@ class IntegrationTest {
         tempFile.writeText(input)
 
         val lexer = Lexer.from(tempFile) // Directamente con file
-        lexer.split() // Sin parámetros, usa el CharSource interno
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(7, container.container.size)
 
@@ -61,8 +59,7 @@ class IntegrationTest {
         val input = "let x: number = 42;"
         val lexer = Lexer.from(input)
 
-        lexer.split()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(11, container.container.size)
 
@@ -83,8 +80,7 @@ class IntegrationTest {
         val input = "x + y * 2;"
         val lexer = Lexer.from(input)
 
-        lexer.split()
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
 
         assertEquals(10, container.container.size)
 
@@ -104,15 +100,42 @@ class IntegrationTest {
     fun `test file processing with custom buffer size`() {
         val content = "let x: number = 42;\n".repeat(100)
         val tempFile = createTempFile("large_test", ".txt")
-        tempFile.writeText(content)
+        tempFile.writeText(content.trim())
 
         val lexer = Lexer.from(tempFile)
         lexer.split(512) // Buffer personalizado solo funciona con archivos
-        val container = lexer.createToken(lexer.list)
+        val statements = lexer.lexIntoStatements()
 
-        val letTokens = container.container.filter { it.type == DataType.LET_KEYWORD }
+        assertEquals(100, statements.size)
+
+        val letTokens = statements.flatMap { it.container }.filter { it.type == DataType.LET_KEYWORD }
         assertEquals(100, letTokens.size)
 
         tempFile.delete()
+    }
+
+    @Test
+    fun `test lexer splits multiple statements correctly`() {
+        val input = "let x = 1; let y = 2;"
+        val lexer = Lexer.from(input)
+
+        val statements = lexer.lexIntoStatements()
+
+        assertEquals(2, statements.size)
+
+        // Check first statement: "let x = 1;"
+        val firstStatement = statements[0]
+        assertEquals(DataType.LET_KEYWORD, firstStatement.container[0].type)
+        assertEquals("x", firstStatement.container[2].content)
+        assertEquals("1", firstStatement.container[6].content)
+        assertEquals(DataType.SEMICOLON, firstStatement.container.last().type)
+
+        // Check second statement: " let y = 2;" (note the leading space)
+        val secondStatement = statements[1]
+        assertEquals(DataType.SPACE, secondStatement.container[0].type)
+        assertEquals(DataType.LET_KEYWORD, secondStatement.container[1].type)
+        assertEquals("y", secondStatement.container[3].content)
+        assertEquals("2", secondStatement.container[7].content)
+        assertEquals(DataType.SEMICOLON, secondStatement.container.last().type)
     }
 }

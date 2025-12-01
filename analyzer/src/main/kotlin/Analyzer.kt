@@ -1,18 +1,19 @@
 package analyzer.src.main.kotlin
 
+import ast.src.main.kotlin.ASTNode
 import progress.src.main.kotlin.MultiStepProgress
 import lexer.src.main.kotlin.Lexer
-import container.src.main.kotlin.Container
+
 import parser.src.main.kotlin.Parser
-import ast.src.main.kotlin.ASTNode
+
 import linter.src.main.kotlin.Linter
 import linter.src.main.kotlin.LintRule
-import linter.src.main.kotlin.LintError
+
 import linter.src.main.kotlin.config.ConfigFactory
 import linter.src.main.kotlin.config.ConfigLoader
 import linter.src.main.kotlin.rules.IdentifierNamingRule
 import linter.src.main.kotlin.rules.PrintLnRule
-import tokendata.src.main.kotlin.Position
+import tokendata.src.main.kotlin.DataType
 import java.io.File
 
 class Analyzer {
@@ -48,45 +49,35 @@ class Analyzer {
         val progress = MultiStepProgress()
         progress.initialize(3)
 
-        var tokens: Container? = null
+        var hasError = false
 
         try {
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            lexer.split()
-            lexerStep.complete("Lexical analysis completed")
-
-            val tokenStep = progress.startStep("Generating tokens")
-            tokens = lexer.createToken(lexer.list)
-            tokenStep.complete("${tokens.size()} tokens generated")
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
 
             val parserStep = progress.startStep("Validating syntax")
-            val parser = Parser(tokens, version)
-            val ast: ASTNode = parser.parse()
+            for (statement in statements) {
+                val parser = Parser(statement, version)
+                val ast: ASTNode = parser.parse()
 
-            // Verificar si el AST es inválido
-            if (ast.content.isEmpty() && ast.children.isEmpty()) {
-                parserStep.complete("Syntax validation failed")
-                println("\nSYNTAX ERROR: Invalid syntax detected")
-
-                // Intentar encontrar el último token válido para dar contexto
-                if (tokens.size() > 0) {
-                    val lastToken = tokens.get(tokens.size() - 1)
-                    if (lastToken != null) {
-                        val pos: Position = lastToken.position
-                        println("Near line ${pos.line}, column ${pos.column}")
-                        println("Last token: '${lastToken.content}' (${lastToken.type})")
-                    }
+                if (ast.type == DataType.INVALID) { // Check for invalid AST directly
+                    hasError = true
+                    parserStep.complete("Syntax validation failed for statement")
+                    println("\nSYNTAX ERROR: Invalid syntax detected in statement")
+                    ErrorReporter.report("validation", Exception("Invalid AST for statement"), statement)
+                    break // Stop validation on first error
                 }
-                return
             }
 
-            parserStep.complete("Syntax validation completed")
-            progress.complete()
-
-            println("\nSUCCESS: File is syntactically and semantically valid")
+            if (!hasError) {
+                parserStep.complete("Syntax validation completed")
+                progress.complete()
+                println("\nSUCCESS: File is syntactically and semantically valid")
+            }
         } catch (e: Exception) {
-            ErrorReporter.report("validation", e, tokens)
+            ErrorReporter.report("validation", e, null) // 'tokens' is not available here anymore
 
             when {
                 e.message?.contains("syntax", ignoreCase = true) == true -> {
@@ -135,46 +126,39 @@ class Analyzer {
         println("Starting analysis of '$sourceFile' (PrintScript $version)")
 
         val progress = MultiStepProgress()
-        progress.initialize(5)
-
-        var tokens: Container? = null
+        progress.initialize(3)
 
         try {
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            lexer.split()
+            val statements = lexer.lexIntoStatements()
             lexerStep.complete("Lexical analysis completed")
-
-            val tokenStep = progress.startStep("Generating tokens")
-            tokens = lexer.createToken(lexer.list)
-            tokenStep.complete("${tokens.size()} tokens generated")
-
-            val parserStep = progress.startStep("Building Abstract Syntax Tree")
-            val parser = Parser(tokens, version)
-            val ast: ASTNode = parser.parse()
-            parserStep.complete("AST built successfully")
 
             val rulesStep = progress.startStep("Loading analysis rules")
             val lintRules: List<LintRule> = loadLintRules(configFile)
             rulesStep.complete("${lintRules.size} rule(s) loaded")
-
             val analysisStep = progress.startStep("Executing static code analysis")
             val linter = Linter(lintRules)
-            val lintErrors: List<LintError> = linter.all(ast)
 
-            if (lintErrors.isEmpty()) {
-                analysisStep.complete("Analysis completed")
-                progress.complete()
+            val asts = statements.map { statement ->
+                val parser = Parser(statement, version)
+                parser.parse()
+            }
+            val allLintErrors = linter.lint(asts)
+            analysisStep.complete("Analysis completed")
+
+            progress.complete()
+
+            if (allLintErrors.isEmpty()) {
                 println("\nSUCCESS: No issues were found")
             } else {
-                analysisStep.complete("Analysis completed")
-                println("\nANALYSIS RESULTS: ${lintErrors.size} issue(s) found:")
-                lintErrors.forEach { error ->
-                    println("$error")
+                println("\nANALYSIS RESULTS: ${allLintErrors.size} issue(s) found:")
+                allLintErrors.forEach { error ->
+                    println("$error: $error")
                 }
             }
         } catch (e: Exception) {
-            ErrorReporter.report("analysis", e, tokens)
+            ErrorReporter.report("analysis", e, null) // 'tokens' is not available here anymore
 
             when {
                 e.message?.contains("syntax", ignoreCase = true) == true -> {

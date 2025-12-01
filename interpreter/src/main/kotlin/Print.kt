@@ -4,11 +4,12 @@ import ast.src.main.kotlin.ASTNode
 object Print : ActionType {
     override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
         val value = interpreter.interpret(node.children[0])
-        return if (value is Double && value % 1 == 0.0) {
-            value.toInt().toString()
+        if (value is Double && value % 1 == 0.0) {
+            interpreter.printer(value.toInt())
+            return value.toInt().toString()
         } else {
-            value.toString()
+            interpreter.printer(value)
+            return value.toString()
         }
     }
 }
-

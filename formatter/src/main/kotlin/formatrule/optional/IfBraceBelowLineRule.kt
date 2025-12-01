@@ -6,7 +6,9 @@ import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
 
 class IfBraceBelowLineRule : FormatRule {
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         val newTokens = mutableListOf<Token>()
         var i = 0
         while (i < source.size()) {
@@ -53,6 +55,6 @@ class IfBraceBelowLineRule : FormatRule {
             }
             i++
         }
-        return Container(newTokens)
+        return listOf(Container(newTokens))
     }
 }

@@ -25,7 +25,7 @@ object TokenMap {
         "const" to DataType.CONST_KEYWORD,
         "if" to DataType.IF_KEYWORD,
         "else" to DataType.ELSE_KEYWORD,
-        "boolean" to DataType.BOOBLEAN_TYPE,
+        "boolean" to DataType.BOOLEAN_TYPE,
         "readInput" to DataType.READ_INPUT,
         "readEnv" to DataType.READ_ENV,
         "{" to DataType.OPEN_BRACE,

@@ -6,10 +6,12 @@ import tokendata.src.main.kotlin.DataType
 
 class Interpreter(
     private val version: String = "1.0",
-    private val inputProvider: InputProvider? = null
+    private val inputProvider: InputProvider? = null,
+    val printer: (Any?) -> Unit = ::println
 ) {
     private val symbolTable = mutableListOf<MutableMap<String, Any?>>(mutableMapOf())
     private val constants = mutableMapOf<String, Any?>()
+    private val variableTypes = mutableListOf<MutableMap<String, String>>(mutableMapOf()) // Stores variable types
 
     private val actionHandlers: Map<Actions, ActionType> = run {
         val v10 = mapOf(
@@ -19,9 +21,9 @@ class Interpreter(
             Actions.DIVIDE to Divide,
             Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
             Actions.PRINT to Print,
-            Actions.VAR_DECLARATION to VarDeclaration,
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
             Actions.LITERAL to Literal,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment
+            Actions.BLOCK to Block()
         )
 
         if (version == "1.1") {
@@ -29,7 +31,7 @@ class Interpreter(
                 inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
                 inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
                 put(Actions.IF_STATEMENT, IfStatement())
-                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, ConstDeclarationAndAssignment)
+                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment) // Use the unified handler
             }
             v10 + v11
         } else {
@@ -39,20 +41,26 @@ class Interpreter(
 
     fun enterScope() {
         symbolTable.add(mutableMapOf())
+        variableTypes.add(mutableMapOf())
     }
 
     fun exitScope() {
         symbolTable.removeAt(symbolTable.lastIndex)
+        variableTypes.removeAt(variableTypes.lastIndex)
     }
 
-    fun declareVariable(name: String, value: Any?) {
+    fun declareVariable(name: String, value: Any?, type: String) {
         if (symbolTable.last().containsKey(name)) {
             throw IllegalStateException("Variable '$name' already declared in this scope")
         }
         symbolTable.last()[name] = value
+        variableTypes.last()[name] = type
     }
 
     fun assignVariable(name: String, value: Any?) {
+        if (constants.containsKey(name)) {
+            throw IllegalStateException("Cannot reassign a constant: '$name'")
+        }
         for (scope in symbolTable.asReversed()) {
             if (scope.containsKey(name)) {
                 scope[name] = value
@@ -74,11 +82,23 @@ class Interpreter(
         throw IllegalStateException("Variable '$name' not declared")
     }
 
-    fun declareConstant(name: String, value: Any?) {
+    fun resolveVariableType(name: String): String? {
+        for (scope in variableTypes.asReversed()) {
+            if (scope.containsKey(name)) {
+                return scope[name]
+            }
+        }
+        // Assuming constants don't have types stored separately for now
+        return null
+    }
+
+    fun declareConstant(name: String, value: Any?, type: String) {
         if (constants.containsKey(name)) {
             throw IllegalStateException("Constant '$name' already declared")
         }
         constants[name] = value
+        // Also track constant types for consistency, though they can't be reassigned
+        variableTypes.last()[name] = type
     }
 
     fun interpret(node: ASTNode): Any? {
@@ -99,11 +119,13 @@ class Interpreter(
         return try {
             handler.interpret(node, this)
         } catch (e: Exception) {
-            println("Error during interpretation at line ${node.position.line}, column ${node.position.column}: ${e.message}")
+            println(
+                "Error during interpretation at line ${node.position.line}, " +
+                    "column ${node.position.column}: ${e.message}"
+            )
             throw e
         }
     }
-
 
     fun determineAction(node: ASTNode): Actions {
         return when (node.type) {
@@ -112,11 +134,16 @@ class Interpreter(
             DataType.MULTIPLICATION -> Actions.MULTIPLY
             DataType.DIVISION -> Actions.DIVIDE
             DataType.PRINTLN -> Actions.PRINT
-            DataType.LET_KEYWORD -> Actions.VAR_DECLARATION_AND_ASSIGNMENT
-            DataType.CONST_KEYWORD -> Actions.CONST_DECLARATION_AND_ASSIGNMENT
+            DataType.DECLARATION -> {
+                if (node.children.firstOrNull()?.type == DataType.CONST_KEYWORD) {
+                    Actions.CONST_DECLARATION_AND_ASSIGNMENT
+                } else {
+                    Actions.VAR_DECLARATION_AND_ASSIGNMENT
+                }
+            }
             DataType.ASSIGNATION -> Actions.ASSIGNMENT_TO_EXISTING_VAR
             DataType.IF_STATEMENT -> Actions.IF_STATEMENT
-            DataType.DECLARATION -> Actions.VAR_DECLARATION
+            DataType.BLOCK -> Actions.BLOCK
             DataType.FUNCTION_CALL -> when (node.content) {
                 "readInput" -> Actions.READ_INPUT
                 "readEnv" -> Actions.READ_ENV
@@ -135,9 +162,10 @@ class Interpreter(
             Actions.DIVIDE,
             Actions.ASSIGNMENT_TO_EXISTING_VAR,
             Actions.PRINT,
-            Actions.VAR_DECLARATION,
             Actions.VAR_DECLARATION_AND_ASSIGNMENT,
-            Actions.LITERAL
+            Actions.LITERAL,
+            Actions.BLOCK,
+            Actions.VAR_DECLARATION
         )
 
         val v11OnlyActions = setOf(

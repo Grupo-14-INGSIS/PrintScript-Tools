@@ -17,10 +17,11 @@ class SpaceAroundOperatorRule : FormatRule {
         DataType.DIVISION
     )
 
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         var tokens = source
         var i = 0
-
         while (i < tokens.size()) {
             val token = tokens.get(i) ?: break
 
@@ -48,7 +49,6 @@ class SpaceAroundOperatorRule : FormatRule {
             }
             i++
         }
-
-        return tokens
+        return listOf(tokens)
     }
 }

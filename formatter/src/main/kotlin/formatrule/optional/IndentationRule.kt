@@ -6,7 +6,9 @@ import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
 
 class IndentationRule(private val indentSize: Int) : FormatRule {
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         val newTokens = mutableListOf<Token>()
         var indentationLevel = 0
         val indent = " ".repeat(indentSize)
@@ -41,6 +43,6 @@ class IndentationRule(private val indentSize: Int) : FormatRule {
                 else -> { /* No hacer nada */ }
             }
         }
-        return Container(newTokens)
+        return listOf(Container(newTokens))
     }
 }

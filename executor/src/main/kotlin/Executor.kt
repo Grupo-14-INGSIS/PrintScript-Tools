@@ -1,7 +1,6 @@
 package executor.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import container.src.main.kotlin.Container
 import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
 import interpreter.src.main.kotlin.Interpreter
@@ -36,39 +35,46 @@ class Executor {
         println("Starting execution of '$sourceFile' with PrintScript $version")
 
         val progress = MultiStepProgress()
-        progress.initialize(4)
-
-        var tokens: Container? = null
+        progress.initialize(3) // Now 3 steps: Lexing, Parsing+Execution
 
         try {
             // Paso 1: Análisis léxico
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            lexer.split()
-            lexerStep.complete("Lexical analysis completed")
+            val statements = lexer.lexIntoStatements()
+            lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
 
-            // Paso 2: Generación de tokens
-            val tokenStep = progress.startStep("Generating tokens")
-            tokens = lexer.createToken(lexer.list)
-            tokenStep.complete("${tokens.size()} tokens generated")
-
-            // Paso 3: Análisis sintáctico
-            val parserStep = progress.startStep("Parsing source code...")
-            val parser = Parser(tokens)
-            val ast: ASTNode = parser.parse()
-            parserStep.complete("AST built successfully")
-
-            // Paso 4: Ejecución
-            val executionStep = progress.startStep("Executing program")
+            // Pasos 2 y 3: Parseo y Ejecución por cada sentencia
+            val executionStep = progress.startStep("Parsing and executing program")
             val inputProvider = ConsoleInputProvider()
-            val interpreter = Interpreter(version, inputProvider)
-            val executionOutput = interpreter.executeAST(ast)
-            executionOutput.forEach { println(it) }
+            val interpreter = Interpreter(version, inputProvider) // Default printer used here
+
+            val originalOut = System.out
+            val capturedOutput = mutableListOf<String>()
+            val printStream = object : java.io.PrintStream(originalOut) {
+                override fun println(x: Any?) {
+                    capturedOutput.add(x.toString())
+                }
+            }
+            System.setOut(printStream)
+
+            try {
+                for (statement in statements) {
+                    val parser = Parser(statement, version) // Parser takes a single statement
+                    val ast: ASTNode = parser.parse()
+                    interpreter.interpret(ast)
+                }
+            } finally {
+                System.setOut(originalOut) // Restore System.out
+            }
+
+            capturedOutput.forEach { println(it) } // Print captured output to actual console
             executionStep.complete("Program executed successfully")
 
             progress.complete()
         } catch (e: Exception) {
-            ErrorReporter.report("execution", e, tokens)
+            // ErrorReporter.report("execution", e, tokens) // 'tokens' is not available here, report general error
+            println("Error during execution: ${e.message}")
             e.printStackTrace()
         }
     }

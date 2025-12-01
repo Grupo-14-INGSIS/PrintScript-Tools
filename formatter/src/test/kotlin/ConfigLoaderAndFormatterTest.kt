@@ -464,7 +464,7 @@ mandatory-single-space-separation: true
 
 
     @Test
-    fun `Formatter - executeOne with SpaceBetweenTokensRule`() {
+    fun `Formatter - rule with SpaceBetweenTokensRule`() {
         val tokens = Container(
             listOf(
                 Token(DataType.IDENTIFIER, "x", pos),
@@ -475,15 +475,15 @@ mandatory-single-space-separation: true
 
 
         val rule = SpaceBetweenTokensRule(enabled = true)
-        val result = formatter.executeOne(tokens, rule)
+        val result = rule.format(listOf(tokens))
 
 
-        assertTrue(result.size() > tokens.size())
+        assertTrue(result.first().size() > tokens.size())
     }
 
 
     @Test
-    fun `Formatter - executeOne with LineBreakAfterSemicolonRule`() {
+    fun `Formatter - rule with LineBreakAfterSemicolonRule`() {
         val tokens = Container(
             listOf(
                 Token(DataType.IDENTIFIER, "x", pos),
@@ -496,15 +496,15 @@ mandatory-single-space-separation: true
 
 
         val rule = LineBreakAfterSemicolonRule(enabled = true)
-        val result = formatter.executeOne(tokens, rule)
+        val result = rule.format(listOf(tokens))
 
 
-        assertEquals(DataType.LINE_BREAK, result.get(4)?.type)
+        assertEquals(DataType.LINE_BREAK, result.first().get(4)?.type)
     }
 
 
     @Test
-    fun `Formatter - executeOne with disabled rule`() {
+    fun `Formatter - rule with disabled rule`() {
         val tokens = Container(
             listOf(
                 Token(DataType.IDENTIFIER, "x", pos),
@@ -515,10 +515,10 @@ mandatory-single-space-separation: true
 
 
         val rule = SpaceBetweenTokensRule(enabled = false)
-        val result = formatter.executeOne(tokens, rule)
+        val result = rule.format(listOf(tokens))
 
 
-        assertEquals(tokens.size(), result.size())
+        assertEquals(tokens.size(), result.first().size())
     }
 
 
@@ -533,7 +533,7 @@ enforce-spacing-around-equals: true
 
 
         val configFile = createConfigFile(config)
-        val rules = formatter.loadRules(configFile.toURI().toURL())
+        val rules = formatter.loadRules(configFile.path)
 
 
         assertEquals(4, rules.size)
@@ -562,10 +562,10 @@ mandatory-line-break-after-statement: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertTrue(result.size() > tokens.size())
+        assertTrue(result.first().size() > tokens.size())
     }
 
 
@@ -578,10 +578,10 @@ mandatory-single-space-separation: true
 
         val configFile = createConfigFile(config)
         val tokens = Container(emptyList())
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(0, result.size())
+        assertEquals(0, result.first().size())
     }
 
 
@@ -606,12 +606,12 @@ mandatory-space-surrounding-operations: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.ADDITION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
+        assertEquals(DataType.SPACE, result.first().get(1)?.type)
+        assertEquals(DataType.ADDITION, result.first().get(2)?.type)
+        assertEquals(DataType.SPACE, result.first().get(3)?.type)
     }
 
 
@@ -635,12 +635,12 @@ enforce-spacing-after-colon-in-declaration: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.COLON, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
+        assertEquals(DataType.SPACE, result.first().get(1)?.type)
+        assertEquals(DataType.COLON, result.first().get(2)?.type)
+        assertEquals(DataType.SPACE, result.first().get(3)?.type)
     }
 
 
@@ -664,10 +664,10 @@ indent-inside-if: 4
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertTrue(result.size() >= tokens.size())
+        assertTrue(result.first().size() >= tokens.size())
     }
 
 
@@ -694,13 +694,13 @@ if-brace-same-line: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
         var foundSpace = false
-        for (i in 0 until result.size()) {
-            if (result.get(i)?.type == DataType.CLOSE_PARENTHESIS) {
-                foundSpace = result.get(i + 1)?.type == DataType.SPACE
+        for (i in 0 until result.first().size()) {
+            if (result.first().get(i)?.type == DataType.CLOSE_PARENTHESIS) {
+                foundSpace = result.first().get(i + 1)?.type == DataType.SPACE
                 break
             }
         }
@@ -730,10 +730,10 @@ line-breaks-after-println: 1
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertTrue(result.size() > tokens.size())
+        assertTrue(result.first().size() > tokens.size())
     }
 
 
@@ -763,10 +763,10 @@ indent-inside-if: 2
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertTrue(result.size() > tokens.size())
+        assertTrue(result.first().size() > tokens.size())
     }
 
 
@@ -791,13 +791,13 @@ enforce-no-spacing-around-equals: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(DataType.IDENTIFIER, result.get(0)?.type)
-        assertEquals(DataType.ASSIGNATION, result.get(1)?.type)
-        assertEquals(DataType.NUMBER_LITERAL, result.get(2)?.type)
-        assertEquals(3, result.size())
+        assertEquals(DataType.IDENTIFIER, result.first().get(0)?.type)
+        assertEquals(DataType.ASSIGNATION, result.first().get(1)?.type)
+        assertEquals(DataType.NUMBER_LITERAL, result.first().get(2)?.type)
+        assertEquals(3, result.first().size())
     }
 
 
@@ -819,11 +819,11 @@ mandatory-single-space-separation: true
         )
 
 
-        val result1 = formatter.execute(tokens, configFile.toURI().toURL())
-        val result2 = formatter.execute(result1, configFile.toURI().toURL())
+        val result1 = formatter.execute(listOf(tokens), configFile)
+        val result2 = formatter.execute(result1, configFile)
 
 
-        assertEquals(result1.size(), result2.size())
+        assertEquals(result1.first().size(), result2.first().size())
     }
 
 
@@ -846,12 +846,12 @@ mandatory-space-surrounding-operations: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.MULTIPLICATION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
+        assertEquals(DataType.SPACE, result.first().get(1)?.type)
+        assertEquals(DataType.MULTIPLICATION, result.first().get(2)?.type)
+        assertEquals(DataType.SPACE, result.first().get(3)?.type)
     }
 
 
@@ -874,12 +874,12 @@ mandatory-space-surrounding-operations: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.DIVISION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
+        assertEquals(DataType.SPACE, result.first().get(1)?.type)
+        assertEquals(DataType.DIVISION, result.first().get(2)?.type)
+        assertEquals(DataType.SPACE, result.first().get(3)?.type)
     }
 
 
@@ -902,12 +902,12 @@ mandatory-space-surrounding-operations: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.SUBTRACTION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
+        assertEquals(DataType.SPACE, result.first().get(1)?.type)
+        assertEquals(DataType.SUBTRACTION, result.first().get(2)?.type)
+        assertEquals(DataType.SPACE, result.first().get(3)?.type)
     }
 
 
@@ -936,16 +936,16 @@ mandatory-line-break-after-statement: true
         )
 
 
-        val result = formatter.execute(tokens, configFile.toURI().toURL())
+        val result = formatter.execute(listOf(tokens), configFile)
 
 
-        assertTrue(result.size() > tokens.size())
+        assertTrue(result.first().size() > tokens.size())
 
 
         var hasLineBreakAfterSemicolon = false
-        for (i in 0 until result.size() - 1) {
-            if (result.get(i)?.type == DataType.SEMICOLON &&
-                result.get(i + 1)?.type == DataType.LINE_BREAK
+        for (i in 0 until result.first().size() - 1) {
+            if (result.first().get(i)?.type == DataType.SEMICOLON &&
+                result.first().get(i + 1)?.type == DataType.LINE_BREAK
             ) {
                 hasLineBreakAfterSemicolon = true
                 break
@@ -983,12 +983,12 @@ mandatory-space-surrounding-operations: true
             )
 
 
-            val result = formatter.execute(tokens, configFile.toURI().toURL())
+            val result = formatter.execute(listOf(tokens), configFile)
 
 
-            assertEquals(DataType.SPACE, result.get(1)?.type)
-            assertEquals(type, result.get(2)?.type)
-            assertEquals(DataType.SPACE, result.get(3)?.type)
+            assertEquals(DataType.SPACE, result.first().get(1)?.type)
+            assertEquals(type, result.first().get(2)?.type)
+            assertEquals(DataType.SPACE, result.first().get(3)?.type)
         }
     }
 

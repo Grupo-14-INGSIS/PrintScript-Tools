@@ -112,13 +112,13 @@ class ParserTest {
         }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
-        val mult = root.children[0]
+        val mult = root.children[1]
 
         assertEquals(DataType.ADDITION, root.type)
         assertEquals(DataType.MULTIPLICATION, mult.type)
         assertEquals(DataType.NUMBER_LITERAL, mult.children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, mult.children[1].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[0].type)
     }
 
     @Test
@@ -152,26 +152,45 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        val sum = root.children[1]
-        val sub = sum.children[1]
-        val div = sum.children[0]
-        val mul = div.children[1]
+        val sum = root
+        val sub = sum.children[0].children[0]
+        val div = sum.children[0].children[1]
+        val mul = div.children[0]
 
         assertEquals(DataType.ADDITION, root.type)
         assertEquals(DataType.ADDITION, sum.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
         assertEquals(DataType.SUBTRACTION, sub.type)
         assertEquals(DataType.DIVISION, div.type)
-        assertEquals(DataType.NUMBER_LITERAL, sub.children[1].type)
         assertEquals(DataType.NUMBER_LITERAL, sub.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, sub.children[1].type)
         assertEquals(DataType.MULTIPLICATION, mul.type)
-        assertEquals(DataType.NUMBER_LITERAL, div.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
+        assertEquals(DataType.NUMBER_LITERAL, div.children[1].type)
         assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
+        assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
     }
 
     @Test
     fun tckTests() {
-        val container = Container()
+        var container = Container()
+        val sentence = listOf("let", " ", "a", ":", " ", "number", " ", "=", " ", "21", ";")
+        val dataTypes = listOf(
+            DataType.LET_KEYWORD,
+            DataType.SPACE,
+            DataType.IDENTIFIER,
+            DataType.COLON,
+            DataType.SPACE,
+            DataType.NUMBER_TYPE,
+            DataType.SPACE,
+            DataType.ASSIGNATION,
+            DataType.SPACE,
+            DataType.NUMBER_LITERAL,
+            DataType.SEMICOLON
+        )
+        for (i in sentence.indices) {
+            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
+        }
+        val parser = Parser(container)
+        val root = parser.parse()
     }
 }

@@ -1,20 +1,21 @@
 package formatter.src.main.kotlin.formatrule.optional
 
-import tokendata.src.main.kotlin.Position
-import token.src.main.kotlin.Token
-import formatter.src.main.kotlin.formatrule.FormatRule
 import container.src.main.kotlin.Container
+import formatter.src.main.kotlin.formatrule.FormatRule
+import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
 
 class SpaceAfterColonRule : FormatRule {
 
     private val colon = DataType.COLON
     private val space = DataType.SPACE
 
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         var tokens = source
         var i = 0
-
         while (i < tokens.size()) {
             val token = tokens.get(i) ?: break
 
@@ -37,7 +38,6 @@ class SpaceAfterColonRule : FormatRule {
             }
             i++
         }
-
-        return tokens
+        return listOf(tokens)
     }
 }

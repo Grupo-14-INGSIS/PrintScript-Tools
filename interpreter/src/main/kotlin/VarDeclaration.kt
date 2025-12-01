@@ -8,7 +8,7 @@ object VarDeclaration : ActionType {
         val variableName = node.children[0].content
         val variableType = node.children[1].content
 
-        interpreter.declareVariable(variableName, defaultValueForType(variableType))
+        interpreter.declareVariable(variableName, defaultValueForType(variableType), variableType)
 
         return Unit
     }

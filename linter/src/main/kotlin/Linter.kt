@@ -4,9 +4,18 @@ import ast.src.main.kotlin.ASTNode
 
 class Linter(private val rules: List<LintRule>) {
 
+    // New main method for multi-AST analysis
+    fun lint(asts: List<ASTNode>): List<LintError> {
+        return asts.flatMap { ast ->
+            rules.flatMap { rule ->
+                rule.apply(ast)
+            }
+        }
+    }
+
     fun all(root: ASTNode): List<LintError> = rules.flatMap { it.apply(root) }
 
-    fun allPassed(root: ASTNode): Boolean = all(root).isEmpty()
+    fun lintingPassed(asts: List<ASTNode>): Boolean = lint(asts).isEmpty()
 }
 
 // recibo una lista de rules, de tipo LintRule. dado que son private val, son inmutables

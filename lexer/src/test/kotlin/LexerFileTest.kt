@@ -144,12 +144,10 @@ class LexerFileTest {
 
     @Test
     fun `createToken should work after split`() {
-        val source = fileSource("let x = 10", "token.txt")
+        val source = fileSource("let x = 10;", "token.txt")
         val lexer = Lexer(source)
-        lexer.split()
-
-        val container = lexer.createToken(lexer.list)
+        val container = lexer.lexIntoStatements().first()
         assertNotNull(container)
-        assertEquals(7, container.size())
+        assertEquals(8, container.size()) // Increased size to account for the semicolon token
     }
 }

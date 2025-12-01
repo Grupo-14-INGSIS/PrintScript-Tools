@@ -7,7 +7,9 @@ import tokendata.src.main.kotlin.DataType
 
 class LineBreakBeforePrintRule(private val count: Int = 1) : FormatRule {
 
-    override fun format(source: Container): Container {
+    override fun format(statements: List<Container>): List<Container> {
+        val source = Container(statements.flatMap { it.container })
+
         val newTokens = mutableListOf<Token>()
         val breaksToAdd = count + 1
 
@@ -29,6 +31,6 @@ class LineBreakBeforePrintRule(private val count: Int = 1) : FormatRule {
             }
             newTokens.add(currentToken)
         }
-        return Container(newTokens)
+        return listOf(Container(newTokens))
     }
 }

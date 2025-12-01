@@ -1,12 +1,19 @@
-#
-# https://help.github.com/articles/dealing-with-line-endings/
-#
-# Linux start script should use lf
-/gradlew        text eol=lf
+* text=auto eol=lf
 
-# These are Windows script files and should use crlf
-*.bat           text eol=crlf
+# These files are text and should be normalized
+*.kt text
+*.java text
+*.ktls text
+*.properties text
+*.xml text
+*.yml text
+*.yaml text
+*.json text
+*.md text
+*.txt text
+*.gradle text
+*.gitignore text
+*.gitattributes text
 
-# Binary files should be left untouched
-*.jar           binary
-
+# These files are binary and should be left alone
+# (add any binary file extensions here)

@@ -36,7 +36,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.IF_KEYWORD, result.get(0)?.type)
@@ -63,7 +63,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(9, result.size())
@@ -88,7 +88,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(tokens.size(), result.size())
@@ -119,7 +119,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var lineBreakCount = 0
@@ -155,7 +155,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         var closingParenIndex = -1
@@ -187,7 +187,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.CLOSE_PARENTHESIS, result.get(3)?.type)
@@ -199,7 +199,7 @@ class IfBraceBelowLineRuleTest {
     @Test
     fun `test empty container`() {
         val tokens = Container(emptyList())
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
         assertEquals(0, result.size())
     }
 
@@ -211,7 +211,7 @@ class IfBraceBelowLineRuleTest {
                 Token(DataType.IF_KEYWORD, "if", pos)
             )
         )
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
         assertEquals(1, result.size())
         assertEquals(DataType.IF_KEYWORD, result.get(0)?.type)
     }
@@ -226,7 +226,7 @@ class IfBraceBelowLineRuleTest {
                 Token(DataType.IDENTIFIER, "x", pos)
             )
         )
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
         assertEquals(3, result.size())
     }
 
@@ -245,7 +245,7 @@ class IfBraceBelowLineRuleTest {
         )
 
 
-        val result = rule.format(tokens)
+        val result = rule.format(listOf(tokens)).first()
 
 
         assertEquals(DataType.LINE_BREAK, result.get(4)?.type)

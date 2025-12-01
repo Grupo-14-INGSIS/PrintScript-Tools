@@ -21,5 +21,6 @@ enum class Actions {
     BOOLEAN_OPERATION,
 
     // MISC
+    BLOCK,
     NULL
 }

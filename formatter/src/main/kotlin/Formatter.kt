@@ -2,29 +2,25 @@ package formatter.src.main.kotlin
 
 import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.formatrule.FormatRule
-import java.net.URL
+import java.io.File
 
 class Formatter() {
 
-    fun executeOne(tokens: Container, rule: FormatRule): Container {
-        return rule.format(tokens)
+    fun loadRules(configFilePath: String): List<FormatRule> {
+        return ConfigLoader(configFilePath).loadConfig()
     }
 
-    fun loadRules(configFile: URL): List<FormatRule> {
-        return ConfigLoader(configFile.path).loadConfig()
-    }
-
-    fun execute(tokens: Container, configFile: URL): Container {
-        val rules: List<FormatRule> = loadRules(configFile)
-        var currentTokens = tokens
+    fun execute(statements: List<Container>, configFile: File): List<Container> {
+        val rules: List<FormatRule> = loadRules(configFile.path) // Call with path
+        var currentStatements = statements
         try {
-            for (rule: FormatRule in rules) {
-                currentTokens = executeOne(currentTokens, rule)
+            for (rule in rules) {
+                currentStatements = rule.format(currentStatements)
             }
         } catch (e: Exception) {
-            ErrorReporter.report("formatting", e, currentTokens)
+            ErrorReporter.report("formatting", e, currentStatements[0])
             throw e
         }
-        return currentTokens
+        return currentStatements
     }
 }

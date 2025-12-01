@@ -69,7 +69,7 @@ jobs:
 
       - name: Verify coverage
         run: |
-          ./gradlew jacocoTestCoverageVerification --quiet
+          ./gradlew jacocoTestCoverageVerification
           if [ $? -ne 0 ]; then
             echo "Build blocked: code coverage below 80%."
             ./gradlew jacocoTestReport
