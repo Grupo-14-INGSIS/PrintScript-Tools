@@ -96,16 +96,6 @@ class FormatterAction {
 
 
             progress.complete()
-            println(
-                "\nFormatted code:"
-            )
-            println(
-                "=".repeat(50)
-            )
-            println()
-            println(
-                "=".repeat(50)
-            )
         } catch (e: Exception) {
             println(
                 "Error during formatting: ${e.message}"
