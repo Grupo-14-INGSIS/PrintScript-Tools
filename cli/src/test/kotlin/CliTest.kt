@@ -1,70 +1,100 @@
 package cli.src.test.kotlin
 
 import org.junit.jupiter.api.Test
-import cli.src.main.kotlin.AnalyzerCommand
 import cli.src.main.kotlin.Cli
-import cli.src.main.kotlin.Command
-import cli.src.main.kotlin.FormatterCommand
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 
 class CliTest {
-    @Test
-    fun `empty args`() {
-        val cli = Cli(
-            mapOf(
-                "analyze" to AnalyzerCommand(),
-                "format" to FormatterCommand()
-            )
-        )
-        val outputStream = ByteArrayOutputStream()
+
+    private val originalOut = System.out
+    private lateinit var outputStream: ByteArrayOutputStream
+
+    @BeforeEach
+    fun setUp() {
+        outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
-        cli.run(emptyArray())
-        val output = outputStream.toString().trim()
-        assertTrue(
-            output.contains(
-                "Must specify a command: formatter | analyzer | validation | execution"
-            )
-        )
+    }
+
+    @AfterEach
+    fun tearDown() {
+        System.setOut(originalOut)
     }
 
     @Test
-    fun `valid command executes successfully`() {
-        val outputStream = ByteArrayOutputStream()
-        System.setOut(PrintStream(outputStream))
-
-        val mockCommand = object : Command {
-            override fun execute(
-                args: List<String>
-            ) {
-                println(
-                    "Mock command executed with args: ${args.joinToString()}"
-                )
-            }
-        }
-
-        val cli = Cli(mapOf("analyze" to mockCommand))
-        cli.run(arrayOf("analyze", "file.txt", "config.yml"))
+    fun `empty args shows usage message`() {
+        val cli = Cli()
+        cli.run(emptyList())
 
         val output = outputStream.toString().trim()
         assertTrue(
-            output.contains(
-                "Mock command executed with args: file.txt, config.yml"
-            )
+            output.contains("Must specify a command: formatter | analyzer | validation | execution")
         )
     }
 
     @Test
     fun `invalid command prints error`() {
-        val outputStream = ByteArrayOutputStream()
-        System.setOut(PrintStream(outputStream))
-
-        val cli = Cli(mapOf("analyze" to AnalyzerCommand()))
-        cli.run(arrayOf("unknown", "file.txt"))
+        val cli = Cli()
+        cli.run(listOf("unknown", "file.txt"))
 
         val output = outputStream.toString().trim()
         assertTrue(output.contains("Unknown command: unknown"))
     }
-}
 
+    @Test
+    fun `execution command with missing file shows error`() {
+        val cli = Cli()
+        cli.run(listOf("execution", "nonexistent.ps"))
+
+        val output = outputStream.toString().trim()
+        // El error puede venir del Executor o del ErrorReporter
+        assertTrue(
+            output.contains("does not exist") ||
+                output.contains("ERROR") ||
+                output.contains("FileNotFoundException")
+        )
+    }
+
+    @Test
+    fun `analyzer command with insufficient args shows error`() {
+        val cli = Cli()
+        cli.run(listOf("analyzer"))
+
+        val output = outputStream.toString().trim()
+        assertTrue(
+            output.contains("Must specify") ||
+                output.contains("ERROR")
+        )
+    }
+
+    @Test
+    fun `formatter command is recognized`() {
+        val cli = Cli()
+        cli.run(listOf("formatter"))
+
+        val output = outputStream.toString().trim()
+        // Debería mostrar algún error de argumentos, no "unknown command"
+        assertTrue(
+            !output.contains("Unknown command") ||
+                output.contains("Must specify") ||
+                output.contains("ERROR")
+        )
+    }
+
+    @Test
+    fun `validation command is recognized`() {
+        val cli = Cli()
+        cli.run(listOf("validation"))
+
+        val output = outputStream.toString().trim()
+        // Debería mostrar algún error de argumentos, no "unknown command"
+        assertTrue(
+            !output.contains("Unknown command") ||
+                output.contains("Must specify") ||
+                output.contains("ERROR")
+        )
+    }
+}

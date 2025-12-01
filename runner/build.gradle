@@ -1,0 +1,10 @@
+plugins {
+    id 'buildlogic.kotlin-myPlugin-conventions'
+}
+
+dependencies {
+    implementation(project ":analyzer")
+    implementation(project ":executor")
+    implementation(project ":formatteraction")
+}
+

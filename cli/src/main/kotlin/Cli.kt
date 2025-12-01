@@ -1,27 +1,24 @@
 package cli.src.main.kotlin
 
-class Cli(private val commands: Map<String, Command>) {
+import org.example.Runner
 
-    fun run(args: Array<String>) {
+class Cli {
+    private val runner = Runner()
+    fun run(args: List<String>) {
         if (args.isEmpty()) {
-            println(
-                "Must specify a command: formatter | analyzer | validation | execution"
-            )
+            println("Must specify a command: formatter | analyzer | validation | execution")
             return
         }
 
         val commandName = args[0]
         val commandArgs = args.drop(1)
 
-        val command = commands[commandName]
-        if (command != null) {
-            command.execute(
-                commandArgs
-            )
-        } else {
-            println(
-                "Unknown command: $commandName"
-            )
+        when (commandName) {
+            "formatter" -> runner.formatterCommand(commandArgs)
+            "analyzer" -> runner.analyzerCommand(commandArgs)
+            "execution" -> runner.executionCommand(commandArgs)
+            "validation" -> runner.validationCommand(commandArgs)
+            else -> println("Unknown command: $commandName")
         }
     }
 }
