@@ -12,7 +12,7 @@ class RulesTest {
     @Test
     fun `valid println with identifier passes`() {
         val node = ASTNode(
-            DataType.PRINTLN,
+            DataType.FUNCTION_CALL,
             "println",
             Position(1, 1),
             listOf(
@@ -28,7 +28,7 @@ class RulesTest {
     @Test
     fun `valid println with literal passes`() {
         val node = ASTNode(
-            DataType.PRINTLN,
+            DataType.FUNCTION_CALL,
             "println",
             Position(2, 1),
             listOf(
@@ -44,7 +44,7 @@ class RulesTest {
     @Test
     fun `invalid println with unsupported type fails`() {
         val node = ASTNode(
-            DataType.PRINTLN,
+            DataType.FUNCTION_CALL,
             "println",
             Position(3, 1),
             listOf(
@@ -62,7 +62,7 @@ class RulesTest {
     @Test
     fun `disabled rule returns no errors`() {
         val node = ASTNode(
-            DataType.PRINTLN,
+            DataType.FUNCTION_CALL,
             "println",
             Position(4, 1),
             listOf(
