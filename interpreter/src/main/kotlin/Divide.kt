@@ -7,13 +7,17 @@ object Divide : ActionType {
         val left = interpreter.interpret(node.children[0])
         val right = interpreter.interpret(node.children[1])
 
-        if (right.toString().toDouble() == 0.0) {
+        val leftDouble = (left as? Number)?.toDouble() ?: throw IllegalArgumentException(
+            "Cannot divide with non-numeric left operand: ${left?.javaClass?.simpleName}"
+        )
+        val rightDouble = (right as? Number)?.toDouble() ?: throw IllegalArgumentException(
+            "Cannot divide with non-numeric right operand: ${right?.javaClass?.simpleName}"
+        )
+
+        if (rightDouble == 0.0) {
             throw IllegalArgumentException("Cannot divide by zero")
         }
 
-        return when {
-            left is Number && right is Number -> left.toString().toDouble() / right.toString().toDouble()
-            else -> throw IllegalArgumentException("Cannot divide types ${left?.javaClass?.simpleName} and ${right?.javaClass?.simpleName}")
-        }
+        return leftDouble / rightDouble
     }
 }

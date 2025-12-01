@@ -7,7 +7,9 @@ object Subtract : ActionType {
         val right = interpreter.interpret(node.children[1])
 
         return when {
-            left is Double || right is Double -> left.toString().toDouble() - right.toString().toDouble()
+            left is Double && right is Double -> left - right
+            left is Int && right is Double -> left.toDouble() - right
+            left is Double && right is Int -> left - right.toDouble()
             left is Int && right is Int -> left - right
             else -> throw IllegalArgumentException(
                 "Cannot subtract types ${left?.javaClass?.simpleName} and ${right?.javaClass?.simpleName}"

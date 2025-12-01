@@ -14,9 +14,8 @@ object Literal : ActionType {
             }
             tokendata.src.main.kotlin.DataType.STRING_LITERAL -> node.content
             tokendata.src.main.kotlin.DataType.BOOLEAN_LITERAL -> node.content.toBoolean()
-            tokendata.src.main.kotlin.DataType.IDENTIFIER -> interpreter.resolveVariable(node.content) ?: throw IllegalStateException(
-                "Variable '${node.content}' not found"
-            )
+            tokendata.src.main.kotlin.DataType.IDENTIFIER -> interpreter.resolveVariable(node.content)
+                ?: throw IllegalStateException("Variable '${node.content}' not found")
             else -> throw IllegalArgumentException("Invalid literal type: ${node.type}")
         }
     }

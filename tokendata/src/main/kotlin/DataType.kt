@@ -13,6 +13,7 @@ enum class DataType {
     // Assignation
     ASSIGNATION,
     DECLARATION,
+    VAR_DECLARATION_WITHOUT_ASSIGNATION,
 
     // Variables and functions
     IDENTIFIER,

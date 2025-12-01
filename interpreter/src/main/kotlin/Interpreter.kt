@@ -22,6 +22,7 @@ class Interpreter(
             Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
             Actions.PRINT to Print,
             Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
+            Actions.VAR_DECLARATION_ONLY to VarDeclarationOnly,
             Actions.LITERAL to Literal,
             Actions.BLOCK to Block()
         )
@@ -134,13 +135,14 @@ class Interpreter(
             DataType.MULTIPLICATION -> Actions.MULTIPLY
             DataType.DIVISION -> Actions.DIVIDE
             DataType.PRINTLN -> Actions.PRINT
-            DataType.DECLARATION -> {
+            DataType.DECLARATION -> { // Declaration WITH assignment
                 if (node.children.firstOrNull()?.type == DataType.CONST_KEYWORD) {
                     Actions.CONST_DECLARATION_AND_ASSIGNMENT
                 } else {
                     Actions.VAR_DECLARATION_AND_ASSIGNMENT
                 }
             }
+            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION -> Actions.VAR_DECLARATION_ONLY // Declaration WITHOUT assignment
             DataType.ASSIGNATION -> Actions.ASSIGNMENT_TO_EXISTING_VAR
             DataType.IF_STATEMENT -> Actions.IF_STATEMENT
             DataType.BLOCK -> Actions.BLOCK
@@ -165,7 +167,7 @@ class Interpreter(
             Actions.VAR_DECLARATION_AND_ASSIGNMENT,
             Actions.LITERAL,
             Actions.BLOCK,
-            Actions.VAR_DECLARATION
+            Actions.VAR_DECLARATION_ONLY // Changed VAR_DECLARATION to VAR_DECLARATION_ONLY
         )
 
         val v11OnlyActions = setOf(

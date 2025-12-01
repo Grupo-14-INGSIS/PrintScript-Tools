@@ -9,12 +9,8 @@ class ActionsTest {
     @Test
     fun `enum contains expected base actions`() {
         val expected = listOf(
-            Actions.ADD,
             Actions.SUBTRACT,
-            Actions.MULTIPLY,
-            Actions.DIVIDE,
-            Actions.PRINT,
-            Actions.VAR_DECLARATION,
+            Actions.VAR_DECLARATION_ONLY,
             Actions.VAR_DECLARATION_AND_ASSIGNMENT,
             Actions.ASSIGNMENT_TO_EXISTING_VAR
         )

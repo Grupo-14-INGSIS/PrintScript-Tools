@@ -24,6 +24,24 @@ class EndToEndTest {
     }
 
     @Test
+    fun `test simple variable declaration without assignment`() {
+        val input = "let x : number;"
+        val result = executeFullPipeline(input)
+        assertTrue(result)
+    }
+
+    @Test
+    fun `test arithmetic expression with decimal point`() {
+        val sourceCode = """
+            let Pi : number;
+            Pi = 3.14;
+            println(Pi / 2);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("1.57"), output)
+    }
+
+    @Test
     fun `test arithmetic expression parsing and evaluation`() {
         val input = "2 + 3 * 4;"
         val lexer = Lexer.from(input)
