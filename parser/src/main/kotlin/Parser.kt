@@ -614,10 +614,9 @@ class Parser @JvmOverloads constructor(
                 if (output.size < 2) {
                     return invalid
                 } else {
-                    children = listOf(
-                        output.removeFirst(),
-                        output.removeFirst()
-                    )
+                    val right = output.removeFirst()
+                    val left = output.removeFirst()
+                    children = listOf(left, right)
                 }
             }
             output.addFirst(

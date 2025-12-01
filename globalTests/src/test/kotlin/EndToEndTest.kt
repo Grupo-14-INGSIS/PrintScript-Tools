@@ -35,11 +35,11 @@ class EndToEndTest {
         assertEquals(DataType.ADDITION, ast.type)
         assertEquals(2, ast.children.size)
 
-        assertEquals("2", ast.children[1].content)
+        assertEquals("2", ast.children[0].content)
 
-        assertEquals(DataType.MULTIPLICATION, ast.children[0].type)
-        assertEquals("3", ast.children[0].children[1].content)
-        assertEquals("4", ast.children[0].children[0].content)
+        assertEquals(DataType.MULTIPLICATION, ast.children[1].type)
+        assertEquals("3", ast.children[1].children[0].content)
+        assertEquals("4", ast.children[1].children[1].content)
     }
 
 
@@ -53,7 +53,7 @@ class EndToEndTest {
         val ast = parser.parse()
 
         assertEquals(DataType.MULTIPLICATION, ast.type)
-        assertEquals("4", ast.children[0].content)
+        assertEquals("4", ast.children[1].content)
     }
 
     @Test
@@ -357,6 +357,16 @@ class EndToEndTest {
         """.trimIndent()
         val output = executeAndGetOutput(sourceCode, "1.1")
         assertEquals(listOf("10", "10"), output)
+    }
+
+    @Test
+    fun `math test`() {
+        val sourceCode = """
+            let x: number = 5 * 5 - 8;
+            println(x);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("17"), output)
     }
 
     @Test

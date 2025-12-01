@@ -6,9 +6,13 @@ import java.io.File
 class ConfigLoader {
     fun loadYaml(path: String): Map<String, Any> {
         val yaml = Yaml()
-        val file = File(path).inputStream()
-        val map: Map<String, Any> = yaml.load(file)
-        return map
+        val file = File(path)
+        if (!file.exists() || file.length() == 0L) {
+            return emptyMap()
+        }
+        val inputStream = file.inputStream()
+        val map: Map<String, Any>? = yaml.load(inputStream)
+        return map ?: emptyMap()
     }
 }
 
