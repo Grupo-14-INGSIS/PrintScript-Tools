@@ -301,6 +301,7 @@ class Parser @JvmOverloads constructor(
     }
 
     fun ifStmtParse(tokens: Container): ASTNode {
+        println("DEBUG Parser: ifStmtParse received tokens: ${tokens.container.map { it?.content }}")
         val ifKeyword = tokens.get(0)!!
 
         val conditionStart = findTokenIndex(tokens, DataType.OPEN_PARENTHESIS, 1)
@@ -308,24 +309,52 @@ class Parser @JvmOverloads constructor(
         val blockStart = findTokenIndex(tokens, DataType.OPEN_BRACE, conditionEnd + 1)
         val blockEnd = findMatchingBrace(tokens, blockStart)
 
+        println("DEBUG Parser: conditionStart=$conditionStart, conditionEnd=$conditionEnd, blockStart=$blockStart, blockEnd=$blockEnd")
+
         if (conditionStart == -1 || conditionEnd == -1 || blockStart == -1 || blockEnd == -1) {
+            println("DEBUG Parser: Returning invalid because condition or if block not found (indices were -1).")
             return invalid
         }
 
-        val condition = expParse(tokens.slice(conditionStart + 1, conditionEnd))
-        val ifBlock = parseBlock(tokens.slice(blockStart + 1, blockEnd))
+        val conditionTokens = tokens.slice(conditionStart + 1, conditionEnd)
+        println("DEBUG Parser: Condition tokens: ${conditionTokens.container.map { it?.content }}")
+        val condition = expParse(conditionTokens)
+        println("DEBUG Parser: Condition AST type: ${condition.type}")
+
+        if (condition.type == DataType.INVALID) {
+            println("DEBUG Parser: Returning invalid because condition expParse returned INVALID.")
+            return invalid
+        }
+
+        val ifBlockTokens = tokens.slice(blockStart + 1, blockEnd)
+        println("DEBUG Parser: If block tokens: ${ifBlockTokens.container.map { it?.content }}")
+        val ifBlock = parseBlock(ifBlockTokens)
+        println("DEBUG Parser: If block AST type: ${ifBlock.type}")
 
         val children = mutableListOf(condition, ifBlock)
 
         val elseIndex = blockEnd + 1
+        println("DEBUG Parser: elseIndex=$elseIndex")
         if (elseIndex < tokens.size() && tokens.get(elseIndex)!!.type == DataType.ELSE_KEYWORD) {
+            println("DEBUG Parser: ELSE_KEYWORD found at index $elseIndex")
             val elseBlockStart = findTokenIndex(tokens, DataType.OPEN_BRACE, elseIndex + 1)
+            println("DEBUG Parser: elseBlockStart=$elseBlockStart")
             if (elseBlockStart != -1) {
                 val elseBlockEnd = findMatchingBrace(tokens, elseBlockStart)
+                println("DEBUG Parser: elseBlockEnd=$elseBlockEnd")
                 if (elseBlockEnd != -1) {
-                    val elseBlock = parseBlock(tokens.slice(elseBlockStart + 1, elseBlockEnd))
+                    val elseBlockTokens = tokens.slice(elseBlockStart + 1, elseBlockEnd)
+                    println("DEBUG Parser: Else block tokens: ${elseBlockTokens.container.map { it?.content }}")
+                    val elseBlock = parseBlock(elseBlockTokens)
+                    println("DEBUG Parser: Else block AST type: ${elseBlock.type}")
                     children.add(elseBlock)
+                } else {
+                    println("DEBUG Parser: Returning invalid: else keyword found, but no matching closing brace.")
+                    return invalid // else keyword found, but no matching closing brace
                 }
+            } else {
+                println("DEBUG Parser: Returning invalid: else keyword found, but no opening brace for its block.")
+                return invalid // else keyword found, but no opening brace for its block
             }
         }
 

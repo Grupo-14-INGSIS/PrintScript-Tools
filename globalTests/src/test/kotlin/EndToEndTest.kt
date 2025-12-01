@@ -19,14 +19,14 @@ class EndToEndTest {
     @Test
     fun `test simple variable declaration and assignment`() {
         val input = "let x : number = 5;"
-        val result = executeFullPipeline(input)
+        val result = executeFullPipeline(input, "1.0")
         assertTrue(result)
     }
 
     @Test
     fun `test simple variable declaration without assignment`() {
         val input = "let x : number;"
-        val result = executeFullPipeline(input)
+        val result = executeFullPipeline(input, "1.0")
         assertTrue(result)
     }
 
@@ -44,7 +44,7 @@ class EndToEndTest {
     @Test
     fun `test arithmetic expression parsing and evaluation`() {
         val input = "2 + 3 * 4;"
-        val lexer = Lexer.from(input)
+        val lexer = Lexer.from(input, "1.0")
         val tokens: Container = lexer.lexIntoStatements().first()
 
         val parser = Parser(tokens)
@@ -83,7 +83,7 @@ class EndToEndTest {
         )
 
         testCases.forEach { input ->
-            val result = executeFullPipeline(input)
+            val result = executeFullPipeline(input, "1.0")
             assertTrue(result, "Failed to process: $input")
         }
     }
@@ -91,7 +91,7 @@ class EndToEndTest {
     @Test
     fun `test lexer token classification`() {
         val input = "let x : number = 42;"
-        val lexer = Lexer.from(input)
+        val lexer = Lexer.from(input, "1.0")
         val tokens = lexer.lexIntoStatements().first()
 
         val expectedTypes = listOf(
@@ -123,7 +123,7 @@ class EndToEndTest {
     @Test
     fun `test string literal with quotes`() {
         val input = "\"This is a string with spaces\";"
-        val lexer = Lexer.from(input)
+        val lexer = Lexer.from(input, "1.0")
         val tokens = lexer.lexIntoStatements().first()
 
         assertEquals(2, tokens.size())
@@ -141,7 +141,7 @@ class EndToEndTest {
         )
 
         testCases.forEach { (input, _) ->
-            val lexer = Lexer.from(input)
+            val lexer = Lexer.from(input, "1.0")
             val tokens = lexer.lexIntoStatements().first()
 
             val parser = Parser(tokens)
@@ -167,7 +167,7 @@ class EndToEndTest {
             println message;
         """.trimIndent()
 
-        val lexer = Lexer.from(program)
+        val lexer = Lexer.from(program, "1.0")
         val statements = lexer.lexIntoStatements()
         val allTokens = statements.flatMap { it.container }
 
@@ -184,7 +184,7 @@ class EndToEndTest {
             println result;
         """.trimIndent()
 
-        val lexer = Lexer.from(fileContent)
+        val lexer = Lexer.from(fileContent, "1.0")
         val statements = lexer.lexIntoStatements()
         val allTokens = statements.flatMap { it.container }
 
@@ -205,12 +205,12 @@ class EndToEndTest {
         assertEquals(3, numberCount, "Should have 3 'number' type declarations")
     }
 
-    private fun executeFullPipeline(input: String): Boolean {
+    private fun executeFullPipeline(input: String, version: String = "1.0"): Boolean {
         return try {
-            val lexer = Lexer.from(input)
+            val lexer = Lexer.from(input, version)
             val tokens = lexer.lexIntoStatements().first()
 
-            val parser = Parser(tokens)
+            val parser = Parser(tokens, version)
             val ast = parser.parse()
 
             ast.type != DataType.INVALID
@@ -399,6 +399,23 @@ class EndToEndTest {
         """.trimIndent()
         val output = executeAndGetOutput(sourceCode, "1.1")
         assertEquals(listOf("5"), output)
+    }
+
+    @Test
+    fun `test if-else statement`() {
+        val sourceCode = """
+            let x: number = 5;
+            if (false) {
+                x = 10;
+                println("if block");
+            } else {
+                x = 20;
+                println("else block");
+            }
+            println(x);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("else block", "20"), output)
     }
 }
 

@@ -51,30 +51,37 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
         var currentStatementStrings = mutableListOf<String>()
         var braceDepth = 0
 
-        for (piece in this.list) {
+        var i = 0
+        while (i < this.list.size) {
+            val piece = this.list[i]
             currentStatementStrings.add(piece)
-
-            if (version == "1.1") { // Version-aware logic
+            if (version == "1.1") {
                 when (piece) {
                     "{" -> braceDepth++
                     "}" -> {
                         braceDepth--
                         if (braceDepth == 0) {
-                            // End of a block statement
-                            val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
-                            statements.add(statementContainer)
-                            currentStatementStrings = mutableListOf()
+                            val nextNonBlankPiece = findNextNonBlankPiece(i + 1, this.list)
+                            if (nextNonBlankPiece == "else") {
+                                // Do nothing, continue to consume 'else' and its block
+                                // The statement will be finalized after the 'else' block
+                            } else {
+                                // No 'else' follows (or it's not a v1.1 else), so finalize the statement
+                                val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
+                                statements.add(statementContainer)
+                                currentStatementStrings = mutableListOf()
+                            }
                         }
                     }
                 }
             }
 
-            if (piece == ";" && braceDepth == 0) {
-                // End of a simple statement (works for all versions)
+            if (piece == ";" && braceDepth == 0) { // Finalize statement if semicolon and braceDepth is 0 (for both versions)
                 val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
                 statements.add(statementContainer)
                 currentStatementStrings = mutableListOf()
             }
+            i++
         }
 
         // Add any remaining tokens as a final statement
@@ -92,15 +99,25 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
                 }
             }
         }
-
         return statements
+    }
+
+    private fun findNextNonBlankPiece(startIndex: Int, pieces: List<String>): String? {
+        var j = startIndex
+        while (j < pieces.size) {
+            if (pieces[j].isNotBlank()) {
+                return pieces[j]
+            }
+            j++
+        }
+        return null
     }
 
 // puede leer un String gracias a...
     companion object {
-        fun from(input: Any): Lexer = when (input) {
-            is String -> Lexer(StringCharSource(input))
-            is File -> Lexer(FileCharSource(input))
+        fun from(input: Any, version: String = "1.0"): Lexer = when (input) {
+            is String -> Lexer(StringCharSource(input), version)
+            is File -> Lexer(FileCharSource(input), version)
             else -> throw IllegalArgumentException("Unsupported input type: ${input::class}")
         }
     }
