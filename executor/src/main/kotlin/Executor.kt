@@ -41,7 +41,7 @@ class Executor {
             // Paso 1: Análisis léxico
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            val statements = lexer.lexIntoStatements()
+            val statements = lexer.lexIntoStatements().toList()
             lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
 
             // Pasos 2 y 3: Parseo y Ejecución por cada sentencia

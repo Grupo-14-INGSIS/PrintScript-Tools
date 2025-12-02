@@ -35,7 +35,7 @@ class LineBreakBeforePrintlnTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        val statements = lexer.lexIntoStatements()
+        val statements = lexer.lexIntoStatements().toList()
 
         val formatter = Formatter()
         val formattedStatements = formatter.execute(statements, configFile)
@@ -72,7 +72,7 @@ class LineBreakBeforePrintlnTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        val statements = lexer.lexIntoStatements()
+        val statements = lexer.lexIntoStatements().toList()
 
         val formatter = Formatter()
         val formattedStatements = formatter.execute(statements, configFile)

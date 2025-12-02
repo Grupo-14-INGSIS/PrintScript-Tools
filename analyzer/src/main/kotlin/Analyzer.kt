@@ -82,7 +82,7 @@ class Analyzer {
             // Paso 1: Análisis léxico
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            val statements = lexer.lexIntoStatements()
+            val statements = lexer.lexIntoStatements().toList()
             lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
 
             // Paso 2: Cargar reglas (solo si se incluye linting)

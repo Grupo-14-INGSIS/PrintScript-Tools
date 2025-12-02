@@ -28,7 +28,7 @@ class FormatterTCKTest {
         val goldenContent = goldenFile.readText()
 
         val lexer = Lexer(StringCharSource(sourceContent), version)
-        val statements = lexer.lexIntoStatements()
+        val statements = lexer.lexIntoStatements().toList()
 
         val formatter = Formatter()
         val formattedStatements = formatter.execute(statements, configFile)
