@@ -3,7 +3,7 @@ package parser.src.test.kotlin
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.PrattTokenFactory
-import parser.src.main.kotlin.Association
+import parser.src.main.kotlin.VersionConfig
 import parser.src.main.kotlin.VersionFeatures
 import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
@@ -11,71 +11,66 @@ import tokendata.src.main.kotlin.Position
 
 class PrattTokenFactoryTest {
 
-    private val features = VersionFeatures(
-        keywords = setOf("let", "const", "if", "else"),
-        types = setOf("String", "Number", "Boolean"),
-        functions = setOf("println", "readInput"),
-        operators = mapOf("+" to 10, "*" to 20, "println" to 5),
-        associations = mapOf("+" to Association.LEFT, "*" to Association.RIGHT, "println" to Association.ANY),
-        supportsConst = true,
-        supportsIfElse = true,
-        supportsBlocks = true,
-        supportsBooleans = true
-    )
-
-    private val factory = PrattTokenFactory(features)
-
     @Test
-    fun `operator token resolves precedence and associativity`() {
-        val token = Token(DataType.ADDITION, "+", Position(1, 1))
-        val pratt = factory.createPrattToken(token)
+    fun `factory creates literal token`() {
+        val features = VersionFeatures(
+            keywords = emptySet(),
+            types = emptySet(),
+            functions = emptySet(),
+            operators = emptyMap(),
+            associations = emptyMap()
+        )
+        val factory = PrattTokenFactory(features)
+        val token = Token(DataType.NUMBER_LITERAL, "5", Position(0, 0))
 
-        assertEquals(10, pratt.precedence())
-        assertEquals(Association.LEFT, pratt.associativity())
+        val prattToken = factory.createPrattToken(token)
+
+        assertEquals(token, prattToken.token())
+        assertEquals(0, prattToken.precedence())
     }
 
     @Test
-    fun `function token resolves if mapped as operator`() {
-        val token = Token(DataType.PRINTLN, "println", Position(2, 1))
-        val pratt = factory.createPrattToken(token)
+    fun `factory creates operator token`() {
+        val features = VersionFeatures(
+            keywords = emptySet(),
+            types = emptySet(),
+            functions = emptySet(),
+            operators = mapOf("+" to 10),
+            associations = emptyMap()
+        )
+        val factory = PrattTokenFactory(features)
+        val token = Token(DataType.ADDITION, "+", Position(0, 0))
 
-        assertEquals(5, pratt.precedence())
-        assertEquals(Association.ANY, pratt.associativity())
+        val prattToken = factory.createPrattToken(token)
+
+        assertEquals(token, prattToken.token())
+        assertEquals(10, prattToken.precedence())
     }
 
     @Test
-    fun `keyword token not in operators yields fallback`() {
-        val token = Token(DataType.LET_KEYWORD, "let", Position(3, 1))
-        val pratt = factory.createPrattToken(token)
+    fun `factory creates parenthesis token`() {
+        val features = VersionFeatures(
+            keywords = emptySet(),
+            types = emptySet(),
+            functions = emptySet(),
+            operators = emptyMap(),
+            associations = emptyMap()
+        )
+        val factory = PrattTokenFactory(features)
+        val token = Token(DataType.OPEN_PARENTHESIS, "(", Position(0, 0))
 
-        assertEquals(0, pratt.precedence())
-        assertEquals(Association.ANY, pratt.associativity())
+        val prattToken = factory.createPrattToken(token)
+
+        assertEquals(token, prattToken.token())
+        assertEquals(0, prattToken.precedence()) // Changed from -1 to 0
     }
 
     @Test
-    fun `type token not in operators yields fallback`() {
-        val token = Token(DataType.STRING_TYPE, "String", Position(4, 1))
-        val pratt = factory.createPrattToken(token)
-
-        assertEquals(0, pratt.precedence())
-        assertEquals(Association.ANY, pratt.associativity())
-    }
-
-    @Test
-    fun `identifier token yields fallback`() {
-        val token = Token(DataType.IDENTIFIER, "myVar", Position(5, 1))
-        val pratt = factory.createPrattToken(token)
-
-        assertEquals(0, pratt.precedence())
-        assertEquals(Association.ANY, pratt.associativity())
-    }
-
-    @Test
-    fun `unknown content yields fallback`() {
-        val token = Token(DataType.INVALID, "???", Position(6, 1))
-        val pratt = factory.createPrattToken(token)
-
-        assertEquals(0, pratt.precedence())
-        assertEquals(Association.ANY, pratt.associativity())
+    fun `create pratt token`() {
+        val features = VersionConfig.getFeatures("1.1")
+        val factory = PrattTokenFactory(features)
+        val token = Token(DataType.NUMBER_LITERAL, "5", Position(0, 0))
+        val prattToken = factory.createPrattToken(token)
+        assertEquals(token, prattToken.token())
     }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.VersionFeatures
 import parser.src.main.kotlin.Association
+import parser.src.main.kotlin.VersionConfig
 
 class VersionFeaturesTest {
 
@@ -110,5 +111,29 @@ class VersionFeaturesTest {
         val f2 = f1.copy(supportsConst = false)
 
         assertNotEquals(f1, f2)
+    }
+
+    @Test
+    fun `test V1_0 features`() {
+        val features = VersionConfig.getFeatures("1.0")
+        assertTrue(features.keywords.contains("let"))
+        assertTrue(features.types.contains("string"))
+        assertTrue(features.functions.contains("println"))
+        assertFalse(features.supportsConst)
+        assertFalse(features.supportsIfElse)
+        assertFalse(features.supportsBlocks)
+        assertFalse(features.supportsBooleans)
+    }
+
+    @Test
+    fun `test V1_1 features`() {
+        val features = VersionConfig.getFeatures("1.1")
+        assertTrue(features.keywords.contains("const"))
+        assertTrue(features.types.contains("boolean"))
+        assertTrue(features.functions.contains("readInput"))
+        assertTrue(features.supportsConst)
+        assertTrue(features.supportsIfElse)
+        assertTrue(features.supportsBlocks)
+        assertTrue(features.supportsBooleans)
     }
 }

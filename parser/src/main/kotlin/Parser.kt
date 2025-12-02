@@ -499,7 +499,7 @@ class Parser @JvmOverloads constructor(
     }
 
 
-    private val tokenFactory = PrattTokenFactory(features)
+    val tokenFactory = PrattTokenFactory(features)
     private var recursionDepth = 0
     private val MAX_RECURSION_DEPTH = 1000
 
