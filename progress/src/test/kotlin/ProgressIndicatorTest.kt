@@ -34,7 +34,7 @@ class ProgressIndicatorTest {
     }
 
     @Test
-    fun `start should print initial message and spinner chars`() = runBlocking {
+    fun `start should print initial message and spinner chars`() = runBlocking { // no se puede testear "en vivo"
         val indicator = ProgressIndicator("Testing spinner")
         indicator.start()
 

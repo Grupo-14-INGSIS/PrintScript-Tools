@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":inputprovider"))
     implementation(project(":cli"))
     implementation(project(":formatter"))
+    implementation(project(":runner"))
     implementation("org.yaml:snakeyaml:2.0")
 }
 
