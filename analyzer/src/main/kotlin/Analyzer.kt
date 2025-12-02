@@ -138,6 +138,8 @@ class Analyzer {
             }
         } catch (e: Exception) {
             ErrorReporter.report(mode, e, null)
+            // En ese punto del flujo no hay referencia a tokens porque pueden no existir aún (lexing), estar encapsulados en cada statement
+            // (--> List<List<Token>>, parsing), o ya no ser relevantes (linting con ASTs)
 
             when {
                 e.message?.contains("syntax", ignoreCase = true) == true -> {
