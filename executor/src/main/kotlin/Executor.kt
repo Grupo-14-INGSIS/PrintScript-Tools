@@ -73,9 +73,7 @@ class Executor {
 
             progress.complete()
         } catch (e: Exception) {
-            // ErrorReporter.report("execution", e, tokens) // 'tokens' is not available here, report general error
-            println("Error during execution: ${e.message}")
-            e.printStackTrace()
+            ErrorReporter.report("execution", e, null)
         }
     }
 }
