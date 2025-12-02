@@ -41,18 +41,17 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
         list = allPieces
     }
 
-    fun lexIntoStatements(): List<Container> {
-        if (this.list.isEmpty()) {
-            this.split()
+    fun lexIntoStatements(): Sequence<Container> = sequence {
+        if (list.isEmpty()) {
+            split()
         }
 
-        val statements = mutableListOf<Container>()
         var currentStatementStrings = mutableListOf<String>()
         var braceDepth = 0
 
         var i = 0
-        while (i < this.list.size) {
-            val piece = this.list[i]
+        while (i < list.size) {
+            val piece = list[i]
             currentStatementStrings.add(piece)
 
             when (piece) {
@@ -60,35 +59,31 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
                 "}" -> braceDepth--
             }
 
-            // Finalización de sentencia
             var shouldFinalize = false
 
-            // En la v1.1 chequea si despues de un '}' (el de un 'if') hay un 'else'
             if (version == "1.1" && piece == "}" && braceDepth == 0) {
                 var j = i + 1
-                while (j < this.list.size && this.list[j].isBlank()) { // Busca el siguiente elemento que no sea un " "
-                    currentStatementStrings.add(this.list[j])
+                while (j < list.size && list[j].isBlank()) {
+                    currentStatementStrings.add(list[j])
                     j++
                 }
-                val nextNonBlankPiece = if (j < this.list.size) this.list[j] else null
+                val nextNonBlankPiece = if (j < list.size) list[j] else null
 
                 if (nextNonBlankPiece != "else") {
                     shouldFinalize = true
                 }
-                // Se sigue procesando la sentencia al encontrar un 'else'
             } else if (piece == ";" && braceDepth == 0) {
                 shouldFinalize = true
             }
 
             if (shouldFinalize) {
                 val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
-                statements.add(statementContainer)
+                yield(statementContainer)
                 currentStatementStrings = mutableListOf()
             }
             i++
         }
 
-        // Tokens restantes se añaden como una "nueva sentencia"
         if (currentStatementStrings.isNotEmpty()) {
             val meaningfulPieces = currentStatementStrings.filter { it.isNotBlank() }
             if (meaningfulPieces.isNotEmpty()) {
@@ -98,11 +93,10 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
                 }
                 val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
                 if (finalContainer.size() > 0) {
-                    statements.add(finalContainer)
+                    yield(finalContainer)
                 }
             }
         }
-        return statements
     }
 
 // puede leer un String gracias a...

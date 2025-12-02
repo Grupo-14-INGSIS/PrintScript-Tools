@@ -12,7 +12,7 @@ class IntegrationTest {
         val input = "let x: number;"
         val lexer = Lexer.from(input) // Directamente con string
 
-        val container = lexer.lexIntoStatements().first()
+        val container = lexer.lexIntoStatements().toList().first()
 
         assertEquals(7, container.container.size)
 
@@ -41,7 +41,7 @@ class IntegrationTest {
         tempFile.writeText(input)
 
         val lexer = Lexer.from(tempFile) // Directamente con file
-        val container = lexer.lexIntoStatements().first()
+        val container = lexer.lexIntoStatements().toList().first()
 
         assertEquals(7, container.container.size)
 
@@ -59,7 +59,7 @@ class IntegrationTest {
         val input = "let x: number = 42;"
         val lexer = Lexer.from(input)
 
-        val container = lexer.lexIntoStatements().first()
+        val container = lexer.lexIntoStatements().toList().first()
 
         assertEquals(11, container.container.size)
 
@@ -80,7 +80,7 @@ class IntegrationTest {
         val input = "x + y * 2;"
         val lexer = Lexer.from(input)
 
-        val container = lexer.lexIntoStatements().first()
+        val container = lexer.lexIntoStatements().toList().first()
 
         assertEquals(10, container.container.size)
 
@@ -103,8 +103,7 @@ class IntegrationTest {
         tempFile.writeText(content.trim())
 
         val lexer = Lexer.from(tempFile)
-        lexer.split(512) // Buffer personalizado solo funciona con archivos
-        val statements = lexer.lexIntoStatements()
+        val statements = lexer.lexIntoStatements().toList()
 
         assertEquals(100, statements.size)
 
@@ -119,7 +118,7 @@ class IntegrationTest {
         val input = "let x = 1; let y = 2;"
         val lexer = Lexer.from(input)
 
-        val statements = lexer.lexIntoStatements()
+        val statements = lexer.lexIntoStatements().toList()
 
         assertEquals(2, statements.size)
 

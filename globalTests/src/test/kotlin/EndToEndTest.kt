@@ -262,7 +262,7 @@ class EndToEndTest {
 
         val lexer = Lexer.from(program, "1.0")
         val statements = lexer.lexIntoStatements()
-        val allTokens = statements.flatMap { it.container }
+        val allTokens = statements.flatMap { it.container }.toList()
 
         assertNotNull(allTokens)
         assertTrue(allTokens.size > 10)
@@ -279,7 +279,7 @@ class EndToEndTest {
 
         val lexer = Lexer.from(fileContent, "1.0")
         val statements = lexer.lexIntoStatements()
-        val allTokens = statements.flatMap { it.container }
+        val allTokens = statements.flatMap { it.container }.toList()
 
         assertTrue(allTokens.size > 20)
 

@@ -31,7 +31,7 @@ class MandatorySingleSpaceSeparationTest {
         }
 
         val lexer = Lexer(StringCharSource(input))
-        val statements = lexer.lexIntoStatements()
+        val statements = lexer.lexIntoStatements().toList()
 
         println("=== TOKENS DESPUÉS DEL LEXER ===")
         statements.forEachIndexed { index, statement ->

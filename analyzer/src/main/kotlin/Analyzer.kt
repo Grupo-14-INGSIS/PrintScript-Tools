@@ -54,7 +54,7 @@ class Analyzer {
         try {
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            val statements = lexer.lexIntoStatements()
+            val statements = lexer.lexIntoStatements().toList()
             lexerStep.complete("Lexical analysis completed: ${statements.size} statements found")
 
             val parserStep = progress.startStep("Validating syntax")
@@ -131,7 +131,7 @@ class Analyzer {
         try {
             val lexerStep = progress.startStep("Performing lexical analysis")
             val lexer = Lexer.from(source)
-            val statements = lexer.lexIntoStatements()
+            val statements = lexer.lexIntoStatements().toList()
             lexerStep.complete("Lexical analysis completed")
 
             val rulesStep = progress.startStep("Loading analysis rules")
