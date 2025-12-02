@@ -1,21 +1,23 @@
 package lexer.src.main.kotlin
 
 class SeparatorHandler : CharacterHandler {
-    override fun handle(char: Char, state: LexerState): LexerState {
-        return if (state.isInLiteral) {
-            val updatePiece = state.currentPiece + char
-            return state.copy(currentPiece = updatePiece)
+    override fun handle(char: Char, state: LexerState): Pair<LexerState, List<String>> {
+        val completedPieces = mutableListOf<String>()
+        var newState = state.copy(pieceReady = false) // Reset pieceReady
+
+        if (state.isInLiteral) {
+            // If inside a literal, just append the char and return
+            newState = state.copy(currentPiece = state.currentPiece + char)
         } else {
-            val flushPieces = buildList { // flush del buffer es lo proximo a ser vaciado
-                if (state.currentPiece.isNotEmpty()) {
-                    add(state.currentPiece)
-                }
-                add(char.toString())
+            // If not inside a literal
+            if (state.currentPiece.isNotEmpty()) {
+                // The currentPiece is a completed token
+                completedPieces.add(state.currentPiece)
             }
-            state.copy(
-                currentPiece = "",
-                pieces = state.pieces + flushPieces
-            )
+            // The separator itself is a completed token
+            completedPieces.add(char.toString())
+            newState = state.copy(currentPiece = "") // Reset currentPiece
         }
+        return Pair(newState, completedPieces)
     }
 }

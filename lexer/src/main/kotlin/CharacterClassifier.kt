@@ -1,7 +1,7 @@
 package lexer.src.main.kotlin
 
 object CharacterClassifier {
-    private val separators = setOf(';', ':', '\n', '+', '-', '*', '/', '=', '(', ')', '{', '}')
+    private val separators = setOf(';', ':', '\n', '+', '-', '*', '/', '=', '(', ')', '{', '}', ',')
     private val quotes = setOf('"', '\'', '`')
     private val whitespaces = setOf(' ', '\t', '\r')
 

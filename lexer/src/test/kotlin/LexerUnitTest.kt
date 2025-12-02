@@ -6,69 +6,68 @@ import lexer.src.main.kotlin.*
 
 class LexerUnitTest {
 
-    private fun lex(text: String): Lexer {
+    private fun lex(text: String): List<String> {
         val lexer = Lexer(StringCharSource(text))
-        lexer.split()
-        return lexer
+        return lexer.split().toList() // Convert sequence to list for assertions
     }
 
     @Test
     fun `split should handle simple input`() {
-        val lexer = lex("let x")
-        assertEquals(listOf("let", " ", "x"), lexer.list)
+        val pieces = lex("let x")
+        assertEquals(listOf("let", " ", "x"), pieces)
     }
 
     @Test
     fun `split should handle double quoted string`() {
-        val lexer = lex("\"hello world\"")
-        assertEquals(listOf("\"hello world\""), lexer.list)
+        val pieces = lex("\"hello world\"")
+        assertEquals(listOf("\"hello world\""), pieces)
     }
 
     @Test
     fun `split should handle single quoted string`() {
-        val lexer = lex("'hello world'")
-        assertEquals(listOf("'hello world'"), lexer.list)
+        val pieces = lex("'hello world'")
+        assertEquals(listOf("'hello world'"), pieces)
     }
 
     @Test
     fun `split should handle arithmetic operators`() {
-        val lexer = lex("x + y - z")
-        assertEquals(listOf("x", " ", "+", " ", "y", " ", "-", " ", "z"), lexer.list)
+        val pieces = lex("x + y - z")
+        assertEquals(listOf("x", " ", "+", " ", "y", " ", "-", " ", "z"), pieces)
     }
 
     @Test
     fun `split should handle assignment and semicolon`() {
-        val lexer = lex("x = 5;")
-        assertEquals(listOf("x", " ", "=", " ", "5", ";"), lexer.list)
+        val pieces = lex("x = 5;")
+        assertEquals(listOf("x", " ", "=", " ", "5", ";"), pieces)
     }
 
     @Test
     fun `split should handle colon for type declaration`() {
-        val lexer = lex("x: number")
-        assertEquals(listOf("x", ":", " ", "number"), lexer.list)
+        val pieces = lex("x: number")
+        assertEquals(listOf("x", ":", " ", "number"), pieces)
     }
 
     @Test
     fun `split should handle newline`() {
-        val lexer = lex("let x;\nlet y;")
-        assertEquals(listOf("let", " ", "x", ";", "\n", "let", " ", "y", ";"), lexer.list)
+        val pieces = lex("let x;\nlet y;")
+        assertEquals(listOf("let", " ", "x", ";", "\n", "let", " ", "y", ";"), pieces)
     }
 
     @Test
     fun `split should handle string with spaces`() {
-        val lexer = lex("\"hello world with spaces\"")
-        assertEquals(listOf("\"hello world with spaces\""), lexer.list)
+        val pieces = lex("\"hello world with spaces\"")
+        assertEquals(listOf("\"hello world with spaces\""), pieces)
     }
 
     @Test
     fun `split should handle mixed quotes`() {
-        val lexer = lex("\"double\" 'single'")
-        assertEquals(listOf("\"double\"", " ", "'single'"), lexer.list)
+        val pieces = lex("\"double\" 'single'")
+        assertEquals(listOf("\"double\"", " ", "'single'"), pieces)
     }
 
     @Test
     fun `split should handle numbers and decimals`() {
-        val lexer = lex("123 45.67")
-        assertEquals(listOf("123", " ", "45.67"), lexer.list)
+        val pieces = lex("123 45.67")
+        assertEquals(listOf("123", " ", "45.67"), pieces)
     }
 }
