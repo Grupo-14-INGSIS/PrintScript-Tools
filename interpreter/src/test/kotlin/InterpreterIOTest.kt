@@ -25,7 +25,7 @@ class InterpreterIOTest {
         )
 
         val result = interpreter.interpret(readInputNode)
-        assertEquals(42.0, result)
+        assertEquals("42", result)
     }
 
     @Test

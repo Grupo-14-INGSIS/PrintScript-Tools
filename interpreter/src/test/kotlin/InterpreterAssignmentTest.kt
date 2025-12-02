@@ -144,4 +144,40 @@ class InterpreterAssignmentTest {
             interpreter.interpret(assignmentNode)
         }
     }
+
+    @Test
+    fun `assign type mismatch throws exception`() {
+        val interpreter = Interpreter("1.1")
+        val declarationNode = ASTNode(
+            DataType.DECLARATION,
+            "=",
+            Position(1, 0),
+            listOf(
+                ASTNode(
+                    DataType.LET_KEYWORD,
+                    "numVar",
+                    Position(1, 1),
+                    listOf(
+                        ASTNode(DataType.IDENTIFIER, "numVar", Position(1, 2), emptyList()),
+                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                    )
+                ),
+                ASTNode(DataType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
+            )
+        )
+        interpreter.interpret(declarationNode)
+
+        val assignmentNode = ASTNode(
+            DataType.ASSIGNATION,
+            "=",
+            Position(2, 0),
+            listOf(
+                ASTNode(DataType.IDENTIFIER, "numVar", Position(2, 1), emptyList()),
+                ASTNode(DataType.STRING_LITERAL, "hello", Position(2, 2), emptyList())
+            )
+        )
+        assertThrows<IllegalArgumentException> {
+            interpreter.interpret(assignmentNode)
+        }
+    }
 }

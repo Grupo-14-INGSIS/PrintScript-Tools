@@ -217,4 +217,23 @@ class InterpreterIfStatementTest {
         interpreter.interpret(ifNode)
         assertEquals(100.0, interpreter.resolveVariable("x"))
     }
+
+    @Test
+    fun `if statement with empty then block`() {
+        val interpreter = Interpreter("1.1")
+        val ifNode = ASTNode(
+            DataType.IF_STATEMENT,
+            "if",
+            Position(1, 0),
+            listOf(
+                ASTNode(DataType.BOOLEAN_LITERAL, "true", Position(1, 1), emptyList()),
+                ASTNode(DataType.BLOCK, "", Position(1, 2), emptyList()) // Empty then block
+            )
+        )
+        interpreter.interpret(ifNode)
+        // Assert that no error occurred and interpreter state is consistent.
+        // For example, if there's a variable `y` declared outside, ensure it's still there.
+        // Or if nothing is expected to change, assert that.
+        // Here, we just ensure no exception is thrown.
+    }
 }

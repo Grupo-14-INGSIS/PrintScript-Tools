@@ -6,6 +6,7 @@ import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class InterpreterArithmeticTest {
 
@@ -71,5 +72,22 @@ class InterpreterArithmeticTest {
         )
         val result = interpreter.interpret(divideNode)
         assertEquals(2.0, result)
+    }
+
+    @Test
+    fun `test division by zero throws exception`() {
+        val interpreter = Interpreter("1.1")
+        val divideNode = ASTNode(
+            DataType.DIVISION,
+            "/",
+            Position(1, 0),
+            listOf(
+                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
+                ASTNode(DataType.NUMBER_LITERAL, "0.0", Position(1, 2), emptyList())
+            )
+        )
+        assertThrows<IllegalArgumentException> {
+            interpreter.interpret(divideNode)
+        }
     }
 }

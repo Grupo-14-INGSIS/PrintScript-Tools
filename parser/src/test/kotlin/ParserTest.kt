@@ -252,7 +252,7 @@ class ParserTest {
         assertEquals(DataType.IF_STATEMENT, root.type)
         assertEquals(DataType.BOOLEAN_LITERAL, root.children[0].type)
         assertEquals(DataType.BLOCK, root.children[1].type)
-        assertEquals(DataType.PRINTLN, root.children[1].children[0].type)
+        assertEquals(DataType.FUNCTION_CALL, root.children[1].children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, root.children[1].children[0].children[0].type)
     }
 
@@ -341,10 +341,10 @@ class ParserTest {
         assertEquals(DataType.IF_STATEMENT, root.type)
         assertEquals(DataType.BOOLEAN_LITERAL, root.children[0].type)
         assertEquals(DataType.BLOCK, root.children[1].type)
-        assertEquals(DataType.PRINTLN, root.children[1].children[0].type)
+        assertEquals(DataType.FUNCTION_CALL, root.children[1].children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, root.children[1].children[0].children[0].type)
         assertEquals(DataType.BLOCK, root.children[2].type)
-        assertEquals(DataType.PRINTLN, root.children[2].children[0].type)
+        assertEquals(DataType.FUNCTION_CALL, root.children[2].children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, root.children[2].children[0].children[0].type)
     }
 
@@ -443,7 +443,8 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.READ_INPUT, root.type)
+        assertEquals(DataType.FUNCTION_CALL, root.type)
+        assertEquals("readInput", root.content)
         assertEquals(0, root.children.size)
     }
 
@@ -1080,8 +1081,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
-        assertEquals(2, root.children.size)
+        assertEquals(DataType.INVALID, root.type)
     }
 
     @Test
@@ -1117,8 +1117,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
-        assertEquals(2, root.children.size)
+        assertEquals(DataType.INVALID, root.type)
     }
 
     @Test

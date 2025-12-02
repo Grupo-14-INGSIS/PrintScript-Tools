@@ -11,6 +11,30 @@ import org.junit.jupiter.api.assertThrows
 class InterpreterConstDeclarationAndAssignmentTest {
 
     @Test
+    fun `test const declaration and assignment with string type`() {
+        val interpreter = Interpreter("1.1")
+        val constDeclarationNode = ASTNode(
+            DataType.DECLARATION,
+            "=",
+            Position(1, 0),
+            listOf(
+                ASTNode(
+                    DataType.CONST_KEYWORD,
+                    "name",
+                    Position(1, 1),
+                    listOf(
+                        ASTNode(DataType.IDENTIFIER, "name", Position(1, 2), emptyList()),
+                        ASTNode(DataType.STRING_TYPE, "string", Position(1, 3), emptyList())
+                    )
+                ),
+                ASTNode(DataType.STRING_LITERAL, "World", Position(1, 4), emptyList())
+            )
+        )
+        interpreter.interpret(constDeclarationNode)
+        assertEquals("World", interpreter.resolveVariable("name"))
+    }
+
+    @Test
     fun `test const declaration and assignment with correct type`() {
         val interpreter = Interpreter("1.1")
         val constDeclarationNode = ASTNode(
