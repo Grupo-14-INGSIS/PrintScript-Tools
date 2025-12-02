@@ -55,6 +55,14 @@ class Parser @JvmOverloads constructor(
         }
 
         if (firstTokenType == DataType.LET_KEYWORD || firstTokenType == DataType.CONST_KEYWORD) {
+            if (firstTokenType == DataType.CONST_KEYWORD && !features.supportsConst) {
+                return ASTNode(
+                    DataType.INVALID,
+                    "Error: Cannot use 'const' keyword in PrintScript $version",
+                    tokensToParse.get(0)!!.position,
+                    listOf()
+                )
+            }
             if (isDeclarationWithAssignment(tokensToParse)) {
                 return parseDeclarationWithAssignment(tokensToParse)
             }

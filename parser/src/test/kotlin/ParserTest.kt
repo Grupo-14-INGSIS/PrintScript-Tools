@@ -215,7 +215,7 @@ class ParserTest {
         for (i in sentence.indices) {
             container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
         }
-        val parser = Parser(container)
+        val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
         val declaration: ASTNode = root.children[0]
 

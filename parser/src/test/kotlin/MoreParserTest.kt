@@ -39,7 +39,7 @@ class MoreParserTest {
             token(DataType.STRING_LITERAL, "\"hello\"")
         )
 
-        val parser = Parser(tokens)
+        val parser = Parser(tokens, "1.1")
         val result = parser.stmtParse(tokens)
         assertEquals(DataType.DECLARATION, result.type)
         assertEquals("\"hello\"", result.children.last().content)
