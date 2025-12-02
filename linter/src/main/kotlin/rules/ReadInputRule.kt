@@ -15,7 +15,7 @@ class ReadInputRule @JvmOverloads constructor(private val enabled: Boolean = tru
     private fun checkNode(node: ASTNode): List<LintError> {
         val errors = mutableListOf<LintError>()
 
-        if (node.type == DataType.READ_INPUT) {
+        if (node.type == DataType.FUNCTION_CALL && node.content == "readInput") {
             val arg = node.children.firstOrNull()
             if (arg != null && arg.type !in listOf(DataType.IDENTIFIER, DataType.NUMBER_LITERAL, DataType.STRING_LITERAL)) {
                 val pos = node.position

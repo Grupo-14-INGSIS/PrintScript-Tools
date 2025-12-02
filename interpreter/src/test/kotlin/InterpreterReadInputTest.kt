@@ -7,11 +7,20 @@ import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class InterpreterReadInputTest {
     private class FakeInputProvider(private val response: String) : InputProvider {
         override fun readInput(prompt: String): String = response
+        override fun readEnv(varName: String): String? = null
+    }
+
+    private class VerifiableInputProvider(private val expectedPrompt: String) : InputProvider {
+        var wasCalled = false
+        override fun readInput(prompt: String): String {
+            assertEquals(expectedPrompt, prompt)
+            wasCalled = true
+            return ""
+        }
         override fun readEnv(varName: String): String? = null
     }
 
@@ -28,7 +37,7 @@ class InterpreterReadInputTest {
             )
         )
         val result = interpreter.interpret(node)
-        assertEquals(42.5, result)
+        assertEquals("42.5", result)
     }
 
     @Test
@@ -48,12 +57,11 @@ class InterpreterReadInputTest {
     }
 
     @Test
-    fun `throws when no prompt node is provided`() {
-        val inputProvider = FakeInputProvider("ignored")
+    fun `handles call with no prompt node`() {
+        val inputProvider = VerifiableInputProvider("")
         val interpreter = Interpreter("1.1", inputProvider)
         val node = ASTNode(DataType.FUNCTION_CALL, "readInput", Position(0, 0), children = emptyList())
-        assertThrows<IndexOutOfBoundsException> {
-            interpreter.interpret(node)
-        }
+        interpreter.interpret(node)
+        assert(inputProvider.wasCalled)
     }
 }

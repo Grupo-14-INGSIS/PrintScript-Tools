@@ -30,7 +30,8 @@ class ParserTest {
         val parser = Parser(container)
         val root = parser.parse()
 
-        assertEquals(DataType.PRINTLN, root.type)
+        assertEquals(DataType.FUNCTION_CALL, root.type)
+        assertEquals("println", root.content)
         assertEquals(DataType.ADDITION, root.children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[0].type)
         assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[1].type)
@@ -84,7 +85,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.PRINTLN, root.type)
+        assertEquals(DataType.FUNCTION_CALL, root.type)
         assertEquals(DataType.STRING_LITERAL, root.children[0].type)
     }
 

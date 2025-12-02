@@ -42,7 +42,6 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
     }
 
     fun lexIntoStatements(): List<Container> {
-        // Ensure the raw string pieces are generated
         if (this.list.isEmpty()) {
             this.split()
         }
@@ -51,56 +50,66 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
         var currentStatementStrings = mutableListOf<String>()
         var braceDepth = 0
 
-        for (piece in this.list) {
+        var i = 0
+        while (i < this.list.size) {
+            val piece = this.list[i]
             currentStatementStrings.add(piece)
 
-            if (version == "1.1") { // Version-aware logic
-                when (piece) {
-                    "{" -> braceDepth++
-                    "}" -> {
-                        braceDepth--
-                        if (braceDepth == 0) {
-                            // End of a block statement
-                            val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
-                            statements.add(statementContainer)
-                            currentStatementStrings = mutableListOf()
-                        }
-                    }
-                }
+            when (piece) {
+                "{" -> braceDepth++
+                "}" -> braceDepth--
             }
 
-            if (piece == ";" && braceDepth == 0) {
-                // End of a simple statement (works for all versions)
+            // Finalización de sentencia
+            var shouldFinalize = false
+
+            // En la v1.1 chequea si despues de un '}' (el de un 'if') hay un 'else'
+            if (version == "1.1" && piece == "}" && braceDepth == 0) {
+                var j = i + 1
+                while (j < this.list.size && this.list[j].isBlank()) { // Busca el siguiente elemento que no sea un " "
+                    currentStatementStrings.add(this.list[j])
+                    j++
+                }
+                val nextNonBlankPiece = if (j < this.list.size) this.list[j] else null
+
+                if (nextNonBlankPiece != "else") {
+                    shouldFinalize = true
+                }
+                // Se sigue procesando la sentencia al encontrar un 'else'
+            } else if (piece == ";" && braceDepth == 0) {
+                shouldFinalize = true
+            }
+
+            if (shouldFinalize) {
                 val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
                 statements.add(statementContainer)
                 currentStatementStrings = mutableListOf()
             }
+            i++
         }
 
-        // Add any remaining tokens as a final statement
+        // Tokens restantes se añaden como una "nueva sentencia"
         if (currentStatementStrings.isNotEmpty()) {
             val meaningfulPieces = currentStatementStrings.filter { it.isNotBlank() }
             if (meaningfulPieces.isNotEmpty()) {
                 val lastPiece = meaningfulPieces.last()
                 if (lastPiece != ";" && lastPiece != "}") {
-                    throw IllegalStateException("Statement must end with a semicolon or closing brace.")
+                    throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")
                 }
-                // If the check passes, add the statement
                 val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
                 if (finalContainer.size() > 0) {
                     statements.add(finalContainer)
                 }
             }
         }
-
         return statements
     }
 
 // puede leer un String gracias a...
     companion object {
-        fun from(input: Any): Lexer = when (input) {
-            is String -> Lexer(StringCharSource(input))
-            is File -> Lexer(FileCharSource(input))
+        fun from(input: Any, version: String = "1.0"): Lexer = when (input) {
+            is String -> Lexer(StringCharSource(input), version)
+            is File -> Lexer(FileCharSource(input), version)
             else -> throw IllegalArgumentException("Unsupported input type: ${input::class}")
         }
     }

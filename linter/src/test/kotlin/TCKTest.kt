@@ -65,7 +65,7 @@ class TCKTest {
 
     private fun getPrintlnWithExpressionAst(): ASTNode {
         return ASTNode(
-            type = DataType.PRINTLN,
+            type = DataType.FUNCTION_CALL,
             content = "println",
             position = Position(1, 1),
             children = listOf(
@@ -84,7 +84,7 @@ class TCKTest {
 
     private fun getReadInputWithExpressionAst(): ASTNode {
         return ASTNode(
-            type = DataType.READ_INPUT,
+            type = DataType.FUNCTION_CALL,
             content = "readInput",
             position = Position(1, 1),
             children = listOf(

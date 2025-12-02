@@ -15,7 +15,7 @@ class PrintLnRule @JvmOverloads constructor(private val enabled: Boolean = true)
     private fun checkNode(node: ASTNode): List<LintError> {
         val errors = mutableListOf<LintError>()
 
-        if (node.type == DataType.PRINTLN) {
+        if (node.type == DataType.FUNCTION_CALL && node.content == "println") {
             val arg = node.children.firstOrNull()
             if (arg != null && arg.type !in listOf(DataType.IDENTIFIER, DataType.NUMBER_LITERAL, DataType.STRING_LITERAL)) {
                 val pos = node.position

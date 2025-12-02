@@ -11,22 +11,115 @@ import container.src.main.kotlin.Container
 import lexer.src.main.kotlin.StringCharSource
 import interpreter.src.main.kotlin.Interpreter // Import the Interpreter
 import inputprovider.src.main.kotlin.ConsoleInputProvider
+import java.io.File
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.jvm.kotlin
 
 
 class EndToEndTest {
 
+    private class MockInputProvider(
+        private val testPrinter: (Any?) -> Unit,
+        private val inputs: Queue<String> = LinkedList(),
+        private val envVars: Map<String, String> = emptyMap()
+    ) : inputprovider.src.main.kotlin.InputProvider {
+        override fun readInput(prompt: String): String {
+            testPrinter(prompt)
+            return inputs.poll() ?: ""
+        }
+
+        override fun readEnv(varName: String): String? {
+            return envVars[varName]
+        }
+    }
+
+    private fun executeWithMockInput(
+        input: String,
+        version: String,
+        inputProvider: inputprovider.src.main.kotlin.InputProvider
+    ): List<String> {
+        val lexer = Lexer(StringCharSource(input), version)
+        val statements = lexer.lexIntoStatements()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+
+        // The mock provider needs the test printer. This is a bit of a chicken-and-egg problem.
+        // For this to work, the MockInputProvider must be initialized with the testPrinter.
+        // We assume the caller of this function has already done so.
+        val interpreter = Interpreter(version, inputProvider, testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, version)
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        return output
+    }
+
+    @Test
+    fun readInputTest() {
+        val testDir = "src/test/resources/e2e/read-input/"
+        val sourceCode = File(testDir + "main.ps").readText()
+        val inputLines = File(testDir + "input.txt").readLines()
+        val expectedOutput = File(testDir + "output.txt").readLines()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+
+        val mockInputProvider = MockInputProvider(testPrinter, LinkedList(inputLines))
+        val lexer = Lexer(StringCharSource(sourceCode), "1.1")
+        val statements = lexer.lexIntoStatements()
+        val interpreter = Interpreter("1.1", mockInputProvider, testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, "1.1")
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        // The prompt from readInput is also printed, so we need to account for that.
+        // The TCK prints "Name:" and then the program prints "Hello world!".
+        // Our mock provider prints the prompt, which is collected.
+        // So we expect ["Name:", "Hello world!"]
+        assertEquals(expectedOutput, output)
+    }
+
+    @Test
+    fun readEnvTest() {
+        val testDir = "src/test/resources/e2e/read-env/"
+        val sourceCode = File(testDir + "main.ps").readText()
+        val expectedOutput = File(testDir + "output.txt").readLines()
+
+        val output = mutableListOf<String>()
+        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
+        val envVars = mapOf("BEST_FOOTBALL_CLUB" to "San Lorenzo")
+
+        val mockInputProvider = MockInputProvider(testPrinter, LinkedList(), envVars)
+
+        val lexer = Lexer(StringCharSource(sourceCode), "1.1")
+        val statements = lexer.lexIntoStatements()
+        val interpreter = Interpreter("1.1", mockInputProvider, testPrinter)
+
+        for (statement in statements) {
+            val parser = Parser(statement, "1.1")
+            val ast = parser.parse()
+            interpreter.interpret(ast)
+        }
+        assertEquals(expectedOutput, output)
+    }
+
     @Test
     fun `test simple variable declaration and assignment`() {
         val input = "let x : number = 5;"
-        val result = executeFullPipeline(input)
+        val result = executeFullPipeline(input, "1.0")
         assertTrue(result)
     }
 
     @Test
     fun `test simple variable declaration without assignment`() {
         val input = "let x : number;"
-        val result = executeFullPipeline(input)
+        val result = executeFullPipeline(input, "1.0")
         assertTrue(result)
     }
 
@@ -44,7 +137,7 @@ class EndToEndTest {
     @Test
     fun `test arithmetic expression parsing and evaluation`() {
         val input = "2 + 3 * 4;"
-        val lexer = Lexer.from(input)
+        val lexer = Lexer.from(input, "1.0")
         val tokens: Container = lexer.lexIntoStatements().first()
 
         val parser = Parser(tokens)
@@ -83,7 +176,7 @@ class EndToEndTest {
         )
 
         testCases.forEach { input ->
-            val result = executeFullPipeline(input)
+            val result = executeFullPipeline(input, "1.0")
             assertTrue(result, "Failed to process: $input")
         }
     }
@@ -91,7 +184,7 @@ class EndToEndTest {
     @Test
     fun `test lexer token classification`() {
         val input = "let x : number = 42;"
-        val lexer = Lexer.from(input)
+        val lexer = Lexer.from(input, "1.0")
         val tokens = lexer.lexIntoStatements().first()
 
         val expectedTypes = listOf(
@@ -123,7 +216,7 @@ class EndToEndTest {
     @Test
     fun `test string literal with quotes`() {
         val input = "\"This is a string with spaces\";"
-        val lexer = Lexer.from(input)
+        val lexer = Lexer.from(input, "1.0")
         val tokens = lexer.lexIntoStatements().first()
 
         assertEquals(2, tokens.size())
@@ -141,7 +234,7 @@ class EndToEndTest {
         )
 
         testCases.forEach { (input, _) ->
-            val lexer = Lexer.from(input)
+            val lexer = Lexer.from(input, "1.0")
             val tokens = lexer.lexIntoStatements().first()
 
             val parser = Parser(tokens)
@@ -167,7 +260,7 @@ class EndToEndTest {
             println message;
         """.trimIndent()
 
-        val lexer = Lexer.from(program)
+        val lexer = Lexer.from(program, "1.0")
         val statements = lexer.lexIntoStatements()
         val allTokens = statements.flatMap { it.container }
 
@@ -184,7 +277,7 @@ class EndToEndTest {
             println result;
         """.trimIndent()
 
-        val lexer = Lexer.from(fileContent)
+        val lexer = Lexer.from(fileContent, "1.0")
         val statements = lexer.lexIntoStatements()
         val allTokens = statements.flatMap { it.container }
 
@@ -205,12 +298,12 @@ class EndToEndTest {
         assertEquals(3, numberCount, "Should have 3 'number' type declarations")
     }
 
-    private fun executeFullPipeline(input: String): Boolean {
+    private fun executeFullPipeline(input: String, version: String = "1.0"): Boolean {
         return try {
-            val lexer = Lexer.from(input)
+            val lexer = Lexer.from(input, version)
             val tokens = lexer.lexIntoStatements().first()
 
-            val parser = Parser(tokens)
+            val parser = Parser(tokens, version)
             val ast = parser.parse()
 
             ast.type != DataType.INVALID
@@ -360,7 +453,7 @@ class EndToEndTest {
             executeAndGetOutput(sourceCode, "1.0")
         }
         println(ex.message)
-        assertTrue(ex.message!!.contains("""is not compatible with type 'number'"""))
+        assertTrue(ex.message!!.contains("""no se puede convertir a número"""))
     }
 
     @Test
@@ -399,6 +492,23 @@ class EndToEndTest {
         """.trimIndent()
         val output = executeAndGetOutput(sourceCode, "1.1")
         assertEquals(listOf("5"), output)
+    }
+
+    @Test
+    fun `test if-else statement`() {
+        val sourceCode = """
+            let x: number = 5;
+            if (false) {
+                x = 10;
+                println("if block");
+            } else {
+                x = 20;
+                println("else block");
+            }
+            println(x);
+        """.trimIndent()
+        val output = executeAndGetOutput(sourceCode, "1.1")
+        assertEquals(listOf("else block", "20"), output)
     }
 }
 
