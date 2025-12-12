@@ -1,6 +1,6 @@
 package cli.src.main.kotlin
 
-import org.example.Runner
+import runner.src.main.kotlin.Runner
 
 class Cli {
     private val runner = Runner()

@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation project(":executor")
     implementation project(":runner")
+    implementation project(":inputprovider")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 

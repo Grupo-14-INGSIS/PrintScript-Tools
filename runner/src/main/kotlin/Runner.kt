@@ -1,13 +1,15 @@
-package org.example
+package runner.src.main.kotlin
 
 import analyzer.src.main.kotlin.Analyzer
 import executor.src.main.kotlin.Executor
 import formatteraction.src.main.kotlin.FormatterAction
+import inputprovider.src.main.kotlin.ConsoleInputProvider
+import inputprovider.src.main.kotlin.InputProvider
 
 class Runner {
 
-    fun executionCommand(args: List<String>) {
-        val executor = Executor()
+    fun executionCommand(args: List<String>, inputProvider: InputProvider = ConsoleInputProvider()) {
+        val executor = Executor(inputProvider)
         executor.execute(args)
     }
 

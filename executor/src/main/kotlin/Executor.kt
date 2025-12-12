@@ -6,9 +6,12 @@ import parser.src.main.kotlin.Parser
 import interpreter.src.main.kotlin.Interpreter
 import progress.src.main.kotlin.MultiStepProgress
 import inputprovider.src.main.kotlin.ConsoleInputProvider
+import inputprovider.src.main.kotlin.InputProvider
 import java.io.File
 
-class Executor {
+class Executor(
+    private val inputProvider: InputProvider = ConsoleInputProvider()
+) {
 
     fun execute(args: List<String>) {
         if (args.isEmpty()) {
@@ -46,7 +49,6 @@ class Executor {
 
             // Pasos 2 y 3: Parseo y Ejecución por cada sentencia
             val executionStep = progress.startStep("Parsing and executing program")
-            val inputProvider = ConsoleInputProvider()
             val interpreter = Interpreter(version, inputProvider) // Default printer used here
 
             val originalOut = System.out

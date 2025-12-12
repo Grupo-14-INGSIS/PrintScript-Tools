@@ -2,7 +2,7 @@ package globaltests.src.test.kotlin
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.example.Runner // Assuming Runner is in org.example package based on Runner.kt
+import runner.src.main.kotlin.Runner
 import java.io.File // Import File for temporary file operations
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
