@@ -10,7 +10,8 @@ import inputprovider.src.main.kotlin.InputProvider
 import java.io.File
 
 class Executor(
-    private val inputProvider: InputProvider = ConsoleInputProvider()
+    private val inputProvider: InputProvider = ConsoleInputProvider(),
+    private val printer: (Any?) -> Unit = ::println
 ) {
 
     fun execute(args: List<String>) {

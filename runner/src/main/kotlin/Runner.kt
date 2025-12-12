@@ -8,8 +8,12 @@ import inputprovider.src.main.kotlin.InputProvider
 
 class Runner {
 
-    fun executionCommand(args: List<String>, inputProvider: InputProvider = ConsoleInputProvider()) {
-        val executor = Executor(inputProvider)
+    fun executionCommand(
+        args: List<String>,
+        inputProvider: InputProvider = ConsoleInputProvider(),
+        printer: (Any?) -> Unit = ::println
+    ) {
+        val executor = Executor(inputProvider, printer)
         executor.execute(args)
     }
 
