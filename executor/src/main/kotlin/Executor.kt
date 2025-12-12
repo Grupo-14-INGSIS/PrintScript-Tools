@@ -50,28 +50,14 @@ class Executor(
 
             // Pasos 2 y 3: Parseo y Ejecución por cada sentencia
             val executionStep = progress.startStep("Parsing and executing program")
-            val interpreter = Interpreter(version, inputProvider) // Default printer used here
+            val interpreter = Interpreter(version, inputProvider, printer) // Default printer used here
 
-            val originalOut = System.out
-            val capturedOutput = mutableListOf<String>()
-            val printStream = object : java.io.PrintStream(originalOut) {
-                override fun println(x: Any?) {
-                    capturedOutput.add(x.toString())
-                }
-            }
-            System.setOut(printStream)
-
-            try {
-                for (statement in statements) {
-                    val parser = Parser(statement, version) // Parser takes a single statement
-                    val ast: ASTNode = parser.parse()
-                    interpreter.interpret(ast)
-                }
-            } finally {
-                System.setOut(originalOut) // Restore System.out
+            for (statement in statements) {
+                val parser = Parser(statement, version) // Parser takes a single statement
+                val ast: ASTNode = parser.parse()
+                interpreter.interpret(ast)
             }
 
-            capturedOutput.forEach { println(it) } // Print captured output to actual console
             executionStep.complete("Program executed successfully")
 
             progress.complete()
