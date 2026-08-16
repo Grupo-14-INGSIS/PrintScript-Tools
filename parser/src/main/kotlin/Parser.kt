@@ -9,11 +9,15 @@ import kotlin.jvm.JvmOverloads
 
 class Parser @JvmOverloads constructor(
     private var tokens: Container,
-    private val version: String = "1.0"
+    val version: String = "1.0",
+    private val statementParsers: List<StatementParser> = StatementParserFactory.createParsers(
+        VersionConfig.getFeatures(version),
+        version
+    )
 ) {
 
-    private val features = VersionConfig.getFeatures(version)
-    private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
+    val features: VersionFeatures = VersionConfig.getFeatures(version)
+    val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
 
     fun parse(): ASTNode {
         val line: Container = format()
@@ -33,7 +37,6 @@ class Parser @JvmOverloads constructor(
         return output
     }
 
-
     fun stmtParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
@@ -48,106 +51,8 @@ class Parser @JvmOverloads constructor(
             return invalid
         }
 
-        val firstTokenType = tokensToParse.get(0)!!.type
-
-        if (firstTokenType == DataType.IF_KEYWORD && features.supportsIfElse) {
-            return ifStmtParse(tokensToParse)
-        }
-
-        if (firstTokenType == DataType.LET_KEYWORD || firstTokenType == DataType.CONST_KEYWORD) {
-            if (firstTokenType == DataType.CONST_KEYWORD && !features.supportsConst) {
-                return ASTNode(
-                    DataType.INVALID,
-                    "Error: Cannot use 'const' keyword in PrintScript $version",
-                    tokensToParse.get(0)!!.position,
-                    listOf()
-                )
-            }
-            if (isDeclarationWithAssignment(tokensToParse)) {
-                return parseDeclarationWithAssignment(tokensToParse)
-            }
-            if (isDeclarationWithoutAssignment(tokensToParse)) {
-                return parseDeclarationWithoutAssignment(tokensToParse)
-            }
-        }
-
-        if (isSimpleAssignment(tokensToParse)) {
-            return parseSimpleAssignment(tokensToParse)
-        }
-
-        return expParse(tokensToParse)
-    }
-
-
-    private fun isDeclarationWithAssignment(tokens: Container): Boolean {
-        if (tokens.size() < 6) return false
-
-        val firstToken = tokens.get(0)!!.type
-        if (firstToken != DataType.LET_KEYWORD && firstToken != DataType.CONST_KEYWORD) {
-            return false
-        }
-
-        val hasIdentifier = tokens.get(1)!!.type == DataType.IDENTIFIER
-        val hasColon = tokens.get(2)!!.type == DataType.COLON
-        val hasAssignation = findTokenIndex(tokens, DataType.ASSIGNATION) != -1
-
-        return hasIdentifier && hasColon && hasAssignation
-    }
-
-    private fun isDeclarationWithoutAssignment(tokens: Container): Boolean {
-        if (tokens.size() != 4) return false // e.g., let x : number
-
-        val firstToken = tokens.get(0)!!.type
-        if (firstToken != DataType.LET_KEYWORD && firstToken != DataType.CONST_KEYWORD) {
-            return false
-        }
-
-        val hasIdentifier = tokens.get(1)!!.type == DataType.IDENTIFIER
-        val hasColon = tokens.get(2)!!.type == DataType.COLON
-        val hasType = tokens.get(3)!!.type == DataType.STRING_TYPE || tokens.get(3)!!.type == DataType.NUMBER_TYPE ||
-            tokens.get(3)!!.type == DataType.BOOLEAN_TYPE
-        val hasAssignation = findTokenIndex(tokens, DataType.ASSIGNATION) != -1
-
-        return hasIdentifier && hasColon && hasType && !hasAssignation
-    }
-
-    private fun parseDeclarationWithoutAssignment(tokens: Container): ASTNode {
-        val keywordToken = tokens.get(0)!!
-        val identifierToken = tokens.get(1)!!
-        val typeToken = tokens.get(3)!!
-
-        return ASTNode(
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION, // Use the new DataType
-            "", // No value assigned
-            keywordToken.position,
-            listOf(
-                ASTNode(
-                    keywordToken.type,
-                    identifierToken.content,
-                    identifierToken.position,
-                    listOf(
-                        ASTNode(
-                            DataType.IDENTIFIER,
-                            identifierToken.content,
-                            identifierToken.position,
-                            listOf()
-                        ),
-                        ASTNode(
-                            typeToken.type,
-                            typeToken.content,
-                            typeToken.position,
-                            listOf()
-                        )
-                    )
-                )
-            )
-        )
-    }
-
-    private fun isSimpleAssignment(tokens: Container): Boolean {
-        if (tokens.size() < 3) return false
-        return tokens.get(0)!!.type == DataType.IDENTIFIER &&
-            tokens.get(1)!!.type == DataType.ASSIGNATION
+        val statementParser = statementParsers.firstOrNull { it.canParse(tokensToParse) }
+        return statementParser?.parse(tokensToParse, this) ?: invalid
     }
 
     private fun isFunctionCall(tokens: Container): Boolean {
@@ -188,124 +93,6 @@ class Parser @JvmOverloads constructor(
         }
 
         return literalTypes.contains(tokens.first()!!.type)
-    }
-
-    private fun isIf(tokens: Container): Boolean {
-        if (tokens.size() < 7) return false
-        if (tokens.first()?.type != DataType.IF_KEYWORD) {
-            return false
-        }
-        if (
-            tokens.get(1)!!.type != DataType.OPEN_PARENTHESIS &&
-            tokens.get(2)!!.type != DataType.BOOLEAN_LITERAL &&
-            tokens.get(3)!!.type != DataType.CLOSE_PARENTHESIS
-        ) {
-            return false
-        }
-        val opens: Boolean = tokens.get(5)?.type == DataType.OPEN_BRACE
-        val closes: Boolean = tokens.last()?.type == DataType.CLOSE_BRACE
-        var hasNoElse = true
-        var token: Token
-        for (i in 5 until tokens.size()) {
-            token = tokens.get(i)!!
-            if (token.type == DataType.ELSE_KEYWORD) {
-                hasNoElse = false
-                break
-            }
-        }
-        return opens && closes && hasNoElse
-    }
-
-    private fun isIfElse(tokens: Container): Boolean {
-        if (tokens.size() < 11) return false
-        if (tokens.first()?.type != DataType.IF_KEYWORD) {
-            return false
-        }
-        if (
-            tokens.get(1)!!.type != DataType.OPEN_PARENTHESIS ||
-            tokens.get(2)!!.type != DataType.BOOLEAN_LITERAL ||
-            tokens.get(3)!!.type == DataType.CLOSE_PARENTHESIS
-        ) {
-            return false
-        }
-        var hasNoElse = true
-        var elseIndex = -1
-        var token: Token
-        for (i in 5 until tokens.size()) {
-            token = tokens.get(i)!!
-            if (token.type == DataType.ELSE_KEYWORD) {
-                hasNoElse = false
-                elseIndex = i
-                break
-            }
-        }
-        if (hasNoElse) return false
-        val openFirst = tokens.get(5)!!.type == DataType.OPEN_BRACE
-        val closeFirst = tokens.get(elseIndex - 1)!!.type == DataType.CLOSE_BRACE
-        val openSecond = tokens.get(elseIndex + 1)!!.type == DataType.OPEN_BRACE
-        val closeSecond = tokens.last()!!.type == DataType.CLOSE_BRACE
-        return openFirst && closeFirst && openSecond && closeSecond
-    }
-
-
-    private fun parseDeclarationWithAssignment(tokens: Container): ASTNode {
-        val isConst = tokens.get(0)!!.type == DataType.CONST_KEYWORD
-        val keyword = if (isConst) DataType.CONST_KEYWORD else DataType.LET_KEYWORD
-
-        val identifierToken = tokens.get(1)!!
-        val typeToken = tokens.get(3)!! // let x : number = 5
-        val assignationIndex = findTokenIndex(tokens, DataType.ASSIGNATION)
-
-        val valueTokens = tokens.slice(assignationIndex + 1)
-
-        return ASTNode(
-            DataType.DECLARATION,
-            "=",
-            tokens.get(assignationIndex)!!.position,
-            listOf(
-                ASTNode(
-                    keyword,
-                    identifierToken.content,
-                    identifierToken.position,
-                    listOf(
-                        ASTNode(
-                            DataType.IDENTIFIER,
-                            identifierToken.content,
-                            identifierToken.position,
-                            listOf()
-                        ),
-                        ASTNode(
-                            typeToken.type,
-                            typeToken.content,
-                            typeToken.position,
-                            listOf()
-                        )
-                    )
-                ),
-                expParse(valueTokens)
-            )
-        )
-    }
-
-    private fun parseSimpleAssignment(tokens: Container): ASTNode {
-        val identifierToken = tokens.get(0)!!
-        val assignationToken = tokens.get(1)!!
-        val valueTokens = tokens.slice(2)
-
-        return ASTNode(
-            DataType.ASSIGNATION,
-            "=",
-            assignationToken.position,
-            listOf(
-                ASTNode(
-                    DataType.IDENTIFIER,
-                    identifierToken.content,
-                    identifierToken.position,
-                    listOf()
-                ),
-                expParse(valueTokens)
-            )
-        )
     }
 
     fun ifStmtParse(tokens: Container): ASTNode {
@@ -357,7 +144,7 @@ class Parser @JvmOverloads constructor(
         )
     }
 
-    private fun parseBlock(tokens: Container): ASTNode {
+    fun parseBlock(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return ASTNode(
                 DataType.BLOCK,
@@ -474,15 +261,14 @@ class Parser @JvmOverloads constructor(
         )
     }
 
-
-    private fun findTokenIndex(tokens: Container, type: DataType, startFrom: Int = 0): Int {
+    fun findTokenIndex(tokens: Container, type: DataType, startFrom: Int = 0): Int {
         for (i in startFrom until tokens.size()) {
             if (tokens.get(i)!!.type == type) return i
         }
         return -1
     }
 
-    private fun findMatchingClosingParenthesis(tokens: Container, openIndex: Int): Int {
+    fun findMatchingClosingParenthesis(tokens: Container, openIndex: Int): Int {
         if (openIndex < 0 || openIndex >= tokens.size()) return -1
 
         var parenCount = 1
@@ -500,7 +286,7 @@ class Parser @JvmOverloads constructor(
         return -1
     }
 
-    private fun findMatchingBrace(tokens: Container, openBraceIndex: Int): Int {
+    fun findMatchingBrace(tokens: Container, openBraceIndex: Int): Int {
         if (openBraceIndex < 0 || openBraceIndex >= tokens.size()) return -1
 
         var braceCount = 1
@@ -517,7 +303,6 @@ class Parser @JvmOverloads constructor(
         }
         return -1
     }
-
 
     val tokenFactory = PrattTokenFactory(features)
     private var recursionDepth = 0

@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' //sin version
+    id 'org.jetbrains.kotlin.jvm'
     id 'org.jlleitschuh.gradle.ktlint'
     id 'jacoco'
     id 'maven-publish'
@@ -15,21 +15,58 @@ project.gradle.taskGraph.whenReady {
 }
 
 dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:2.0.0"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.9.2"
+    testImplementation "io.mockk:mockk:1.13.7"
+    implementation 'org.yaml:snakeyaml:1.33'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.9.3"
 }
 
+compileKotlin {
+    kotlinOptions { jvmTarget = "21" }
+}
+compileTestKotlin {
+    kotlinOptions { jvmTarget = "21" }
+}
+
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit { minimum = 0.8 }
+        }
+    }
+}
+
+tasks.named("test") {
+    if (rootProject.tasks.findByName("installGitHook") != null) {
+        dependsOn(rootProject.tasks.named("installGitHook"))
+    }
 }
 
 tasks.named("build") {
-    dependsOn "ktlintCheck", "test" //no pongo el de formatt pq cambiaria el archivo y no quier que lo haga aca. Lo corro automatico, pero desde la terminal.
+    dependsOn "ktlintCheck", "test"
 }
 
-ktlint{
-    additionalEditorconfigFile = file("$rootDir/config/.editorConfig") // con esto tenemos las reglas custom
+ktlint {
+    if (file("$rootDir/.editorconfig").exists()) {
+        additionalEditorconfigFile = file("$rootDir/.editorconfig")
+    }
 }
 
 // Para publicar objetos
