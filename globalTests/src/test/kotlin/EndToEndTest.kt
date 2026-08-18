@@ -14,7 +14,6 @@ import inputprovider.src.main.kotlin.ConsoleInputProvider
 import java.io.File
 import java.util.LinkedList
 import java.util.Queue
-import kotlin.jvm.kotlin
 
 
 class EndToEndTest {
@@ -112,14 +111,14 @@ class EndToEndTest {
     @Test
     fun `test simple variable declaration and assignment`() {
         val input = "let x : number = 5;"
-        val result = executeFullPipeline(input, "1.0")
+        val result = executePartialPipeline(input, "1.0")
         assertTrue(result)
     }
 
     @Test
     fun `test simple variable declaration without assignment`() {
         val input = "let x : number;"
-        val result = executeFullPipeline(input, "1.0")
+        val result = executePartialPipeline(input, "1.0")
         assertTrue(result)
     }
 
@@ -176,7 +175,7 @@ class EndToEndTest {
         )
 
         testCases.forEach { input ->
-            val result = executeFullPipeline(input, "1.0")
+            val result = executePartialPipeline(input, "1.0")
             assertTrue(result, "Failed to process: $input")
         }
     }
@@ -298,7 +297,7 @@ class EndToEndTest {
         assertEquals(3, numberCount, "Should have 3 'number' type declarations")
     }
 
-    private fun executeFullPipeline(input: String, version: String = "1.0"): Boolean {
+    private fun executePartialPipeline(input: String, version: String = "1.0"): Boolean {
         return try {
             val lexer = Lexer.from(input, version)
             val tokens = lexer.lexIntoStatements().first()

@@ -5,7 +5,8 @@ plugins {
 
 
 application{
-    mainClass = 'cli.src.main.kotlin.Main'
+    //mainClass = 'cli.src.main.kotlin.Main'
+    mainClass = 'MainKt'
 }
 
 dependencies {
