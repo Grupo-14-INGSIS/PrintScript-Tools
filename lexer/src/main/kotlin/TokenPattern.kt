@@ -1,18 +1,13 @@
 package lexer.src.main.kotlin
 
 import tokendata.src.main.kotlin.DataType
+import tokendata.src.main.kotlin.Position
 
 object TokenPattern {
-    private val tokenPatterns = listOf(
-        Regex("^[\"'].*[\"']\$") to DataType.STRING_LITERAL,
-        Regex("^[0-9]+(\\.[0-9]+)?$") to DataType.NUMBER_LITERAL,
-        Regex("^[a-zA-Z_][a-zA-Z0-9_]*$") to DataType.IDENTIFIER
-    )
 
     fun classifyTokenPattern(piece: String): DataType? {
-        for ((regex, type) in tokenPatterns) {
-            if (piece.matches(regex)) return type
-        }
-        return null
+        val plugins = TokenPluginFactory.createPlugins("1.0")
+        return plugins.filterIsInstance<RegexTokenPlugin>()
+            .firstNotNullOfOrNull { it.match(piece, Position(0, 0))?.type }
     }
 }

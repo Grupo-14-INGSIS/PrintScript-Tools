@@ -3,9 +3,18 @@ package lexer.src.main.kotlin
 import container.src.main.kotlin.Container
 import java.io.File
 import java.io.InputStream
-import kotlin.jvm.JvmOverloads
 
-class Lexer @JvmOverloads constructor(val source: CharSource, val version: String = "1.0") {
+class Lexer(
+    val source: CharSource,
+    val tokenPlugins: List<TokenPlugin>,
+    val version: String = "1.0"
+) {
+
+    constructor(source: CharSource, version: String = "1.0") : this(
+        source = source,
+        tokenPlugins = TokenPluginFactory.createPlugins(version),
+        version = version
+    )
 
     fun split(): Sequence<String> = sequence {
         var state = LexerState()
@@ -80,7 +89,7 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
             }
 
             if (shouldFinalize) {
-                val statementContainer = TokenFactory.createTokens(currentStatementStrings, version)
+                val statementContainer = TokenFactory.createTokens(currentStatementStrings, tokenPlugins)
                 yield(statementContainer)
                 currentStatementStrings = mutableListOf()
             }
@@ -94,7 +103,7 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
                 if (lastPiece != ";" && lastPiece != "}") {
                     throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")
                 }
-                val finalContainer = TokenFactory.createTokens(currentStatementStrings, version)
+                val finalContainer = TokenFactory.createTokens(currentStatementStrings, tokenPlugins)
                 if (finalContainer.size() > 0) {
                     yield(finalContainer)
                 }
@@ -107,6 +116,13 @@ class Lexer @JvmOverloads constructor(val source: CharSource, val version: Strin
             is String -> Lexer(StringCharSource(input), version)
             is File -> Lexer(FileCharSource(input), version)
             is InputStream -> Lexer(InputStreamCharSource(input), version)
+            else -> throw IllegalArgumentException("Unsupported input type: ${input::class}")
+        }
+
+        fun from(input: Any, tokenPlugins: List<TokenPlugin>, version: String = "1.0"): Lexer = when (input) {
+            is String -> Lexer(StringCharSource(input), tokenPlugins, version)
+            is File -> Lexer(FileCharSource(input), tokenPlugins, version)
+            is InputStream -> Lexer(InputStreamCharSource(input), tokenPlugins, version)
             else -> throw IllegalArgumentException("Unsupported input type: ${input::class}")
         }
     }

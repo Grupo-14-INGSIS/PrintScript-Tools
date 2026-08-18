@@ -1,25 +1,19 @@
 package lexer.src.main.kotlin
 
-import tokendata.src.main.kotlin.DataType
 import container.src.main.kotlin.Container
-import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.Position
 
 object TokenFactory {
-    fun createTokens(pieces: List<String>, version: String = "1.0"): Container {
+
+    fun createTokens(pieces: List<String>, plugins: List<TokenPlugin>): Container {
         var container = Container()
         var position = Position(line = 0, column = 0)
 
         pieces.filter { it.isNotEmpty() }
             .forEach { piece ->
-                val type = when (piece) {
-                    " " -> DataType.SPACE
-                    else -> TokenMap.classifyTokenMap(piece, version)
-                        ?: TokenPattern.classifyTokenPattern(piece)
-                }
+                val token = plugins.firstNotNullOfOrNull { it.match(piece, position) }
 
-                if (type != null) {
-                    val token = Token(type, piece, position)
+                if (token != null) {
                     container = container.addContainer(token)
 
                     val lines = piece.split("\n")
@@ -37,5 +31,10 @@ object TokenFactory {
                 }
             }
         return container
+    }
+
+    fun createTokens(pieces: List<String>, version: String = "1.0"): Container {
+        val plugins = TokenPluginFactory.createPlugins(version)
+        return createTokens(pieces, plugins)
     }
 }
