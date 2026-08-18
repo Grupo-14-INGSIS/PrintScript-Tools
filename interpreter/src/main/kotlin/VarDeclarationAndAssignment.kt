@@ -2,7 +2,7 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object VarDeclarationAndAssignment : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         require(node.children.size == 2) { "Invalid declaration structure" }
 
         val declarationNode = node.children[0]

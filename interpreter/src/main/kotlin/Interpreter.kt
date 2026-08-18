@@ -3,8 +3,9 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 import inputprovider.src.main.kotlin.InputProvider
 import tokendata.src.main.kotlin.DataType
+import kotlin.jvm.JvmOverloads
 
-class Interpreter(
+class Interpreter @JvmOverloads constructor(
     override val version: String = "1.0",
     private val inputProvider: InputProvider? = null,
     override val printer: (Any?) -> Unit = ::println,

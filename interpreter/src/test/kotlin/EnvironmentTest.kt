@@ -4,6 +4,7 @@ import ast.src.main.kotlin.ASTNode
 import interpreter.src.main.kotlin.ActionType
 import interpreter.src.main.kotlin.Actions
 import interpreter.src.main.kotlin.Environment
+import interpreter.src.main.kotlin.ExecutionContext
 import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -47,7 +48,7 @@ class EnvironmentTest {
         val interpreter = Interpreter("1.0")
 
         val customActionHandler = object : ActionType {
-            override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+            override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
                 return "CUSTOM_ACTION_RESULT_${node.content}"
             }
         }

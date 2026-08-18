@@ -3,7 +3,7 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object AssignmentToExistingVar : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         val variableName = node.children[0].content
         val rawValue = interpreter.interpret(node.children[1])
 

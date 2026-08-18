@@ -4,7 +4,7 @@ import ast.src.main.kotlin.ASTNode
 import inputprovider.src.main.kotlin.InputProvider
 
 class ReadInput(private val inputProvider: InputProvider) : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         require(node.children.size <= 1) { "readInput expects 0 or 1 arguments" }
 
         val rawPrompt = if (node.children.isNotEmpty()) {

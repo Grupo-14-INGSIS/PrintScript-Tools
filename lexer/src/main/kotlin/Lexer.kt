@@ -3,14 +3,16 @@ package lexer.src.main.kotlin
 import container.src.main.kotlin.Container
 import java.io.File
 import java.io.InputStream
+import kotlin.jvm.JvmOverloads
 
-class Lexer(
+class Lexer @JvmOverloads constructor(
     val source: CharSource,
     val tokenPlugins: List<TokenPlugin>,
     val version: String = "1.0",
     val statementSplitter: StatementSplitter = DefaultStatementSplitter(version)
 ) {
 
+    @JvmOverloads
     constructor(source: CharSource, version: String = "1.0") : this(
         source = source,
         tokenPlugins = TokenPluginFactory.createPlugins(version),

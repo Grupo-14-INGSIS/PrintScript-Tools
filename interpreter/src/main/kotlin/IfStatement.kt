@@ -3,7 +3,7 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 class IfStatement : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         val conditionResult = interpreter.interpret(node.children[0])
 
         if (conditionResult !is Boolean) {

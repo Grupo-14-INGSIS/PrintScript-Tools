@@ -3,7 +3,7 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object Literal : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         return when (node.type) {
             tokendata.src.main.kotlin.DataType.NUMBER_LITERAL -> {
                 if (node.content.contains(".")) {

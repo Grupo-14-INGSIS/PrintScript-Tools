@@ -4,7 +4,7 @@ import ast.src.main.kotlin.ASTNode
 import tokendata.src.main.kotlin.DataType
 
 object VarDeclarationOnly : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         // The VAR_DECLARATION_WITHOUT_ASSIGNATION node has one child:
         // ASTNode(keyword, identifier.content, ..., children = [AST(IDENTIFIER), AST(TYPE)])
         require(node.children.size == 1) { "Invalid variable declaration structure" }

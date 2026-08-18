@@ -3,7 +3,7 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object Divide : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         val left = interpreter.interpret(node.children[0])
         val right = interpreter.interpret(node.children[1])
 

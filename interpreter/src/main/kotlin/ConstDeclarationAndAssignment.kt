@@ -2,7 +2,7 @@ package interpreter.src.main.kotlin
 import ast.src.main.kotlin.ASTNode
 
 object ConstDeclarationAndAssignment : ActionType {
-    override fun interpret(node: ASTNode, interpreter: Interpreter): Any {
+    override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
         require(node.children.size >= 3) { "Declaración de constante con asignación inválida: faltan argumentos" }
 
         val constantName = node.children[0].content // "x"
