@@ -14,10 +14,11 @@ class Parser @JvmOverloads constructor(
         VersionConfig.getFeatures(version),
         version
     )
-) {
+) : ExpressionParser {
 
     val features: VersionFeatures = VersionConfig.getFeatures(version)
     val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
+    private val ifParser = IfStatementParser()
 
     fun parse(): ASTNode {
         val line: Container = format()
@@ -37,7 +38,7 @@ class Parser @JvmOverloads constructor(
         return output
     }
 
-    fun stmtParse(tokens: Container): ASTNode {
+    override fun stmtParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
         }
@@ -58,7 +59,7 @@ class Parser @JvmOverloads constructor(
     private fun isFunctionCall(tokens: Container): Boolean {
         if (tokens.size() < 3) return false
 
-        val functionName = tokens.get(0)!!.type
+        val firstToken = tokens.get(0)!!
         val validFunctions = mutableSetOf(DataType.PRINTLN)
 
         if (features.supportsIfElse) {
@@ -66,7 +67,10 @@ class Parser @JvmOverloads constructor(
             validFunctions.add(DataType.READ_ENV)
         }
 
-        return validFunctions.contains(functionName) &&
+        val isFunctionNameValid = validFunctions.contains(firstToken.type) ||
+            features.functions.contains(firstToken.content)
+
+        return isFunctionNameValid &&
             tokens.get(1)!!.type == DataType.OPEN_PARENTHESIS &&
             tokens.last()!!.type == DataType.CLOSE_PARENTHESIS
     }
@@ -95,56 +99,11 @@ class Parser @JvmOverloads constructor(
         return literalTypes.contains(tokens.first()!!.type)
     }
 
-    fun ifStmtParse(tokens: Container): ASTNode {
-        val ifKeyword = tokens.get(0)!!
-
-        val conditionStart = findTokenIndex(tokens, DataType.OPEN_PARENTHESIS, 1)
-        val conditionEnd = findMatchingClosingParenthesis(tokens, conditionStart)
-        val blockStart = findTokenIndex(tokens, DataType.OPEN_BRACE, conditionEnd + 1)
-        val blockEnd = findMatchingBrace(tokens, blockStart)
-
-        if (conditionStart == -1 || conditionEnd == -1 || blockStart == -1 || blockEnd == -1) {
-            return invalid
-        }
-
-        val conditionTokens = tokens.slice(conditionStart + 1, conditionEnd)
-        val condition = expParse(conditionTokens)
-
-        if (condition.type == DataType.INVALID) {
-            return invalid
-        }
-
-        val ifBlockTokens = tokens.slice(blockStart + 1, blockEnd)
-        val ifBlock = parseBlock(ifBlockTokens)
-
-        val children = mutableListOf(condition, ifBlock)
-
-        val elseIndex = blockEnd + 1
-        if (elseIndex < tokens.size() && tokens.get(elseIndex)!!.type == DataType.ELSE_KEYWORD) {
-            val elseBlockStart = findTokenIndex(tokens, DataType.OPEN_BRACE, elseIndex + 1)
-            if (elseBlockStart != -1) {
-                val elseBlockEnd = findMatchingBrace(tokens, elseBlockStart)
-                if (elseBlockEnd != -1) {
-                    val elseBlockTokens = tokens.slice(elseBlockStart + 1, elseBlockEnd)
-                    val elseBlock = parseBlock(elseBlockTokens)
-                    children.add(elseBlock)
-                } else {
-                    return invalid // else keyword found, but no matching closing brace
-                }
-            } else {
-                return invalid // else keyword found, but no opening brace for its block
-            }
-        }
-
-        return ASTNode(
-            DataType.IF_STATEMENT,
-            "if",
-            ifKeyword.position,
-            children
-        )
+    override fun ifStmtParse(tokens: Container): ASTNode {
+        return ifParser.parse(tokens, this)
     }
 
-    fun parseBlock(tokens: Container): ASTNode {
+    override fun parseBlock(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return ASTNode(
                 DataType.BLOCK,
@@ -207,7 +166,7 @@ class Parser @JvmOverloads constructor(
         )
     }
 
-    fun expParse(tokens: Container): ASTNode {
+    override fun expParse(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return invalid
         }

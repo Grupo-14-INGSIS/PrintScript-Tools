@@ -7,13 +7,15 @@ import java.io.InputStream
 class Lexer(
     val source: CharSource,
     val tokenPlugins: List<TokenPlugin>,
-    val version: String = "1.0"
+    val version: String = "1.0",
+    val statementSplitter: StatementSplitter = DefaultStatementSplitter(version)
 ) {
 
     constructor(source: CharSource, version: String = "1.0") : this(
         source = source,
         tokenPlugins = TokenPluginFactory.createPlugins(version),
-        version = version
+        version = version,
+        statementSplitter = DefaultStatementSplitter(version)
     )
 
     fun split(): Sequence<String> = sequence {
@@ -44,71 +46,8 @@ class Lexer(
         return handler.handle(char, state)
     }
 
-    fun lexIntoStatements(): Sequence<Container> = sequence {
-        var currentStatementStrings = mutableListOf<String>()
-        var braceDepth = 0
-
-        val peekingIterator = PeekingIterator(split().iterator())
-
-        while (peekingIterator.hasNext()) {
-            val piece = peekingIterator.next()
-
-            currentStatementStrings.add(piece)
-
-            when (piece) {
-                "{" -> braceDepth++
-                "}" -> braceDepth--
-            }
-
-            var shouldFinalize = false
-
-            if (version == "1.1" && piece == "}" && braceDepth == 0) {
-                // Peek ahead for 'else'
-                val bufferedWhitespace = mutableListOf<String>()
-                var nextNonBlankPiece: String? = null
-
-                // Consume and buffer any whitespace after '}'
-                while (peekingIterator.hasNext() && peekingIterator.peek().isBlank()) {
-                    bufferedWhitespace.add(peekingIterator.next()) // Consume and buffer
-                }
-
-                if (peekingIterator.hasNext()) {
-                    nextNonBlankPiece = peekingIterator.peek()
-                }
-
-                if (nextNonBlankPiece != "else") {
-                    shouldFinalize = true // No 'else' found, finalize
-                } else {
-                    // 'else' found, do NOT finalize this statement yet.
-                    // Add buffered whitespace and 'else' to current statement
-                    currentStatementStrings.addAll(bufferedWhitespace)
-                    currentStatementStrings.add(peekingIterator.next()) // Consume 'else'
-                }
-            } else if (piece == ";" && braceDepth == 0) {
-                shouldFinalize = true
-            }
-
-            if (shouldFinalize) {
-                val statementContainer = TokenFactory.createTokens(currentStatementStrings, tokenPlugins)
-                yield(statementContainer)
-                currentStatementStrings = mutableListOf()
-            }
-        }
-
-        // Handle any remaining pieces after the loop
-        if (currentStatementStrings.isNotEmpty()) {
-            val meaningfulPieces = currentStatementStrings.filter { it.isNotBlank() }
-            if (meaningfulPieces.isNotEmpty()) {
-                val lastPiece = meaningfulPieces.last()
-                if (lastPiece != ";" && lastPiece != "}") {
-                    throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")
-                }
-                val finalContainer = TokenFactory.createTokens(currentStatementStrings, tokenPlugins)
-                if (finalContainer.size() > 0) {
-                    yield(finalContainer)
-                }
-            }
-        }
+    fun lexIntoStatements(): Sequence<Container> {
+        return statementSplitter.splitIntoStatements(split(), tokenPlugins)
     }
 
     companion object {

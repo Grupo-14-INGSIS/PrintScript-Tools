@@ -5,5 +5,6 @@ import container.src.main.kotlin.Container
 
 interface StatementParser {
     fun canParse(tokens: Container): Boolean
-    fun parse(tokens: Container, parser: Parser): ASTNode
+    fun parse(tokens: Container, parser: ExpressionParser): ASTNode
 }
+

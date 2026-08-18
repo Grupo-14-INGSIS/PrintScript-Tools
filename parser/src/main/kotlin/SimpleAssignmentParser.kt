@@ -12,7 +12,7 @@ class SimpleAssignmentParser : StatementParser {
             tokens.get(1)?.type == DataType.ASSIGNATION
     }
 
-    override fun parse(tokens: Container, parser: Parser): ASTNode {
+    override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
         val identifierToken = tokens.get(0)!!
         val assignationToken = tokens.get(1)!!
         val valueTokens = tokens.slice(2)

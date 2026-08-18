@@ -24,7 +24,7 @@ class DeclarationWithAssignmentParser(
         return hasIdentifier && hasColon && hasAssignation
     }
 
-    override fun parse(tokens: Container, parser: Parser): ASTNode {
+    override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
         val firstToken = tokens.get(0)!!
         if (firstToken.type == DataType.CONST_KEYWORD && !features.supportsConst) {
             return ASTNode(

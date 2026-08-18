@@ -5,13 +5,22 @@ import inputprovider.src.main.kotlin.InputProvider
 import tokendata.src.main.kotlin.DataType
 
 class Interpreter(
-    private val version: String = "1.0",
+    override val version: String = "1.0",
     private val inputProvider: InputProvider? = null,
-    val printer: (Any?) -> Unit = ::println
-) {
-    private val symbolTable = mutableListOf<MutableMap<String, Any?>>(mutableMapOf())
-    private val constants = mutableMapOf<String, Any?>()
-    private val variableTypes = mutableListOf<MutableMap<String, String>>(mutableMapOf()) // Stores variable types
+    override val printer: (Any?) -> Unit = ::println,
+    private val environment: Environment = Environment()
+) : ExecutionContext {
+
+    constructor(version: String, printer: (Any?) -> Unit) : this(
+        version = version,
+        inputProvider = null,
+        printer = printer,
+        environment = Environment()
+    )
+
+    private val customActionHandlers = mutableMapOf<Actions, ActionType>()
+    private val customFunctionActions = mutableMapOf<String, Actions>()
+    private val customNodeActions = mutableMapOf<DataType, Actions>()
 
     private val actionHandlers: Map<Actions, ActionType> = run {
         val v10 = mapOf(
@@ -40,69 +49,47 @@ class Interpreter(
         }
     }
 
-    fun enterScope() {
-        symbolTable.add(mutableMapOf())
-        variableTypes.add(mutableMapOf())
+    fun registerHandler(action: Actions, handler: ActionType) {
+        customActionHandlers[action] = handler
     }
 
-    fun exitScope() {
-        symbolTable.removeAt(symbolTable.lastIndex)
-        variableTypes.removeAt(variableTypes.lastIndex)
+    fun registerFunctionAction(name: String, action: Actions) {
+        customFunctionActions[name] = action
     }
 
-    fun declareVariable(name: String, value: Any?, type: String) {
-        if (symbolTable.last().containsKey(name)) {
-            throw IllegalStateException("Variable '$name' already declared in this scope")
-        }
-        symbolTable.last()[name] = value
-        variableTypes.last()[name] = type
+    fun registerNodeAction(type: DataType, action: Actions) {
+        customNodeActions[type] = action
     }
 
-    fun assignVariable(name: String, value: Any?) {
-        if (constants.containsKey(name)) {
-            throw IllegalStateException("Cannot reassign a constant: '$name'")
-        }
-        for (scope in symbolTable.asReversed()) {
-            if (scope.containsKey(name)) {
-                scope[name] = value
-                return
-            }
-        }
-        throw IllegalStateException("Variable '$name' not declared")
+    override fun enterScope() {
+        environment.enterScope()
     }
 
-    fun resolveVariable(name: String): Any? {
-        for (scope in symbolTable.asReversed()) {
-            if (scope.containsKey(name)) {
-                return scope[name]
-            }
-        }
-        if (constants.containsKey(name)) {
-            return constants[name]
-        }
-        throw IllegalStateException("Variable '$name' not declared")
+    override fun exitScope() {
+        environment.exitScope()
     }
 
-    fun resolveVariableType(name: String): String? {
-        for (scope in variableTypes.asReversed()) {
-            if (scope.containsKey(name)) {
-                return scope[name]
-            }
-        }
-        // Assuming constants don't have types stored separately for now
-        return null
+    override fun declareVariable(name: String, value: Any?, type: String) {
+        environment.declareVariable(name, value, type)
     }
 
-    fun declareConstant(name: String, value: Any?, type: String) {
-        if (constants.containsKey(name)) {
-            throw IllegalStateException("Constant '$name' already declared")
-        }
-        constants[name] = value
-        // Also track constant types for consistency, though they can't be reassigned
-        variableTypes.last()[name] = type
+    override fun assignVariable(name: String, value: Any?) {
+        environment.assignVariable(name, value)
     }
 
-    fun interpret(node: ASTNode): Any? {
+    override fun resolveVariable(name: String): Any? {
+        return environment.resolveVariable(name)
+    }
+
+    override fun resolveVariableType(name: String): String? {
+        return environment.resolveVariableType(name)
+    }
+
+    override fun declareConstant(name: String, value: Any?, type: String) {
+        environment.declareConstant(name, value, type)
+    }
+
+    override fun interpret(node: ASTNode): Any? {
         val action = determineAction(node)
         if (!isActionSupportedInVersion(action, version)) {
             throw IllegalArgumentException(
@@ -111,7 +98,7 @@ class Interpreter(
             )
         }
 
-        val handler = actionHandlers[action]
+        val handler = customActionHandlers[action] ?: actionHandlers[action]
             ?: throw IllegalArgumentException(
                 "No handler found for action: $action " +
                     "at line ${node.position.line}, column ${node.position.column}"
@@ -129,6 +116,10 @@ class Interpreter(
     }
 
     fun determineAction(node: ASTNode): Actions {
+        if (node.type != null && customNodeActions.containsKey(node.type)) {
+            return customNodeActions[node.type]!!
+        }
+
         return when (node.type) {
             DataType.ADDITION -> Actions.ADD
             DataType.SUBTRACTION -> Actions.SUBTRACT
@@ -146,11 +137,13 @@ class Interpreter(
             DataType.ASSIGNATION -> Actions.ASSIGNMENT_TO_EXISTING_VAR
             DataType.IF_STATEMENT -> Actions.IF_STATEMENT
             DataType.BLOCK -> Actions.BLOCK
-            DataType.FUNCTION_CALL -> when (node.content) {
-                "println" -> Actions.PRINT
-                "readInput" -> Actions.READ_INPUT
-                "readEnv" -> Actions.READ_ENV
-                else -> throw IllegalArgumentException("Unknown function call: '${node.content}'")
+            DataType.FUNCTION_CALL -> {
+                customFunctionActions[node.content] ?: when (node.content) {
+                    "println" -> Actions.PRINT
+                    "readInput" -> Actions.READ_INPUT
+                    "readEnv" -> Actions.READ_ENV
+                    else -> throw IllegalArgumentException("Unknown function call: '${node.content}'")
+                }
             }
             DataType.IDENTIFIER, DataType.NUMBER_LITERAL, DataType.STRING_LITERAL, DataType.BOOLEAN_LITERAL -> Actions.LITERAL
             else -> throw IllegalArgumentException("Unknown action for node type: '${node.type}'")
@@ -158,6 +151,10 @@ class Interpreter(
     }
 
     private fun isActionSupportedInVersion(action: Actions, version: String): Boolean {
+        if (customActionHandlers.containsKey(action)) {
+            return true
+        }
+
         val v10Actions = setOf(
             Actions.ADD,
             Actions.SUBTRACT,

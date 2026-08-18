@@ -9,7 +9,7 @@ class ExpressionStatementParser : StatementParser {
         return !tokens.isEmpty()
     }
 
-    override fun parse(tokens: Container, parser: Parser): ASTNode {
+    override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
         return parser.expParse(tokens)
     }
 }

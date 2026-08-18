@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.DeclarationWithAssignmentParser
 import parser.src.main.kotlin.DeclarationWithoutAssignmentParser
+import parser.src.main.kotlin.ExpressionParser
 import parser.src.main.kotlin.ExpressionStatementParser
 import parser.src.main.kotlin.IfStatementParser
 import parser.src.main.kotlin.Parser
@@ -188,7 +189,7 @@ class StatementParserTest {
                 return !tokens.isEmpty() && tokens.get(0)?.type == DataType.IDENTIFIER && tokens.get(0)?.content == "customKeyword"
             }
 
-            override fun parse(tokens: Container, parser: Parser): ASTNode {
+            override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
                 return ASTNode(DataType.IDENTIFIER, "CUSTOM_HANDLED", Position(1, 1), emptyList())
             }
         }
