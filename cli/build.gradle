@@ -1,14 +1,36 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
+    id 'application'
+}
+
+application {
+    mainClass = 'MainKt'
 }
 
 dependencies {
-    implementation project(":executor")
-    implementation project(":runner")
-    implementation project(":inputprovider")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation project(":token")
+    implementation project(":ast")
+    implementation project(":lexer")
+    implementation project(":parser")
+    implementation project(":interpreter")
+    implementation project(":formatter")
+    implementation project(":linter")
+    implementation 'info.picocli:picocli:4.7.7'
+    implementation "info.picocli:picocli-shell-jline3:4.7.7"
+    implementation "org.jline:jline:3.26.2"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
+tasks.named('run', JavaExec) {
+    standardInput = System.in
+    workingDir = rootProject.projectDir
+}
+
 tasks.named('jacocoTestCoverageVerification') {
+    enabled = false
+}
+
+tasks.withType(PublishToMavenRepository).configureEach {
     enabled = false
 }
