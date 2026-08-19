@@ -1,13 +1,7 @@
 plugins {
-    id 'buildlogic.kotlin-myPlugin-conventions' //sin la extension .gradle
-
+    id 'buildlogic.kotlin-myPlugin-conventions'
 }
-
 
 dependencies {
-    implementation(project(":container"))
-    implementation(project(":token"))
-    implementation(project(":tokendata"))
+    implementation project(":token")
 }
-
-//el resto de la logica permanece en el plugin
