@@ -1,8 +1,9 @@
 package runner.src.main.kotlin
 
-import analyzer.src.main.kotlin.Analyzer
-import executor.src.main.kotlin.Executor
-import formatteraction.src.main.kotlin.FormatterAction
+import cli.src.main.kotlin.command.AnalyzerCommand
+import cli.src.main.kotlin.command.ExecutionCommand
+import cli.src.main.kotlin.command.FormatterCommand
+import cli.src.main.kotlin.command.ValidationCommand
 import inputprovider.src.main.kotlin.ConsoleInputProvider
 import inputprovider.src.main.kotlin.InputProvider
 
@@ -13,22 +14,18 @@ class Runner {
         inputProvider: InputProvider = ConsoleInputProvider(),
         printer: (Any?) -> Unit = ::println
     ) {
-        val executor = Executor(inputProvider, printer)
-        executor.execute(args)
+        ExecutionCommand(inputProvider, printer).execute(args)
     }
 
     fun analyzerCommand(args: List<String>) {
-        val analyzer = Analyzer()
-        analyzer.execute(args)
+        AnalyzerCommand().execute(args)
     }
 
     fun formatterCommand(args: List<String>) {
-        val formatter = FormatterAction()
-        formatter.execute(args)
+        FormatterCommand().execute(args)
     }
 
     fun validationCommand(args: List<String>) {
-        val analyzer = Analyzer()
-        analyzer.executeValidation(args)
+        ValidationCommand().execute(args)
     }
 }
