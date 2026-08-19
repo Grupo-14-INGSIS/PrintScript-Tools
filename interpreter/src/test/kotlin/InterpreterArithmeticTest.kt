@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -14,12 +14,12 @@ class InterpreterArithmeticTest {
     fun `test addition`() {
         val interpreter = Interpreter("1.1")
         val addNode = ASTNode(
-            DataType.ADDITION,
+            ASTNodeType.ADDITION,
             "+",
             Position(1, 0),
             listOf(
-                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
             )
         )
         val result = interpreter.interpret(addNode)
@@ -30,12 +30,12 @@ class InterpreterArithmeticTest {
     fun `test subtraction`() {
         val interpreter = Interpreter("1.1")
         val subtractNode = ASTNode(
-            DataType.SUBTRACTION,
+            ASTNodeType.SUBTRACTION,
             "-",
             Position(1, 0),
             listOf(
-                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
             )
         )
         val result = interpreter.interpret(subtractNode)
@@ -46,12 +46,12 @@ class InterpreterArithmeticTest {
     fun `test multiplication`() {
         val interpreter = Interpreter("1.1")
         val multiplyNode = ASTNode(
-            DataType.MULTIPLICATION,
+            ASTNodeType.MULTIPLICATION,
             "*",
             Position(1, 0),
             listOf(
-                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
             )
         )
         val result = interpreter.interpret(multiplyNode)
@@ -62,12 +62,12 @@ class InterpreterArithmeticTest {
     fun `test division`() {
         val interpreter = Interpreter("1.1")
         val divideNode = ASTNode(
-            DataType.DIVISION,
+            ASTNodeType.DIVISION,
             "/",
             Position(1, 0),
             listOf(
-                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
             )
         )
         val result = interpreter.interpret(divideNode)
@@ -78,12 +78,12 @@ class InterpreterArithmeticTest {
     fun `test division by zero throws exception`() {
         val interpreter = Interpreter("1.1")
         val divideNode = ASTNode(
-            DataType.DIVISION,
+            ASTNodeType.DIVISION,
             "/",
             Position(1, 0),
             listOf(
-                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "0.0", Position(1, 2), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "0.0", Position(1, 2), emptyList())
             )
         )
         assertThrows<IllegalArgumentException> {
@@ -91,3 +91,5 @@ class InterpreterArithmeticTest {
         }
     }
 }
+
+

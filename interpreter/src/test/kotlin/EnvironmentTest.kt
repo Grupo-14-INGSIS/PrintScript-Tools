@@ -1,6 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import interpreter.src.main.kotlin.ActionType
 import interpreter.src.main.kotlin.Actions
 import interpreter.src.main.kotlin.Environment
@@ -9,7 +10,6 @@ import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 
 class EnvironmentTest {
@@ -54,11 +54,13 @@ class EnvironmentTest {
         }
 
         interpreter.registerHandler(Actions.NULL, customActionHandler)
-        interpreter.registerNodeAction(DataType.INVALID, Actions.NULL)
+        interpreter.registerNodeAction(ASTNodeType.INVALID, Actions.NULL)
 
-        val testNode = ASTNode(DataType.INVALID, "HELLO", Position(1, 1), emptyList())
+        val testNode = ASTNode(ASTNodeType.INVALID, "HELLO", Position(1, 1), emptyList())
         val result = interpreter.interpret(testNode)
 
         assertEquals("CUSTOM_ACTION_RESULT_HELLO", result)
     }
 }
+
+

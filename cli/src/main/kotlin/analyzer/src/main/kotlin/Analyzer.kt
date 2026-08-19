@@ -1,6 +1,7 @@
 package analyzer.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import progress.src.main.kotlin.MultiStepProgress
 import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
@@ -10,7 +11,6 @@ import linter.src.main.kotlin.config.ConfigFactory
 import linter.src.main.kotlin.config.ConfigLoader
 import linter.src.main.kotlin.rules.IdentifierNamingRule
 import linter.src.main.kotlin.rules.PrintLnRule
-import tokendata.src.main.kotlin.DataType
 import java.io.File
 
 class Analyzer {
@@ -101,7 +101,7 @@ class Analyzer {
                 val parser = Parser(statement, version)
                 val ast: ASTNode = parser.parse()
 
-                if (ast.type == DataType.INVALID) {
+                if (ast.type == ASTNodeType.INVALID) {
                     hasError = true
                     parsingStep.complete("Syntax validation failed for statement")
                     println("\nSYNTAX ERROR: Invalid syntax detected in statement")
@@ -175,3 +175,4 @@ class Analyzer {
         return rules
     }
 }
+

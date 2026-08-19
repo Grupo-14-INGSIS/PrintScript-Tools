@@ -1,88 +1,94 @@
 # ??? Arquitectura Modular y Sistema de Plugins - PrintScript-Tools
 
-Este documento detalla la arquitectura modular del proyecto, la justificaciÔøΩn de diseÔøΩo de cada mÔøΩdulo, cÔøΩmo se estructuran internamente mediante **packages**, y cÔøΩmo extender el sistema mediante **plugins** para procesar lenguajes distintos a PrintScript.
+Este documento detalla la arquitectura modular del proyecto, la justificaciÛn de diseÒo de cada mÛdulo, cÛmo se estructuran internamente mediante **packages**, y cÛmo extender el sistema mediante **plugins** para procesar lenguajes distintos a PrintScript o agregar nuevos comandos CLI.
 
 ---
 
-## ?? 1. ReestructuraciÔøΩn de MÔøΩdulos (De 18 Nano-mÔøΩdulos a MÔøΩdulos Cohesivos)
+## ?? 1. ReestructuraciÛn de MÛdulos (De 18 Nano-mÛdulos a MÛdulos Cohesivos)
 
-Se eliminaron los "nano-mÔøΩdulos" de un solo archivo y se agruparon por **Common Closure Principle (CCP)** en los mÔøΩdulos naturales de un compilador:
+Se eliminaron los "nano-mÛdulos" de un solo archivo y se agruparon por **Common Closure Principle (CCP)** en los mÛdulos naturales de un compilador:
 
-| MÔøΩdulo | Contenido y MÔøΩdulos Absorbidos | Responsabilidad ÔøΩnica (SRP del MÔøΩdulo) |
+| MÛdulo | Contenido y MÛdulos Absorbidos | Responsabilidad ⁄nica (SRP del MÛdulo) |
 | :--- | :--- | :--- |
-| **`token`** | `Token`, `DataType`, `Position`, `Container`, `RemoveResponse`, `ErrorReporter` (absorbiÔøΩ `tokendata`, `container`, `error`). | **Modelos y contratos lÔøΩxicos:** Estructura atÔøΩmica del token, tipos de datos, posiciones espaciales y flujos de tokens. |
-| **`ast`** | `ASTNode` | **Modelo sintÔøΩctico:** DefiniciÔøΩn y jerarquÔøΩa del ÔøΩrbol de Sintaxis Abstracta (`ASTNode`). |
-| **`lexer`** | Motor de streaming, `CharSource`, `CharacterClassifier`, `TokenPlugin`, `ExactMatchTokenPlugin`, `RegexTokenPlugin`, `TokenPluginFactory`. | **Motor lÔøΩxico:** Transforma secuencias de caracteres en streams de tokens mediante plugins de reconocimiento. |
-| **`parser`** | Pratt Parser, `ExpressionParser`, `StatementParser`, `StatementParserFactory`, `PrattToken`, etc. | **Motor sintÔøΩctico:** Transforma secuencias de tokens en un AST validando la gramÔøΩtica. |
-| **`interpreter`** | Motor de evaluaciÔøΩn, `Environment`, `ExecutionContext`, `InputProvider`, `ConsoleInputProvider`, `ActionType` (`Add`, `Print`, `If`, etc.). | **Motor de ejecuciÔøΩn semÔøΩntica:** EvalÔøΩa el AST en memoria y gestiona ÔøΩmbitos/variables e I/O. |
-| **`formatter`** | `Formatter`, `FormatRule` (reglas obligatorias y opcionales), `ConfigLoader`. | **Motor de formateo:** Aplica reglas de estilo, espaciado y saltos de lÔøΩnea sobre tokens. |
-| **`linter`** | `Linter`, `LintRule` (`IdentifierNamingRule`, `PrintLnRule`, etc.), `ConfigLoader`. | **Motor de anÔøΩlisis estÔøΩtico:** Valida reglas de buenas prÔøΩcticas sobre el AST. |
-| **`cli`** | `MainApp` (JLine REPL / Picocli), `Cli`, `Runner`, `Executor`, `Analyzer`, `FormatterAction`, `MultiStepProgress`, `ProgressIndicator`. | **Capa de aplicaciÔøΩn y presentaciÔøΩn:** Orquesta los comandos de usuario, CLI interactiva y reporta el progreso. |
-| **`globalTests`** | Tests de integraciÔøΩn End-to-End, TCK y tests agnÔøΩsticos. | **ValidaciÔøΩn integral del sistema.** |
+| **`token`** | `Token`, `DataType`, `Position`, `Container`, `RemoveResponse`, `ErrorReporter` (absorbiÛ `tokendata`, `container`, `error`). | **Modelos y contratos lÈxicos:** Estructura atÛmica del token, tipos de datos, posiciones espaciales y flujos de tokens. |
+| **`ast`** | `ASTNode`, `ASTNodeType` | **Modelo sint·ctico puro:** DefiniciÛn de la estructura en ·rbol (`ASTNode`) y su clasificaciÛn sem·ntica (`ASTNodeType`), desacoplado de los tokens lÈxicos. |
+| **`lexer`** | Motor de streaming, `CharSource`, `CharacterClassifier`, `TokenPlugin`, `ExactMatchTokenPlugin`, `RegexTokenPlugin`, `TokenPluginFactory`. | **Motor lÈxico:** Transforma secuencias de caracteres en streams de tokens mediante plugins de reconocimiento. |
+| **`parser`** | Pratt Parser, `ExpressionParser`, `StatementParser`, `StatementParserFactory`, `PrattToken`, etc. | **Motor sint·ctico y traductor:** Transforma secuencias de `Token` (`DataType`) en un AST puro (`ASTNodeType`). |
+| **`interpreter`** | Motor de evaluaciÛn, `Environment`, `ExecutionContext`, `InputProvider`, `ConsoleInputProvider`, `ActionType` (`Add`, `Print`, `If`, etc.). | **Motor de ejecuciÛn sem·ntica:** Eval˙a los nodos del AST (`ASTNodeType`) en memoria y gestiona ·mbitos/variables e I/O. |
+| **`formatter`** | `Formatter`, `FormatRule` (reglas obligatorias y opcionales), `ConfigLoader`. | **Motor de formateo:** Aplica reglas de estilo, espaciado y saltos de lÌnea sobre tokens. |
+| **`linter`** | `Linter`, `LintRule` (`IdentifierNamingRule`, `PrintLnRule`, etc.), `ConfigLoader`. | **Motor de an·lisis est·tico:** Valida reglas de buenas pr·cticas sobre el AST (`ASTNodeType`). |
+| **`cli`** | `MainApp` (JLine REPL / Picocli), `Cli`, `CliCommand` (`ExecutionCommand`, `AnalyzerCommand`, `FormatterCommand`, `ValidationCommand`), `Runner`, `Executor`, `Analyzer`, `FormatterAction`, `MultiStepProgress`, `ProgressIndicator`. | **Capa de aplicaciÛn extensible:** Despacha comandos desacoplados mediante el patrÛn Command / Plugins y maneja la UI interactiva. |
+| **`globalTests`** | Tests de integraciÛn End-to-End, TCK y tests agnÛsticos. | **ValidaciÛn integral del sistema.** |
 
 ---
 
-## ?? 2. ÔøΩPor quÔøΩ `token` y `ast` estÔøΩn separados? (Evitando la "Bolsa de Gatos")
+## ?? 2. øPor quÈ `token` y `ast` est·n separados? (Evitando la "Bolsa de Gatos")
 
-Juntar `token` y `ast` en un ÔøΩnico mÔøΩdulo genÔøΩrico (como `core` o `common`) introduce el riesgo del **anti-patrÔøΩn "Junk Drawer" (CajÔøΩn de cachivaches / Bolsa de gatos)**, donde se arroja cualquier clase sin identidad clara. 
+Juntar `token` y `ast` en un ˙nico mÛdulo genÈrico (como `core` o `common`) introduce el riesgo del **anti-patrÛn "Junk Drawer" (CajÛn de cachivaches / Bolsa de gatos)**, donde se arroja cualquier clase sin identidad clara. 
 
-Mantener `token` y `ast` como mÔøΩdulos independientes aporta 3 beneficios fundamentales:
+Mantener `token` y `ast` como mÛdulos independientes aporta 3 beneficios fundamentales:
 
 1. **Identidad de Dominio Clara:**
-   * **`token`:** Modela la **representaciÔøΩn lÔøΩxica lineal y plana** (caracteres, palabras clave, posiciones en el archivo).
-   * **`ast`:** Modela la **representaciÔøΩn sintÔøΩctica jerÔøΩrquica** (ÔøΩrbol de nodos con relaciones padre-hijo).
+   * **`token`:** Modela la **representaciÛn lÈxica lineal y plana** (palabras clave, operadores, caracteres, posiciones en el archivo).
+   * **`ast`:** Modela la **representaciÛn sint·ctica jer·rquica** (`ASTNodeType` con relaciones padre-hijo).
 2. **El Compilador Previene Acoplamientos Accidentales:**
-   * Si estuvieran juntos, un desarrollador podrÔøΩa importar `ASTNode` dentro del `lexer` o dentro del `formatter` por error y Gradle lo compilarÔøΩa.
-   * Al estar separados, `lexer` y `formatter` **fÔøΩsicamente no tienen `ast` en su classpath**. El compilador de Kotlin impide romper las capas.
+   * Al estar separados, `lexer` y `formatter` **fÌsicamente no tienen `ast` en su classpath**. Si un desarrollador intenta importar `ASTNode` dentro del lexer, el compilador de Kotlin arroja error y previene acoplamientos indebidos.
 3. **Fases Formales de Compiladores:**
-   * Fase LÔøΩxica: Texto $\rightarrow$ Tokens (`token`).
-   * Fase SintÔøΩctica: Tokens $\rightarrow$ AST (`ast`).
-   * Fase SemÔøΩntica: AST $\rightarrow$ EjecuciÔøΩn / AnÔøΩlisis.
+   * Fase LÈxica: Texto $\rightarrow$ Tokens (`token`).
+   * Fase Sint·ctica: Tokens $\rightarrow$ AST (`ast`).
+   * Fase Sem·ntica: AST $\rightarrow$ EjecuciÛn / An·lisis.
 
 ---
 
-## ?? 3. ÔøΩPor quÔøΩ dentro de un MÔøΩdulo se usan Packages en lugar de crear mÔøΩs MÔøΩdulos/Carpetas Gradle?
+## ?? 3. Desacoplamiento LÈxico vs Sint·ctico (`DataType` vs `ASTNodeType`)
+
+Anteriormente, los nodos del AST reutilizaban el enum `DataType` del mÛdulo `token`. Esto obligaba al AST a depender del vocabulario lÈxico (signos de puntuaciÛn como `;`, `{`, espaciados, etc.).
+
+Para resolver esto:
+1. **`ASTNodeType` vive en `ast`:** Describe la sem·ntica pura del nodo (`DECLARATION`, `ASSIGNATION`, `IF_STATEMENT`, `BINARY_OPERATION`, `LITERAL`, etc.).
+2. **`Parser` act˙a como ˙nico puente de traducciÛn:** Convierte `DataType` lÈxico en `ASTNodeType` sint·ctico.
+3. **`Interpreter` y `Linter` consumen `ASTNodeType`:** Ya no necesitan importar `DataType` ni saber cÛmo se leyeron los tokens originales.
+
+---
+
+## ?? 4. øPor quÈ dentro de un MÛdulo se usan Packages en lugar de crear m·s MÛdulos/Carpetas Gradle?
 
 Es fundamental diferenciar los 3 conceptos:
 
-1. **MÔøΩdulo Gradle (Unidad de CompilaciÔøΩn y Despliegue):**
-   * Cada mÔøΩdulo tiene su propio `build.gradle`, genera su propio archivo `.jar` y tiene un classpath aislado.
-   * Crear un mÔøΩdulo Gradle para 1 o 2 archivos genera sobrecarga de configuraciÔøΩn, lentitud en Gradle y dependencias cruzadas innecesarias.
-2. **Package en Kotlin/Java (Espacio de Nombres LÔøΩgico):**
-   * Es la herramienta nativa del lenguaje para organizar y categorizar clases dentro de un mismo mÔøΩdulo.
-   * Permite usar modificadores de visibilidad (`internal` en Kotlin) para que ciertas clases sean accesibles dentro del mÔøΩdulo pero invisibles para los mÔøΩdulos externos.
-3. **Carpetas FÔøΩsicas en el Disco:**
-   * La estructura `src/main/kotlin/...` es simplemente la convenciÔøΩn de carpetas del sistema de archivos donde residen los archivos `.kt`.
-
-> **Regla de Oro:** Se crea un **MÔøΩdulo Gradle** cuando hay un lÔøΩmite de subsistema/despliegue (ej. `lexer` vs `parser`). Dentro de ese subsistema, se usan **Packages** para organizar las clases lÔøΩgicamente sin sobrecargar el build.
+1. **MÛdulo Gradle (Unidad de CompilaciÛn y Despliegue):**
+   * Cada mÛdulo tiene su propio `build.gradle`, genera su propio archivo `.jar` y tiene un classpath aislado.
+   * Crear un mÛdulo Gradle para 1 o 2 archivos genera sobrecarga de configuraciÛn, lentitud en Gradle y dependencias cruzadas innecesarias.
+2. **Package en Kotlin/Java (Espacio de Nombres LÛgico):**
+   * Es la herramienta nativa del lenguaje para organizar y clasificar las clases **dentro del mismo mÛdulo**.
+   * Permite usar modificadores de visibilidad (`internal` en Kotlin) para que ciertas clases sean accesibles dentro del mÛdulo pero invisibles para los mÛdulos externos.
+3. **Carpetas FÌsicas en el Disco:**
+   * La estructura `src/main/kotlin/...` es simplemente la convenciÛn de carpetas del sistema de archivos donde residen los archivos `.kt`.
 
 ---
 
-## ?? 4. ÔøΩCÔøΩmo se Enlazan los MÔøΩdulos entre SÔøΩ?
-
-El grafo de dependencias es **estrictamente unidireccional y acÔøΩclico**:
+## ?? 5. Grafo de Dependencias Unidireccional y AcÌclico
 
 ```mermaid
-graph TD
-    subgraph Modelos["Capa de Modelos (Contratos de Datos)"]
-        TOKEN["token (Token, DataType, Position, Container)"]
-        AST["ast (ASTNode)"]
-        AST --> TOKEN
+flowchart TD
+    subgraph CapaModelos["Modelos de Datos"]
+        TOKEN["token (Token, DataType, Position)"]
+        AST["ast (ASTNode, ASTNodeType)"]
+        AST -->|solo usa Position| TOKEN
     end
 
-    subgraph Motores["Capa de Motores / Herramientas"]
+    subgraph CapaMotores["Motores del Compilador"]
         LEXER["lexer"] --> TOKEN
         FORMATTER["formatter"] --> TOKEN
-        PARSER["parser"] --> TOKEN
+        
+        PARSER["parser (Puente Traductor)"] --> TOKEN
         PARSER --> AST
+        
         INTERPRETER["interpreter"] --> AST
-        INTERPRETER --> TOKEN
         LINTER["linter"] --> AST
-        LINTER --> TOKEN
     end
 
-    subgraph App["Capa de AplicaciÔøΩn y Pruebas"]
-        CLI["cli (Runner, Executor, Analyzer, FormatterAction, Progress)"]
+    subgraph CapaApp["Capa de AplicaciÛn y Pruebas"]
+        CLI["cli (Command Plugins, Runner, Executor, Analyzer)"]
         TESTS["globalTests"]
         
         CLI --> LEXER
@@ -92,51 +98,46 @@ graph TD
         CLI --> LINTER
         
         TESTS --> CLI
-        TESTS --> Motores
-        TESTS --> Modelos
+        TESTS --> CapaMotores
+        TESTS --> CapaModelos
     end
 ```
 
-### Flujo de EjecuciÔøΩn en el Pipeline:
-1. **`cli`** recibe el comando del usuario (`execution`, `analyzer`, `formatter`, etc.) y el archivo fuente.
-2. **`lexer`** lee los caracteres y, mediante su lista de `TokenPlugin`, produce un `Container` con los `Token`s.
-3. **`parser`** recibe los `Token`s y ejecuta sus `StatementParser`s para construir el `ASTNode`.
-4. **`interpreter`** recibe el `ASTNode` y despacha cada nodo a su `ActionType` handler correspondiente.
-5. **`formatter`** recibe los `Token`s y ejecuta sus `FormatRule`s para producir el cÔøΩdigo formateado.
-6. **`linter`** recibe el `ASTNode` y ejecuta sus `LintRule`s para reportar advertencias o errores de estilo.
-
 ---
 
-## ?? 5. LÔøΩgica de Plugins en Cada MÔøΩdulo
+## ?? 6. LÛgica de Plugins en Cada MÛdulo (100% Extensible)
 
-Todos los mÔøΩdulos siguen el **Principio Abierto/Cerrado (OCP)** y **InversiÔøΩn de Dependencias (DIP)**:
+Todos los mÛdulos siguen el **Principio Abierto/Cerrado (OCP)** y el **Command Pattern**:
 
-1. **Lexer (`TokenPlugin`):**
+1. **CLI (`CliCommand`):**
+   * Interfaz: `interface CliCommand { val name: String; val description: String; fun execute(args: List<String>) }`
+   * Los comandos ya no usan switches hardcodeados: `Cli` mantiene un registro din·mico (`cli.registerCommand(...)`). Se pueden registrar nuevos comandos en caliente sin modificar `Cli.kt`.
+2. **Lexer (`TokenPlugin`):**
    * Interfaz: `fun match(piece: String, position: Position): Token?`
    * Permite inyectar nuevos plugins regex o palabras clave exactas (`ExactMatchTokenPlugin`, `RegexTokenPlugin`).
-2. **Parser (`StatementParser` & `PrattToken`):**
+3. **Parser (`StatementParser` & `PrattToken`):**
    * Interfaz: `fun canParse(tokens: Container): Boolean` y `fun parse(tokens: Container, parser: ExpressionParser): ASTNode`.
-   * Permite agregar nuevas construcciones sintÔøΩcticas (ej. bucles `while`, sentencias `match`, etc.) inyectando un nuevo `StatementParser`.
-3. **Interpreter (`ActionType`):**
+   * Permite agregar nuevas construcciones sint·cticas (ej. bucles `while`, `match`, etc.) inyectando un nuevo `StatementParser`.
+4. **Interpreter (`ActionType`):**
    * Interfaz: `fun interpret(node: ASTNode, interpreter: ExecutionContext): Any`
    * Permite registrar nuevos comportamientos con `interpreter.registerHandler(action, handler)` o `registerFunctionAction(name, action)`.
-4. **Formatter (`FormatRule`):**
-   * Interfaz: `fun apply(tokens: Container, context: FormatterContext): Container`
-   * Permite agregar reglas de espaciado o indentaciÔøΩn configurables mediante YAML.
-5. **Linter (`LintRule`):**
+5. **Formatter (`FormatRule`):**
+   * Interfaz: `fun format(statements: List<Container>): List<Container>`
+   * Permite agregar reglas de espaciado o indentaciÛn configurables mediante YAML.
+6. **Linter (`LintRule`):**
    * Interfaz: `fun lint(node: ASTNode): List<LintError>`
-   * Permite agregar nuevas reglas estÔøΩticas configurables mediante YAML.
+   * Permite agregar nuevas reglas est·ticas configurables mediante YAML.
 
 ---
 
-## ?? 6. ÔøΩCÔøΩmo Probar el Motor con un Lenguaje Distinto a PrintScript?
+## ?? 7. øCÛmo Probar el Motor con un Lenguaje Distinto a PrintScript?
 
-Dado que los motores reciben abstracciones (`TokenPlugin`, `StatementParser`, `ActionType`), puedes definir un mini-lenguaje completo **sin tocar una sola lÔøΩnea del cÔøΩdigo core**.
+Dado que los motores reciben abstracciones (`TokenPlugin`, `StatementParser`, `ActionType`), puedes definir un mini-lenguaje completo **sin tocar una sola lÌnea del cÛdigo core**.
 
-Ver el test de integraciÔøΩn en `globalTests/src/test/kotlin/LanguageAgnosticPluginTest.kt`:
+Ver el test de integraciÛn en `globalTests/src/test/kotlin/LanguageAgnosticPluginTest.kt`:
 
 ```kotlin
-// 1. Definir plugins lÔøΩxicos para el nuevo lenguaje (sintaxis: echo <expr>;)
+// 1. Definir plugins lÈxicos para el nuevo lenguaje (sintaxis: echo <expr>;)
 val customPlugins: List<TokenPlugin> = listOf(
     ExactMatchTokenPlugin(
         mapOf(
@@ -149,24 +150,24 @@ val customPlugins: List<TokenPlugin> = listOf(
     RegexTokenPlugin(Regex("^[0-9]+$"), DataType.NUMBER_LITERAL)
 )
 
-// 2. Lexear con el motor agnÔøΩstico
+// 2. Lexear con el motor agnÛstico
 val lexer = Lexer.from("echo 5 + 10;", customPlugins)
 val statements = lexer.lexIntoStatements().toList()
 
-// 3. Parser para la sentencia 'echo'
+// 3. Parser para la sentencia 'echo' que emite ASTNodeType
 val customEchoStatementParser = object : StatementParser {
     override fun canParse(tokens: Container): Boolean = 
         tokens.size() >= 2 && tokens.first()?.type == DataType.PRINTLN
 
     override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
         val exprAst = parser.expParse(tokens.slice(1, tokens.size()))
-        return ASTNode(DataType.PRINTLN, "echo", Position(1, 1), listOf(exprAst))
+        return ASTNode(ASTNodeType.PRINTLN, "echo", Position(1, 1), listOf(exprAst))
     }
 }
 val parser = Parser(statements.first(), "1.0", listOf(customEchoStatementParser))
 val ast = parser.parse()
 
-// 4. IntÔøΩrprete con handler personalizado
+// 4. IntÈrprete con handler personalizado
 val outputs = mutableListOf<String>()
 val interpreter = Interpreter("1.0", printer = { println(it) })
 interpreter.registerHandler(Actions.PRINT, object : ActionType {
@@ -180,54 +181,3 @@ interpreter.registerHandler(Actions.PRINT, object : ActionType {
 interpreter.interpret(ast)
 // Output: CUSTOM ECHO: 15
 ```
-### 1. üîç Linter: S√ç, 100%
-
-El m√≥dulo linter respeta la l√≥gica de plugins a la perfecci√≥n:
-
-‚Ä¢ El motor es agn√≥stico: La clase Linter.kt no tiene ninguna regla hardcodeada. Solo recibe una lista inyectada de reglas:
-class Linter(private val rules: List<LintRule>) {
-fun lint(asts: List<ASTNode>): List<LintError> {
-return asts.flatMap { ast -> rules.flatMap { it.apply(ast) } }
-}
-}
-
-‚Ä¢ Cada regla es un plugin: Todas implementan la interfaz com√∫n LintRule.kt (IdentifierNamingRule, PrintLnRule, IfWithoutElseRule, ImmutableValRule, etc.).
-‚Ä¢ Extensibilidad: Si ma√±ana quieres agregar una regla nueva, creas una clase que implemente LintRule, la agregas a la configuraci√≥n YAML y el motor la ejecuta sin
-tocar Linter.kt.
-‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
-### 2. üé® Formatter: S√ç, 100%
-
-El m√≥dulo formatter tambi√©n respeta la l√≥gica de plugins al 100%:
-
-‚Ä¢ El motor es una tuber√≠a de reglas: La clase Formatter.kt solo itera sobre la lista de reglas cargadas:
-for (rule in rules) {
-currentStatements = rule.format(currentStatements)
-}
-
-‚Ä¢ Cada regla es un plugin: Todas implementan FormatRule.kt (IndentationRule, SpaceAroundOperatorRule, AssignSpacingRule, IfBraceOnSameLineRule, etc.).
-‚Ä¢ Configurable: Se instancian din√°micamente a trav√©s del archivo YAML (ConfigLoader).
-‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
-### 3. üñ•Ô∏è CLI: PARCIALMENTE (Patr√≥n Fachada / Dispatcher)
-
-El m√≥dulo cli actualmente no usa un sistema din√°mico de plugins de comandos, sino un Command Dispatcher con when:
-
-‚Ä¢ C√≥mo est√° hoy:
-En Cli.kt, los comandos est√°n enumerados est√°ticamente:
-when (commandName) {
-"formatter" -> runner.formatterCommand(commandArgs)
-"analyzer" -> runner.analyzerCommand(commandArgs)
-"execution" -> runner.executionCommand(commandArgs)
-"validation" -> runner.validationCommand(commandArgs)
-else -> println("Unknown command: $commandName")
-}
-
-‚Ä¢ ¬øCumple buenos principios?: S√≠, cumple Single Responsibility (SRP) porque cada comando se delega a su propia clase especializada (Executor.kt, Analyzer.kt,
-FormatterAction.kt).
-‚Ä¢ ¬øC√≥mo ser√≠a si fuera 100% plugin (Command Pattern)?:
-Tendr√≠as una interfaz de comando:
-interface CliCommand {
-val name: String
-fun execute(args: List<String>)
-}
-Y el Cli simplemente tendr√≠a un mapa Map<String, CliCommand> donde se registran los comandos sin ning√∫n when hardcodeado.
-‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ

@@ -1,6 +1,7 @@
 package parser.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 
@@ -18,12 +19,12 @@ class SimpleAssignmentParser : StatementParser {
         val valueTokens = tokens.slice(2)
 
         return ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             assignationToken.position,
             listOf(
                 ASTNode(
-                    DataType.IDENTIFIER,
+                    ASTNodeType.IDENTIFIER,
                     identifierToken.content,
                     identifierToken.position,
                     listOf()

@@ -1,7 +1,7 @@
 package linter.src.main.kotlin.rules
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.LintRule
 
@@ -12,16 +12,16 @@ class ImmutableValRule : LintRule {
         val reassigned = mutableSetOf<String>()
 
         fun traverse(node: ASTNode) {
-            if (node.type == DataType.DECLARATION && node.content == "var") {
-                val identifierNode = node.children.firstOrNull { it.type == DataType.IDENTIFIER }
+            if (node.type == ASTNodeType.DECLARATION && node.content == "var") {
+                val identifierNode = node.children.firstOrNull { it.type == ASTNodeType.IDENTIFIER }
                 val name = identifierNode?.content
                 if (name != null) {
                     declaredVars[name] = node
                 }
             }
 
-            if (node.type == DataType.ASSIGNATION) {
-                val targetNode = node.children.firstOrNull { it.type == DataType.IDENTIFIER }
+            if (node.type == ASTNodeType.ASSIGNATION) {
+                val targetNode = node.children.firstOrNull { it.type == ASTNodeType.IDENTIFIER }
                 val name = targetNode?.content
                 if (name != null) {
                     reassigned.add(name)

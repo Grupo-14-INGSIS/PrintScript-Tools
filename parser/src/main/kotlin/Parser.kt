@@ -1,6 +1,7 @@
 package parser.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
@@ -17,7 +18,7 @@ class Parser @JvmOverloads constructor(
 ) : ExpressionParser {
 
     val features: VersionFeatures = VersionConfig.getFeatures(version)
-    val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
+    val invalid = ASTNode(ASTNodeType.INVALID, "", Position(0, 0), listOf())
     private val ifParser = IfStatementParser()
 
     fun parse(): ASTNode {
@@ -106,7 +107,7 @@ class Parser @JvmOverloads constructor(
     override fun parseBlock(tokens: Container): ASTNode {
         if (tokens.isEmpty()) {
             return ASTNode(
-                DataType.BLOCK,
+                ASTNodeType.BLOCK,
                 "block",
                 Position(0, 0),
                 emptyList()
@@ -135,7 +136,7 @@ class Parser @JvmOverloads constructor(
                     if (braceDepth == 0) {
                         if (!currentStmt.isEmpty()) {
                             val stmt = stmtParse(currentStmt)
-                            if (stmt.type != DataType.INVALID) {
+                            if (stmt.type != ASTNodeType.INVALID) {
                                 statements.add(stmt)
                             }
                             currentStmt = Container()
@@ -153,13 +154,13 @@ class Parser @JvmOverloads constructor(
 
         if (!currentStmt.isEmpty()) {
             val stmt = stmtParse(currentStmt)
-            if (stmt.type != DataType.INVALID) {
+            if (stmt.type != ASTNodeType.INVALID) {
                 statements.add(stmt)
             }
         }
 
         return ASTNode(
-            DataType.BLOCK,
+            ASTNodeType.BLOCK,
             "block",
             tokens.get(0)?.position ?: Position(0, 0),
             statements
@@ -188,7 +189,7 @@ class Parser @JvmOverloads constructor(
 
         if (tokens.size() == 1 && tokens.first()!!.type == DataType.IDENTIFIER) {
             return ASTNode(
-                DataType.IDENTIFIER,
+                ASTNodeType.IDENTIFIER,
                 tokens.first()!!.content,
                 tokens.first()!!.position,
                 listOf()
@@ -197,7 +198,7 @@ class Parser @JvmOverloads constructor(
 
         if (isLiteral(tokens)) {
             return ASTNode(
-                tokens.first()!!.type,
+                tokens.first()!!.type.toASTNodeType(),
                 tokens.first()!!.content,
                 tokens.first()!!.position,
                 listOf()
@@ -209,11 +210,10 @@ class Parser @JvmOverloads constructor(
 
     private fun parseFunctionCall(tokens: Container): ASTNode {
         val functionToken = tokens.get(0)!!
-
         val argsTokens = tokens.slice(2, tokens.size() - 1)
 
         return ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             functionToken.content,
             functionToken.position,
             if (argsTokens.isEmpty()) emptyList() else listOf(expParse(argsTokens))
@@ -238,7 +238,6 @@ class Parser @JvmOverloads constructor(
                     parenCount--
                     if (parenCount == 0) return i
                 }
-
                 else -> {}
             }
         }
@@ -256,7 +255,6 @@ class Parser @JvmOverloads constructor(
                     braceCount--
                     if (braceCount == 0) return i
                 }
-
                 else -> {}
             }
         }
@@ -365,7 +363,7 @@ class Parser @JvmOverloads constructor(
         val children = symbol.allChildren().map { prattToAST(it) }
 
         return ASTNode(
-            symbol.token().type,
+            symbol.token().type.toASTNodeType(),
             symbol.token().content,
             symbol.token().position,
             children
@@ -442,7 +440,7 @@ class Parser @JvmOverloads constructor(
             }
             output.addFirst(
                 ASTNode(
-                    nextToken.type,
+                    nextToken.type.toASTNodeType(),
                     nextToken.content,
                     nextToken.position,
                     children

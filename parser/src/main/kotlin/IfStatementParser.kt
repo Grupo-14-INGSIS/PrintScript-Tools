@@ -1,17 +1,14 @@
 package parser.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 
-/**
- * Parser de sentencias 'if / else' (SRP).
- * Encapsula la lógica de validación de sintaxis de condiciones y bloques de control de flujo.
- */
 class IfStatementParser : StatementParser {
 
-    private val invalid = ASTNode(DataType.INVALID, "", Position(0, 0), listOf())
+    private val invalid = ASTNode(ASTNodeType.INVALID, "", Position(0, 0), listOf())
 
     override fun canParse(tokens: Container): Boolean {
         return !tokens.isEmpty() && tokens.get(0)?.type == DataType.IF_KEYWORD
@@ -33,7 +30,7 @@ class IfStatementParser : StatementParser {
         val conditionTokens = tokens.slice(conditionStart + 1, conditionEnd)
         val condition = parser.expParse(conditionTokens)
 
-        if (condition.type == DataType.INVALID) {
+        if (condition.type == ASTNodeType.INVALID) {
             return invalid
         }
 
@@ -60,7 +57,7 @@ class IfStatementParser : StatementParser {
         }
 
         return ASTNode(
-            DataType.IF_STATEMENT,
+            ASTNodeType.IF_STATEMENT,
             "if",
             ifKeyword.position,
             children

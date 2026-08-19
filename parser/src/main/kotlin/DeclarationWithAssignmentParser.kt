@@ -1,6 +1,7 @@
 package parser.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 
@@ -28,7 +29,7 @@ class DeclarationWithAssignmentParser(
         val firstToken = tokens.get(0)!!
         if (firstToken.type == DataType.CONST_KEYWORD && !features.supportsConst) {
             return ASTNode(
-                DataType.INVALID,
+                ASTNodeType.INVALID,
                 "Error: Cannot use 'const' keyword in PrintScript $version",
                 firstToken.position,
                 listOf()
@@ -36,7 +37,7 @@ class DeclarationWithAssignmentParser(
         }
 
         val isConst = firstToken.type == DataType.CONST_KEYWORD
-        val keyword = if (isConst) DataType.CONST_KEYWORD else DataType.LET_KEYWORD
+        val keyword = if (isConst) ASTNodeType.CONST_KEYWORD else ASTNodeType.LET_KEYWORD
 
         val identifierToken = tokens.get(1)!!
         val typeToken = tokens.get(3)!!
@@ -45,7 +46,7 @@ class DeclarationWithAssignmentParser(
         val valueTokens = tokens.slice(assignationIndex + 1)
 
         return ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             tokens.get(assignationIndex)!!.position,
             listOf(
@@ -55,13 +56,13 @@ class DeclarationWithAssignmentParser(
                     identifierToken.position,
                     listOf(
                         ASTNode(
-                            DataType.IDENTIFIER,
+                            ASTNodeType.IDENTIFIER,
                             identifierToken.content,
                             identifierToken.position,
                             listOf()
                         ),
                         ASTNode(
-                            typeToken.type,
+                            typeToken.type.toASTNodeType(),
                             typeToken.content,
                             typeToken.position,
                             listOf()
