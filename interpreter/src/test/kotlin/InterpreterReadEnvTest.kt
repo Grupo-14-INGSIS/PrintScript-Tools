@@ -1,8 +1,8 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import inputprovider.src.main.kotlin.InputProvider
-import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -20,11 +20,11 @@ class InterpreterReadEnvTest {
         val inputProvider = FakeInputProvider(mapOf("MY_VAR" to "my_value"))
         val interpreter = Interpreter("1.1", inputProvider)
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "readEnv",
             Position(0, 0),
             children = listOf(
-                ASTNode(DataType.STRING_LITERAL, "MY_VAR", Position(0, 0), children = emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "MY_VAR", Position(0, 0), children = emptyList())
             )
         )
         val result = interpreter.interpret(node)
@@ -36,11 +36,11 @@ class InterpreterReadEnvTest {
         val inputProvider = FakeInputProvider(emptyMap())
         val interpreter = Interpreter("1.1", inputProvider)
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "readEnv",
             Position(0, 0),
             children = listOf(
-                ASTNode(DataType.STRING_LITERAL, "UNKNOWN_VAR", Position(0, 0), children = emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "UNKNOWN_VAR", Position(0, 0), children = emptyList())
             )
         )
         assertThrows<IllegalArgumentException> {
@@ -48,3 +48,5 @@ class InterpreterReadEnvTest {
         }
     }
 }
+
+

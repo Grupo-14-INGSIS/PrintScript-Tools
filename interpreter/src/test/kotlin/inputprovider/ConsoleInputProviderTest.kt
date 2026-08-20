@@ -29,3 +29,5 @@ class ConsoleInputProviderTest {
         assertTrue(value!!.isNotEmpty()) // validación genérica
     }
 }
+
+

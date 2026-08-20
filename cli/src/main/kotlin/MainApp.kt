@@ -3,14 +3,8 @@ import org.jline.terminal.TerminalBuilder
 import picocli.CommandLine.Command
 import cli.src.main.kotlin.Cli
 
-// Guardar cambios con ./gradlew :mainApp:installDist
-
-// Ejecutar con .\mainApp\build\install\mainApp\bin\mainApp.bat
-
-
 @Command(
     name = "CLIPS",
-    // Esto crea automaticamente los comandos --help y --version
     mixinStandardHelpOptions = true,
     description = ["CLI principal de PrintScript - Grupo 14"]
 )
@@ -27,7 +21,7 @@ class RootCommand : Runnable {
             .build()
 
         println("=== CLIPS - CLI PrintScript - Modo Interactivo ===")
-        println("Comandos disponibles: formatter | analyzer | validation | execution")
+        println("Comandos disponibles: ${cli.availableCommands().joinToString(" | ")}")
         println("Escribe 'exit' para salir\n")
 
         while (true) {
@@ -39,12 +33,10 @@ class RootCommand : Runnable {
 
             val trimmedLine = line.trim()
 
-            // Comando para salir
             if (trimmedLine.equals("exit", ignoreCase = true)) {
                 break
             }
 
-            // Saltar líneas vacías
             if (trimmedLine.isBlank()) {
                 continue
             }
@@ -52,7 +44,6 @@ class RootCommand : Runnable {
             val args = trimmedLine.split(" ").filter { it.isNotBlank() }
 
             try {
-                // CLI usa Array<String>, no List<String>
                 cli.run(args)
             } catch (e: Exception) {
                 System.err.println("Error: ${e.message}")
@@ -62,12 +53,10 @@ class RootCommand : Runnable {
         terminal.close()
     }
 
-
     override fun run() {
         startInteractiveMode()
     }
 }
-
 
 fun main(args: Array<String>) {
     val app = RootCommand()
@@ -81,8 +70,6 @@ fun main(args: Array<String>) {
         }
         System.exit(0)
     } else {
-        // Modo interactivo REPL
         app.startInteractiveMode()
     }
 }
-

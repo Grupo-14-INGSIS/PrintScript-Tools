@@ -1,6 +1,7 @@
 package linter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import linter.src.main.kotlin.Linter
 import linter.src.main.kotlin.rules.IdentifierNamingRule
 import linter.src.main.kotlin.rules.PrintLnRule
@@ -8,14 +9,13 @@ import linter.src.main.kotlin.rules.ReadInputRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 
 class TCKTest {
 
     private fun identifierNode(name: String) =
         ASTNode(
-            type = DataType.IDENTIFIER,
+            type = ASTNodeType.IDENTIFIER,
             content = name,
             position = Position(1, 5),
             children = emptyList()
@@ -23,13 +23,13 @@ class TCKTest {
 
     private fun getInvalidCamelCaseAst(): ASTNode {
         return ASTNode(
-            type = DataType.DECLARATION,
+            type = ASTNodeType.DECLARATION,
             content = "let",
             position = Position(1, 1),
             children = listOf(
                 identifierNode("my_var"),
                 ASTNode(
-                    type = DataType.STRING_TYPE,
+                    type = ASTNodeType.STRING_TYPE,
                     content = "string",
                     position = Position(1, 13),
                     children = emptyList()
@@ -40,13 +40,13 @@ class TCKTest {
 
     private fun getValidCamelCaseAst(): ASTNode {
         return ASTNode(
-            type = DataType.DECLARATION,
+            type = ASTNodeType.DECLARATION,
             content = "let",
             position = Position(1, 1),
             children = listOf(
                 identifierNode("myVar"),
                 ASTNode(
-                    type = DataType.STRING_TYPE,
+                    type = ASTNodeType.STRING_TYPE,
                     content = "string",
                     position = Position(1, 11),
                     children = emptyList()
@@ -65,17 +65,17 @@ class TCKTest {
 
     private fun getPrintlnWithExpressionAst(): ASTNode {
         return ASTNode(
-            type = DataType.FUNCTION_CALL,
+            type = ASTNodeType.FUNCTION_CALL,
             content = "println",
             position = Position(1, 1),
             children = listOf(
                 ASTNode(
-                    type = DataType.ADDITION,
+                    type = ASTNodeType.ADDITION,
                     content = "+",
                     position = Position(1, 11),
                     children = listOf(
-                        ASTNode(DataType.IDENTIFIER, "b", Position(1, 13), emptyList()),
-                        ASTNode(DataType.IDENTIFIER, "a", Position(1, 9), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "b", Position(1, 13), emptyList()),
+                        ASTNode(ASTNodeType.IDENTIFIER, "a", Position(1, 9), emptyList())
                     )
                 )
             )
@@ -84,17 +84,17 @@ class TCKTest {
 
     private fun getReadInputWithExpressionAst(): ASTNode {
         return ASTNode(
-            type = DataType.FUNCTION_CALL,
+            type = ASTNodeType.FUNCTION_CALL,
             content = "readInput",
             position = Position(1, 1),
             children = listOf(
                 ASTNode(
-                    type = DataType.ADDITION,
+                    type = ASTNodeType.ADDITION,
                     content = "+",
                     position = Position(1, 12),
                     children = listOf(
-                        ASTNode(DataType.IDENTIFIER, "b", Position(1, 14), emptyList()),
-                        ASTNode(DataType.IDENTIFIER, "a", Position(1, 10), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "b", Position(1, 14), emptyList()),
+                        ASTNode(ASTNodeType.IDENTIFIER, "a", Position(1, 10), emptyList())
                     )
                 )
             )
@@ -165,3 +165,5 @@ class TCKTest {
         assertTrue(errors.isEmpty(), "Expected no linting errors when no rules are applied.")
     }
 }
+
+

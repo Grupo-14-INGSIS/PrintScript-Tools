@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -17,21 +17,21 @@ class InterpreterASTTest {
 
         val interpreter = Interpreter("1.1") { println(it) }
         val ast = ASTNode(
-            DataType.SCRIPT,
+            ASTNodeType.SCRIPT,
             "script",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.PRINTLN,
+                    ASTNodeType.PRINTLN,
                     "println",
                     Position(1, 0),
-                    listOf(ASTNode(DataType.STRING_LITERAL, "hello", Position(1, 1), emptyList()))
+                    listOf(ASTNode(ASTNodeType.STRING_LITERAL, "hello", Position(1, 1), emptyList()))
                 ),
                 ASTNode(
-                    DataType.PRINTLN,
+                    ASTNodeType.PRINTLN,
                     "println",
                     Position(2, 0),
-                    listOf(ASTNode(DataType.STRING_LITERAL, "world", Position(2, 1), emptyList()))
+                    listOf(ASTNode(ASTNodeType.STRING_LITERAL, "world", Position(2, 1), emptyList()))
                 )
             )
         )
@@ -42,3 +42,5 @@ class InterpreterASTTest {
         System.setOut(originalOut)
     }
 }
+
+

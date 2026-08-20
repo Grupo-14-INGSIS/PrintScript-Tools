@@ -1,6 +1,7 @@
 package globaltests.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import interpreter.src.main.kotlin.ActionType
 import interpreter.src.main.kotlin.Actions
@@ -57,7 +58,7 @@ class LanguageAgnosticPluginTest {
                 val exprTokens = tokens.slice(1, tokens.size())
                 val exprAst = parser.expParse(exprTokens)
                 return ASTNode(
-                    DataType.PRINTLN,
+                    ASTNodeType.PRINTLN,
                     "echo",
                     tokens.first()?.position ?: Position(1, 1),
                     listOf(exprAst)
@@ -67,7 +68,7 @@ class LanguageAgnosticPluginTest {
 
         val parser = Parser(statements.first(), "1.0", listOf(customEchoStatementParser))
         val ast = parser.parse()
-        assertEquals(DataType.PRINTLN, ast.type)
+        assertEquals(ASTNodeType.PRINTLN, ast.type)
 
         // 4. Interprete con un handler de salida personalizado
         val outputs = mutableListOf<String>()
@@ -88,3 +89,6 @@ class LanguageAgnosticPluginTest {
         assertEquals(listOf("CUSTOM ECHO: 15"), outputs)
     }
 }
+
+
+
