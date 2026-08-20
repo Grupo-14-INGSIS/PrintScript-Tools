@@ -1,6 +1,7 @@
 package parser.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -53,7 +54,7 @@ class StatementParserTest {
         assertTrue(parserV10.canParse(letTokens))
         val dummyParser = Parser(letTokens, "1.0")
         val letNode = parserV10.parse(letTokens, dummyParser)
-        assertEquals(DataType.DECLARATION, letNode.type)
+        assertEquals(ASTNodeType.DECLARATION, letNode.type)
 
         val constTokens = containerOf(
             token(DataType.CONST_KEYWORD, "const"),
@@ -66,13 +67,13 @@ class StatementParserTest {
 
         assertTrue(parserV10.canParse(constTokens))
         val invalidConstNode = parserV10.parse(constTokens, dummyParser)
-        assertEquals(DataType.INVALID, invalidConstNode.type)
+        assertEquals(ASTNodeType.INVALID, invalidConstNode.type)
         assertTrue(invalidConstNode.content.contains("Cannot use 'const' keyword in PrintScript 1.0"))
 
         val dummyParserV11 = Parser(constTokens, "1.1")
         val validConstNode = parserV11.parse(constTokens, dummyParserV11)
-        assertEquals(DataType.DECLARATION, validConstNode.type)
-        assertEquals(DataType.CONST_KEYWORD, validConstNode.children[0].type)
+        assertEquals(ASTNodeType.DECLARATION, validConstNode.type)
+        assertEquals(ASTNodeType.CONST_KEYWORD, validConstNode.children[0].type)
     }
 
     @Test
@@ -92,7 +93,7 @@ class StatementParserTest {
         assertTrue(parserV10.canParse(letTokens))
         val dummyParser = Parser(letTokens, "1.0")
         val node = parserV10.parse(letTokens, dummyParser)
-        assertEquals(DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION, node.type)
+        assertEquals(ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION, node.type)
 
         val constTokens = containerOf(
             token(DataType.CONST_KEYWORD, "const"),
@@ -102,11 +103,11 @@ class StatementParserTest {
         )
 
         val invalidConst = parserV10.parse(constTokens, dummyParser)
-        assertEquals(DataType.INVALID, invalidConst.type)
+        assertEquals(ASTNodeType.INVALID, invalidConst.type)
 
         val dummyParserV11 = Parser(constTokens, "1.1")
         val validConst = parserV11.parse(constTokens, dummyParserV11)
-        assertEquals(DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION, validConst.type)
+        assertEquals(ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION, validConst.type)
     }
 
     @Test
@@ -122,9 +123,9 @@ class StatementParserTest {
         assertTrue(assignmentParser.canParse(tokens))
         val dummyParser = Parser(tokens, "1.0")
         val node = assignmentParser.parse(tokens, dummyParser)
-        assertEquals(DataType.ASSIGNATION, node.type)
-        assertEquals(DataType.IDENTIFIER, node.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, node.children[1].type)
+        assertEquals(ASTNodeType.ASSIGNATION, node.type)
+        assertEquals(ASTNodeType.IDENTIFIER, node.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, node.children[1].type)
 
         val invalidTokens = containerOf(token(DataType.NUMBER_LITERAL, "10"))
         assertFalse(assignmentParser.canParse(invalidTokens))
@@ -150,7 +151,7 @@ class StatementParserTest {
         assertTrue(ifParser.canParse(tokens))
         val dummyParser = Parser(tokens, "1.1")
         val node = ifParser.parse(tokens, dummyParser)
-        assertEquals(DataType.IF_STATEMENT, node.type)
+        assertEquals(ASTNodeType.IF_STATEMENT, node.type)
 
         val notIfTokens = containerOf(token(DataType.IDENTIFIER, "x"))
         assertFalse(ifParser.canParse(notIfTokens))
@@ -170,7 +171,7 @@ class StatementParserTest {
         assertTrue(expParser.canParse(tokens))
         val dummyParser = Parser(tokens, "1.0")
         val node = expParser.parse(tokens, dummyParser)
-        assertEquals(DataType.FUNCTION_CALL, node.type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, node.type)
     }
 
     @Test
@@ -190,7 +191,7 @@ class StatementParserTest {
             }
 
             override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
-                return ASTNode(DataType.IDENTIFIER, "CUSTOM_HANDLED", Position(1, 1), emptyList())
+                return ASTNode(ASTNodeType.IDENTIFIER, "CUSTOM_HANDLED", Position(1, 1), emptyList())
             }
         }
 
@@ -201,7 +202,9 @@ class StatementParserTest {
 
         val parser = Parser(tokens, "1.1", listOf(customParser))
         val result = parser.parse()
-        assertEquals(DataType.IDENTIFIER, result.type)
+        assertEquals(ASTNodeType.IDENTIFIER, result.type)
         assertEquals("CUSTOM_HANDLED", result.content)
     }
 }
+
+

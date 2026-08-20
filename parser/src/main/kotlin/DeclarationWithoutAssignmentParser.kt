@@ -1,6 +1,7 @@
 package parser.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 
@@ -31,7 +32,7 @@ class DeclarationWithoutAssignmentParser(
         val keywordToken = tokens.get(0)!!
         if (keywordToken.type == DataType.CONST_KEYWORD && !features.supportsConst) {
             return ASTNode(
-                DataType.INVALID,
+                ASTNodeType.INVALID,
                 "Error: Cannot use 'const' keyword in PrintScript $version",
                 keywordToken.position,
                 listOf()
@@ -42,23 +43,23 @@ class DeclarationWithoutAssignmentParser(
         val typeToken = tokens.get(3)!!
 
         return ASTNode(
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
+            ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "",
             keywordToken.position,
             listOf(
                 ASTNode(
-                    keywordToken.type,
+                    keywordToken.type.toASTNodeType(),
                     identifierToken.content,
                     identifierToken.position,
                     listOf(
                         ASTNode(
-                            DataType.IDENTIFIER,
+                            ASTNodeType.IDENTIFIER,
                             identifierToken.content,
                             identifierToken.position,
                             listOf()
                         ),
                         ASTNode(
-                            typeToken.type,
+                            typeToken.type.toASTNodeType(),
                             typeToken.content,
                             typeToken.position,
                             listOf()

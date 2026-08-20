@@ -1,5 +1,7 @@
 package globaltests.src.test.kotlin
 
+import ast.src.main.kotlin.ASTNodeType
+
 import org.junit.jupiter.api.Assertions.*
 import tokendata.src.main.kotlin.DataType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -142,12 +144,12 @@ class EndToEndTest {
         val parser = Parser(tokens)
         val ast = parser.parse()
 
-        assertEquals(DataType.ADDITION, ast.type)
+        assertEquals(ASTNodeType.ADDITION, ast.type)
         assertEquals(2, ast.children.size)
 
         assertEquals("2", ast.children[0].content)
 
-        assertEquals(DataType.MULTIPLICATION, ast.children[1].type)
+        assertEquals(ASTNodeType.MULTIPLICATION, ast.children[1].type)
         assertEquals("3", ast.children[1].children[0].content)
         assertEquals("4", ast.children[1].children[1].content)
     }
@@ -162,7 +164,7 @@ class EndToEndTest {
         val parser = Parser(tokens)
         val ast = parser.parse()
 
-        assertEquals(DataType.MULTIPLICATION, ast.type)
+        assertEquals(ASTNodeType.MULTIPLICATION, ast.type)
         assertEquals("4", ast.children[1].content)
     }
 
@@ -241,12 +243,7 @@ class EndToEndTest {
 
             assertNotNull(ast)
             assertTrue(
-                ast.type in listOf(
-                    DataType.ADDITION,
-                    DataType.SUBTRACTION,
-                    DataType.MULTIPLICATION,
-                    DataType.DIVISION
-                )
+                ast.type in listOf(ASTNodeType.ADDITION, ASTNodeType.SUBTRACTION, ASTNodeType.MULTIPLICATION, ASTNodeType.DIVISION)
             )
         }
     }
@@ -305,7 +302,7 @@ class EndToEndTest {
             val parser = Parser(tokens, version)
             val ast = parser.parse()
 
-            ast.type != DataType.INVALID
+            ast.type != ASTNodeType.INVALID
         } catch (e: Exception) {
             println("Pipeline failed with exception: ${e.message}")
             false
@@ -510,4 +507,7 @@ class EndToEndTest {
         assertEquals(listOf("else block", "20"), output)
     }
 }
+
+
+
 

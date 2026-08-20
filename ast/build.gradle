@@ -1,8 +1,7 @@
 plugins {
-    id 'buildlogic.kotlin-myPlugin-conventions' // sin versión
+    id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
 dependencies {
-    implementation project(":tokendata")
+    implementation project(":token")
 }
-

@@ -1,8 +1,8 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import inputprovider.src.main.kotlin.InputProvider
-import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -29,11 +29,11 @@ class InterpreterReadInputTest {
         val inputProvider = FakeInputProvider("42.5")
         val interpreter = Interpreter("1.1", inputProvider)
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "readInput",
             Position(0, 0),
             children = listOf(
-                ASTNode(DataType.STRING_LITERAL, "Enter a number", Position(0, 0), children = emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "Enter a number", Position(0, 0), children = emptyList())
             )
         )
         val result = interpreter.interpret(node)
@@ -45,11 +45,11 @@ class InterpreterReadInputTest {
         val inputProvider = FakeInputProvider("hello")
         val interpreter = Interpreter("1.1", inputProvider)
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "readInput",
             Position(0, 0),
             children = listOf(
-                ASTNode(DataType.STRING_LITERAL, "Enter text", Position(0, 0), children = emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "Enter text", Position(0, 0), children = emptyList())
             )
         )
         val result = interpreter.interpret(node)
@@ -60,8 +60,10 @@ class InterpreterReadInputTest {
     fun `handles call with no prompt node`() {
         val inputProvider = VerifiableInputProvider("")
         val interpreter = Interpreter("1.1", inputProvider)
-        val node = ASTNode(DataType.FUNCTION_CALL, "readInput", Position(0, 0), children = emptyList())
+        val node = ASTNode(ASTNodeType.FUNCTION_CALL, "readInput", Position(0, 0), children = emptyList())
         interpreter.interpret(node)
         assert(inputProvider.wasCalled)
     }
 }
+
+

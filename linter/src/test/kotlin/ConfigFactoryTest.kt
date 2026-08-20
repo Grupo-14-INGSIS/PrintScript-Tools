@@ -1,4 +1,5 @@
 package linter.src.test.kotlin
+
 import linter.src.main.kotlin.config.ConfigFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
@@ -82,3 +83,5 @@ class ConfigFactoryTest {
         assertNull(config.rules.mandatory_variable_or_literal_in_println)
     }
 }
+
+

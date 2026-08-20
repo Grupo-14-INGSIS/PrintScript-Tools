@@ -1,14 +1,9 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
-
 }
 
 dependencies {
     implementation project(":ast")
-    implementation project(":tokendata")
     implementation project(":token")
-    implementation project(":container")
-    implementation project(":inputprovider")
     testImplementation 'org.mockito:mockito-core:5.11.0'
 }
-

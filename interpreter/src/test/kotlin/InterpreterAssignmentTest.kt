@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -13,31 +13,31 @@ class InterpreterAssignmentTest {
     fun `assign numeric value to variable`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "x",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "x", Position(1, 2), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
 
         val assignmentNode = ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             Position(2, 0),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "x", Position(2, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "42.0", Position(2, 2), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "x", Position(2, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "42.0", Position(2, 2), emptyList())
             )
         )
         val result = interpreter.interpret(assignmentNode)
@@ -49,31 +49,31 @@ class InterpreterAssignmentTest {
     fun `assign string value to variable`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "greeting",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "greeting", Position(1, 2), emptyList()),
-                        ASTNode(DataType.STRING_TYPE, "string", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "greeting", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.STRING_TYPE, "string", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.STRING_LITERAL, "", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
 
         val assignmentNode = ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             Position(2, 0),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "greeting", Position(2, 1), emptyList()),
-                ASTNode(DataType.STRING_LITERAL, "hello", Position(2, 2), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "greeting", Position(2, 1), emptyList()),
+                ASTNode(ASTNodeType.STRING_LITERAL, "hello", Position(2, 2), emptyList())
             )
         )
         val result = interpreter.interpret(assignmentNode)
@@ -85,42 +85,42 @@ class InterpreterAssignmentTest {
     fun `reassign existing variable`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "y",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "y", Position(1, 2), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "y", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
 
         val firstAssignment = ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             Position(2, 0),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "y", Position(2, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "10.0", Position(2, 2), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "y", Position(2, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(2, 2), emptyList())
             )
         )
         interpreter.interpret(firstAssignment)
 
         val secondAssignment = ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             Position(3, 0),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "y", Position(3, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "20.0", Position(3, 2), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "y", Position(3, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "20.0", Position(3, 2), emptyList())
             )
         )
         val result = interpreter.interpret(secondAssignment)
@@ -132,12 +132,12 @@ class InterpreterAssignmentTest {
     fun `assign to undeclared variable throws exception`() {
         val interpreter = Interpreter("1.1")
         val assignmentNode = ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             Position(1, 0),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "x", Position(1, 1), emptyList()),
-                ASTNode(DataType.NUMBER_LITERAL, "42", Position(1, 2), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 1), emptyList()),
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "42", Position(1, 2), emptyList())
             )
         )
         assertThrows<IllegalStateException> {
@@ -149,31 +149,31 @@ class InterpreterAssignmentTest {
     fun `assign type mismatch throws exception`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "numVar",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "numVar", Position(1, 2), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "numVar", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "0.0", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
 
         val assignmentNode = ASTNode(
-            DataType.ASSIGNATION,
+            ASTNodeType.ASSIGNATION,
             "=",
             Position(2, 0),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "numVar", Position(2, 1), emptyList()),
-                ASTNode(DataType.STRING_LITERAL, "hello", Position(2, 2), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "numVar", Position(2, 1), emptyList()),
+                ASTNode(ASTNodeType.STRING_LITERAL, "hello", Position(2, 2), emptyList())
             )
         )
         assertThrows<IllegalArgumentException> {
@@ -181,3 +181,5 @@ class InterpreterAssignmentTest {
         }
     }
 }
+
+

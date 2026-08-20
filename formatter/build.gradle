@@ -1,13 +1,8 @@
 plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
-
 }
 
 dependencies {
-    implementation(project(":container"))
-    implementation(project(":token"))
-    implementation(project(":tokendata"))
-    implementation("org.yaml:snakeyaml:2.0")
-    implementation(project ":error")
-
+    implementation project(":token")
+    implementation 'org.yaml:snakeyaml:2.0'
 }

@@ -56,3 +56,5 @@ class VarDeclarationTest {
         assertEquals("Declaración inválida: faltan argumentos", ex0.message)
     }
 }
+
+

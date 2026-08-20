@@ -2,14 +2,12 @@ plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
-
-repositories { //defindo de donde puedo consumir dependencias
+repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.yaml:snakeyaml:2.2'
     implementation project(":ast")
-    implementation project(":tokendata")
+    implementation project(":token")
 }
-

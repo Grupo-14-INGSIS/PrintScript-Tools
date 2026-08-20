@@ -1,7 +1,7 @@
 package linter.src.main.kotlin.rules
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.LintRule
@@ -14,7 +14,7 @@ class IdentifierNamingRule @JvmOverloads constructor(private val style: String =
     private fun checkNode(node: ASTNode): List<LintError> {
         val errors = mutableListOf<LintError>()
 
-        if (node.type == DataType.IDENTIFIER) {
+        if (node.type == ASTNodeType.IDENTIFIER) {
             val name = node.content
             val isValid = when (style) {
                 "camelCase" -> name.matches(Regex("^[a-z][a-zA-Z0-9]*$"))

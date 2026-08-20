@@ -21,3 +21,5 @@ class LinterConfigTest {
         assertEquals(printlnConfig, linterConfig.rules.mandatory_variable_or_literal_in_println)
     }
 }
+
+

@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -14,20 +14,20 @@ class InterpreterConstDeclarationAndAssignmentTest {
     fun `test const declaration and assignment with string type`() {
         val interpreter = Interpreter("1.1")
         val constDeclarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.CONST_KEYWORD,
+                    ASTNodeType.CONST_KEYWORD,
                     "name",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "name", Position(1, 2), emptyList()),
-                        ASTNode(DataType.STRING_TYPE, "string", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "name", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.STRING_TYPE, "string", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.STRING_LITERAL, "World", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "World", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(constDeclarationNode)
@@ -38,20 +38,20 @@ class InterpreterConstDeclarationAndAssignmentTest {
     fun `test const declaration and assignment with correct type`() {
         val interpreter = Interpreter("1.1")
         val constDeclarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.CONST_KEYWORD,
+                    ASTNodeType.CONST_KEYWORD,
                     "x",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "x", Position(1, 2), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.NUMBER_LITERAL, "42.0", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "42.0", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(constDeclarationNode)
@@ -62,20 +62,20 @@ class InterpreterConstDeclarationAndAssignmentTest {
     fun `test const declaration and assignment with incorrect type`() {
         val interpreter = Interpreter("1.1")
         val constDeclarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.CONST_KEYWORD,
+                    ASTNodeType.CONST_KEYWORD,
                     "x",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "x", Position(1, 2), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.STRING_LITERAL, "hello", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "hello", Position(1, 4), emptyList())
             )
         )
         assertThrows<IllegalArgumentException> {
@@ -83,3 +83,5 @@ class InterpreterConstDeclarationAndAssignmentTest {
         }
     }
 }
+
+

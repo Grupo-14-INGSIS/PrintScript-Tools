@@ -1,7 +1,7 @@
 package linter.src.main.kotlin.rules
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.LintRule
@@ -15,9 +15,9 @@ class PrintLnRule @JvmOverloads constructor(private val enabled: Boolean = true)
     private fun checkNode(node: ASTNode): List<LintError> {
         val errors = mutableListOf<LintError>()
 
-        if (node.type == DataType.FUNCTION_CALL && node.content == "println") {
+        if (node.type == ASTNodeType.FUNCTION_CALL && node.content == "println") {
             val arg = node.children.firstOrNull()
-            if (arg != null && arg.type !in listOf(DataType.IDENTIFIER, DataType.NUMBER_LITERAL, DataType.STRING_LITERAL)) {
+            if (arg != null && arg.type !in listOf(ASTNodeType.IDENTIFIER, ASTNodeType.NUMBER_LITERAL, ASTNodeType.STRING_LITERAL)) {
                 val pos = node.position
                 errors += LintError(
                     "println argument must be a literal or identifier",

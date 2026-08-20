@@ -1,6 +1,7 @@
 package parser.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
@@ -30,11 +31,11 @@ class ParserTest {
         val parser = Parser(container)
         val root = parser.parse()
 
-        assertEquals(DataType.FUNCTION_CALL, root.type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, root.type)
         assertEquals("println", root.content)
-        assertEquals(DataType.ADDITION, root.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[1].type)
+        assertEquals(ASTNodeType.ADDITION, root.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[0].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[0].children[1].type)
     }
 
     @Test
@@ -61,11 +62,11 @@ class ParserTest {
         val root: ASTNode = parser.parse()
         val declaration: ASTNode = root.children[0]
 
-        assertEquals(DataType.DECLARATION, root.type)
-        assertEquals(DataType.LET_KEYWORD, declaration.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
-        assertEquals(DataType.IDENTIFIER, declaration.children[0].type)
-        assertEquals(DataType.NUMBER_TYPE, declaration.children[1].type)
+        assertEquals(ASTNodeType.DECLARATION, root.type)
+        assertEquals(ASTNodeType.LET_KEYWORD, declaration.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(ASTNodeType.IDENTIFIER, declaration.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_TYPE, declaration.children[1].type)
     }
 
     @Test
@@ -85,8 +86,8 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.FUNCTION_CALL, root.type)
-        assertEquals(DataType.STRING_LITERAL, root.children[0].type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, root.type)
+        assertEquals(ASTNodeType.STRING_LITERAL, root.children[0].type)
     }
 
     @Test
@@ -115,11 +116,11 @@ class ParserTest {
         val root: ASTNode = parser.parse()
         val mult = root.children[1]
 
-        assertEquals(DataType.ADDITION, root.type)
-        assertEquals(DataType.MULTIPLICATION, mult.type)
-        assertEquals(DataType.NUMBER_LITERAL, mult.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, mult.children[1].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].type)
+        assertEquals(ASTNodeType.ADDITION, root.type)
+        assertEquals(ASTNodeType.MULTIPLICATION, mult.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, mult.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, mult.children[1].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[0].type)
     }
 
     @Test
@@ -158,17 +159,17 @@ class ParserTest {
         val div = sum.children[0].children[1]
         val mul = div.children[0]
 
-        assertEquals(DataType.ADDITION, root.type)
-        assertEquals(DataType.ADDITION, sum.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
-        assertEquals(DataType.SUBTRACTION, sub.type)
-        assertEquals(DataType.DIVISION, div.type)
-        assertEquals(DataType.NUMBER_LITERAL, sub.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, sub.children[1].type)
-        assertEquals(DataType.MULTIPLICATION, mul.type)
-        assertEquals(DataType.NUMBER_LITERAL, div.children[1].type)
-        assertEquals(DataType.NUMBER_LITERAL, mul.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, mul.children[1].type)
+        assertEquals(ASTNodeType.ADDITION, root.type)
+        assertEquals(ASTNodeType.ADDITION, sum.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(ASTNodeType.SUBTRACTION, sub.type)
+        assertEquals(ASTNodeType.DIVISION, div.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, sub.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, sub.children[1].type)
+        assertEquals(ASTNodeType.MULTIPLICATION, mul.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, div.children[1].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, mul.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, mul.children[1].type)
     }
 
     @Test
@@ -219,11 +220,11 @@ class ParserTest {
         val root: ASTNode = parser.parse()
         val declaration: ASTNode = root.children[0]
 
-        assertEquals(DataType.DECLARATION, root.type)
-        assertEquals(DataType.CONST_KEYWORD, declaration.type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
-        assertEquals(DataType.IDENTIFIER, declaration.children[0].type)
-        assertEquals(DataType.NUMBER_TYPE, declaration.children[1].type)
+        assertEquals(ASTNodeType.DECLARATION, root.type)
+        assertEquals(ASTNodeType.CONST_KEYWORD, declaration.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(ASTNodeType.IDENTIFIER, declaration.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_TYPE, declaration.children[1].type)
     }
 
     @Test
@@ -249,11 +250,11 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
-        assertEquals(DataType.BOOLEAN_LITERAL, root.children[0].type)
-        assertEquals(DataType.BLOCK, root.children[1].type)
-        assertEquals(DataType.FUNCTION_CALL, root.children[1].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].children[0].children[0].type)
+        assertEquals(ASTNodeType.IF_STATEMENT, root.type)
+        assertEquals(ASTNodeType.BOOLEAN_LITERAL, root.children[0].type)
+        assertEquals(ASTNodeType.BLOCK, root.children[1].type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, root.children[1].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].children[0].children[0].type)
     }
 
     @Test
@@ -272,7 +273,7 @@ class ParserTest {
         val parser = Parser(container)
         val result = parser.expParse(container)
 
-        assertEquals(DataType.MULTIPLICATION, result.type)
+        assertEquals(ASTNodeType.MULTIPLICATION, result.type)
         assertEquals("5", result.children[0].content)
         assertEquals("3", result.children[1].content)
     }
@@ -297,8 +298,8 @@ class ParserTest {
         val parser = Parser(container)
         val result = parser.expParse(container)
 
-        assertEquals(DataType.MULTIPLICATION, result.type)
-        assertEquals(DataType.ADDITION, result.children[0].type)
+        assertEquals(ASTNodeType.MULTIPLICATION, result.type)
+        assertEquals(ASTNodeType.ADDITION, result.children[0].type)
         assertEquals("5", result.children[0].children[0].content)
         assertEquals("3", result.children[0].children[1].content)
         assertEquals("2", result.children[1].content)
@@ -338,14 +339,14 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
-        assertEquals(DataType.BOOLEAN_LITERAL, root.children[0].type)
-        assertEquals(DataType.BLOCK, root.children[1].type)
-        assertEquals(DataType.FUNCTION_CALL, root.children[1].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].children[0].children[0].type)
-        assertEquals(DataType.BLOCK, root.children[2].type)
-        assertEquals(DataType.FUNCTION_CALL, root.children[2].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[2].children[0].children[0].type)
+        assertEquals(ASTNodeType.IF_STATEMENT, root.type)
+        assertEquals(ASTNodeType.BOOLEAN_LITERAL, root.children[0].type)
+        assertEquals(ASTNodeType.BLOCK, root.children[1].type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, root.children[1].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].children[0].children[0].type)
+        assertEquals(ASTNodeType.BLOCK, root.children[2].type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, root.children[2].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[2].children[0].children[0].type)
     }
 
     @Test
@@ -359,7 +360,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -376,7 +377,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -398,10 +399,10 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION, root.type)
-        assertEquals(DataType.LET_KEYWORD, root.children[0].type)
-        assertEquals(DataType.IDENTIFIER, root.children[0].children[0].type)
-        assertEquals(DataType.NUMBER_TYPE, root.children[0].children[1].type)
+        assertEquals(ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION, root.type)
+        assertEquals(ASTNodeType.LET_KEYWORD, root.children[0].type)
+        assertEquals(ASTNodeType.IDENTIFIER, root.children[0].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_TYPE, root.children[0].children[1].type)
     }
 
     @Test
@@ -422,9 +423,9 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.ASSIGNATION, root.type)
-        assertEquals(DataType.IDENTIFIER, root.children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].type)
+        assertEquals(ASTNodeType.ASSIGNATION, root.type)
+        assertEquals(ASTNodeType.IDENTIFIER, root.children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].type)
     }
 
     @Test
@@ -443,7 +444,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.FUNCTION_CALL, root.type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, root.type)
         assertEquals("readInput", root.content)
         assertEquals(0, root.children.size)
     }
@@ -473,15 +474,15 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.SUBTRACTION, root.type)
-        assertEquals(DataType.MULTIPLICATION, root.children[0].type)
-        assertEquals(DataType.DIVISION, root.children[1].type)
-        assertEquals(DataType.ADDITION, root.children[0].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[1].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[0].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[0].children[0].children[1].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].children[0].type)
-        assertEquals(DataType.NUMBER_LITERAL, root.children[1].children[1].type)
+        assertEquals(ASTNodeType.SUBTRACTION, root.type)
+        assertEquals(ASTNodeType.MULTIPLICATION, root.children[0].type)
+        assertEquals(ASTNodeType.DIVISION, root.children[1].type)
+        assertEquals(ASTNodeType.ADDITION, root.children[0].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[0].children[1].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[0].children[0].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[0].children[0].children[1].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].children[0].type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, root.children[1].children[1].type)
     }
 
     @Test
@@ -507,9 +508,9 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
-        assertEquals(DataType.BOOLEAN_LITERAL, root.children[0].type)
-        assertEquals(DataType.BLOCK, root.children[1].type)
+        assertEquals(ASTNodeType.IF_STATEMENT, root.type)
+        assertEquals(ASTNodeType.BOOLEAN_LITERAL, root.children[0].type)
+        assertEquals(ASTNodeType.BLOCK, root.children[1].type)
         assertEquals(2, root.children.size)
     }
 
@@ -530,7 +531,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
 
@@ -553,7 +554,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -574,7 +575,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -595,7 +596,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -616,7 +617,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -636,7 +637,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -655,7 +656,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -674,7 +675,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -693,7 +694,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -715,7 +716,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.DECLARATION, root.type) // This should be a declaration with assignment
+        assertEquals(ASTNodeType.DECLARATION, root.type) // This should be a declaration with assignment
     }
 
     @Test
@@ -733,7 +734,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -752,7 +753,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -771,7 +772,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.ADDITION, root.type)
+        assertEquals(ASTNodeType.ADDITION, root.type)
     }
 
     @Test
@@ -789,7 +790,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -809,7 +810,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -828,7 +829,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -847,7 +848,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -866,7 +867,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -884,7 +885,7 @@ class ParserTest {
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
 
@@ -902,7 +903,7 @@ class ParserTest {
         val parser = Parser(container, "1.0") // version 1.0 does not support booleans
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
 
@@ -928,7 +929,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -953,7 +954,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
 
@@ -980,7 +981,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -1017,7 +1018,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
+        assertEquals(ASTNodeType.IF_STATEMENT, root.type)
     }
 
     @Test
@@ -1045,7 +1046,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
+        assertEquals(ASTNodeType.IF_STATEMENT, root.type)
     }
 
     @Test
@@ -1081,7 +1082,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -1117,7 +1118,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -1159,8 +1160,8 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.arithParse(container)
 
-        assertEquals(DataType.ADDITION, root.type)
-        assertEquals(DataType.MULTIPLICATION, root.children[0].type)
+        assertEquals(ASTNodeType.ADDITION, root.type)
+        assertEquals(ASTNodeType.MULTIPLICATION, root.children[0].type)
     }
 
     @Test
@@ -1190,7 +1191,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.DECLARATION, root.type)
+        assertEquals(ASTNodeType.DECLARATION, root.type)
     }
 
     @Test
@@ -1221,7 +1222,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.IF_STATEMENT, root.type)
+        assertEquals(ASTNodeType.IF_STATEMENT, root.type)
     }
 
     @Test
@@ -1257,7 +1258,7 @@ class ParserTest {
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
-        assertEquals(DataType.INVALID, root.type)
+        assertEquals(ASTNodeType.INVALID, root.type)
     }
 
     @Test
@@ -1308,8 +1309,10 @@ class ParserTest {
         val fivePratt = parser.tokenFactory.createPrattToken(five)
         val result = parser.prattToAST(fivePratt)
 
-        assertEquals(DataType.NUMBER_LITERAL, result.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, result.type)
         assertEquals("5", result.content)
         assertEquals(0, result.children.size)
     }
 }
+
+

@@ -1,8 +1,8 @@
 package interpreter.src.main.kotlin
 
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import inputprovider.src.main.kotlin.InputProvider
-import tokendata.src.main.kotlin.DataType
 import kotlin.jvm.JvmOverloads
 
 class Interpreter @JvmOverloads constructor(
@@ -21,7 +21,7 @@ class Interpreter @JvmOverloads constructor(
 
     private val customActionHandlers = mutableMapOf<Actions, ActionType>()
     private val customFunctionActions = mutableMapOf<String, Actions>()
-    private val customNodeActions = mutableMapOf<DataType, Actions>()
+    private val customNodeActions = mutableMapOf<ASTNodeType, Actions>()
 
     private val actionHandlers: Map<Actions, ActionType> = run {
         val v10 = mapOf(
@@ -42,7 +42,7 @@ class Interpreter @JvmOverloads constructor(
                 inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
                 inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
                 put(Actions.IF_STATEMENT, IfStatement())
-                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment) // Use the unified handler
+                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
             }
             v10 + v11
         } else {
@@ -58,7 +58,7 @@ class Interpreter @JvmOverloads constructor(
         customFunctionActions[name] = action
     }
 
-    fun registerNodeAction(type: DataType, action: Actions) {
+    fun registerNodeAction(type: ASTNodeType, action: Actions) {
         customNodeActions[type] = action
     }
 
@@ -122,23 +122,23 @@ class Interpreter @JvmOverloads constructor(
         }
 
         return when (node.type) {
-            DataType.ADDITION -> Actions.ADD
-            DataType.SUBTRACTION -> Actions.SUBTRACT
-            DataType.MULTIPLICATION -> Actions.MULTIPLY
-            DataType.DIVISION -> Actions.DIVIDE
-            DataType.PRINTLN -> Actions.PRINT
-            DataType.DECLARATION -> { // Declaration WITH assignment
-                if (node.children.firstOrNull()?.type == DataType.CONST_KEYWORD) {
+            ASTNodeType.ADDITION -> Actions.ADD
+            ASTNodeType.SUBTRACTION -> Actions.SUBTRACT
+            ASTNodeType.MULTIPLICATION -> Actions.MULTIPLY
+            ASTNodeType.DIVISION -> Actions.DIVIDE
+            ASTNodeType.PRINTLN -> Actions.PRINT
+            ASTNodeType.DECLARATION -> {
+                if (node.children.firstOrNull()?.type == ASTNodeType.CONST_KEYWORD) {
                     Actions.CONST_DECLARATION_AND_ASSIGNMENT
                 } else {
                     Actions.VAR_DECLARATION_AND_ASSIGNMENT
                 }
             }
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION -> Actions.VAR_DECLARATION_ONLY // Declaration WITHOUT assignment
-            DataType.ASSIGNATION -> Actions.ASSIGNMENT_TO_EXISTING_VAR
-            DataType.IF_STATEMENT -> Actions.IF_STATEMENT
-            DataType.BLOCK -> Actions.BLOCK
-            DataType.FUNCTION_CALL -> {
+            ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION -> Actions.VAR_DECLARATION_ONLY
+            ASTNodeType.ASSIGNATION -> Actions.ASSIGNMENT_TO_EXISTING_VAR
+            ASTNodeType.IF_STATEMENT -> Actions.IF_STATEMENT
+            ASTNodeType.BLOCK -> Actions.BLOCK
+            ASTNodeType.FUNCTION_CALL -> {
                 customFunctionActions[node.content] ?: when (node.content) {
                     "println" -> Actions.PRINT
                     "readInput" -> Actions.READ_INPUT
@@ -146,7 +146,7 @@ class Interpreter @JvmOverloads constructor(
                     else -> throw IllegalArgumentException("Unknown function call: '${node.content}'")
                 }
             }
-            DataType.IDENTIFIER, DataType.NUMBER_LITERAL, DataType.STRING_LITERAL, DataType.BOOLEAN_LITERAL -> Actions.LITERAL
+            ASTNodeType.IDENTIFIER, ASTNodeType.NUMBER_LITERAL, ASTNodeType.STRING_LITERAL, ASTNodeType.BOOLEAN_LITERAL -> Actions.LITERAL
             else -> throw IllegalArgumentException("Unknown action for node type: '${node.type}'")
         }
     }
@@ -166,7 +166,7 @@ class Interpreter @JvmOverloads constructor(
             Actions.VAR_DECLARATION_AND_ASSIGNMENT,
             Actions.LITERAL,
             Actions.BLOCK,
-            Actions.VAR_DECLARATION_ONLY // Changed VAR_DECLARATION to VAR_DECLARATION_ONLY
+            Actions.VAR_DECLARATION_ONLY
         )
 
         val v11OnlyActions = setOf(

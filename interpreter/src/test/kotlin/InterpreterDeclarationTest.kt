@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -14,17 +14,17 @@ class InterpreterDeclarationTest {
     fun `declare string variable with default value`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
+            ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "var",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "msg",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "msg", Position(1, 1), emptyList()),
-                        ASTNode(DataType.STRING_TYPE, "string", Position(1, 2), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "msg", Position(1, 1), emptyList()),
+                        ASTNode(ASTNodeType.STRING_TYPE, "string", Position(1, 2), emptyList())
                     )
                 )
             )
@@ -37,17 +37,17 @@ class InterpreterDeclarationTest {
     fun `declare boolean variable with default value`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
+            ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "var",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "flag",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "flag", Position(1, 1), emptyList()),
-                        ASTNode(DataType.BOOLEAN_TYPE, "boolean", Position(1, 2), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "flag", Position(1, 1), emptyList()),
+                        ASTNode(ASTNodeType.BOOLEAN_TYPE, "boolean", Position(1, 2), emptyList())
                     )
                 )
             )
@@ -60,20 +60,20 @@ class InterpreterDeclarationTest {
     fun `declare and assign number variable`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "x",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "x", Position(1, 2), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.NUMBER_LITERAL, "42.0", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.NUMBER_LITERAL, "42.0", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
@@ -84,20 +84,20 @@ class InterpreterDeclarationTest {
     fun `declare and assign string variable`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "msg",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "msg", Position(1, 2), emptyList()),
-                        ASTNode(DataType.STRING_TYPE, "string", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "msg", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.STRING_TYPE, "string", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.STRING_LITERAL, "hello", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "hello", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
@@ -108,20 +108,20 @@ class InterpreterDeclarationTest {
     fun `declare and assign boolean variable`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.DECLARATION,
+            ASTNodeType.DECLARATION,
             "=",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "flag",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "flag", Position(1, 2), emptyList()),
-                        ASTNode(DataType.BOOLEAN_TYPE, "boolean", Position(1, 3), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "flag", Position(1, 2), emptyList()),
+                        ASTNode(ASTNodeType.BOOLEAN_TYPE, "boolean", Position(1, 3), emptyList())
                     )
                 ),
-                ASTNode(DataType.BOOLEAN_LITERAL, "true", Position(1, 4), emptyList())
+                ASTNode(ASTNodeType.BOOLEAN_LITERAL, "true", Position(1, 4), emptyList())
             )
         )
         interpreter.interpret(declarationNode)
@@ -132,17 +132,17 @@ class InterpreterDeclarationTest {
     fun `redeclaration of variable throws exception`() {
         val interpreter = Interpreter("1.1")
         val declarationNode = ASTNode(
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
+            ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "var",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "x",
                     Position(1, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "x", Position(1, 1), emptyList()),
-                        ASTNode(DataType.NUMBER_TYPE, "number", Position(1, 2), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 1), emptyList()),
+                        ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(1, 2), emptyList())
                     )
                 )
             )
@@ -150,17 +150,17 @@ class InterpreterDeclarationTest {
         interpreter.interpret(declarationNode)
 
         val redeclarationNode = ASTNode(
-            DataType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
+            ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "var",
             Position(2, 0),
             listOf(
                 ASTNode(
-                    DataType.LET_KEYWORD,
+                    ASTNodeType.LET_KEYWORD,
                     "x",
                     Position(2, 1),
                     listOf(
-                        ASTNode(DataType.IDENTIFIER, "x", Position(2, 1), emptyList()),
-                        ASTNode(DataType.STRING_TYPE, "string", Position(2, 2), emptyList())
+                        ASTNode(ASTNodeType.IDENTIFIER, "x", Position(2, 1), emptyList()),
+                        ASTNode(ASTNodeType.STRING_TYPE, "string", Position(2, 2), emptyList())
                     )
                 )
             )
@@ -171,3 +171,5 @@ class InterpreterDeclarationTest {
         }
     }
 }
+
+

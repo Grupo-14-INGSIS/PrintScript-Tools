@@ -124,3 +124,5 @@ class FormatterTCKTest {
         runFormatterTckTest("1.1/if-indent-inside-2", "1.1")
     }
 }
+
+

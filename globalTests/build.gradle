@@ -3,17 +3,14 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":container"))
-    implementation(project(":ast"))
-    implementation(project(":token"))
-    implementation(project(":tokendata"))
-    implementation(project(":lexer"))
-    implementation(project(":parser"))
-    implementation(project(":interpreter"))
-    implementation(project(":inputprovider"))
-    implementation(project(":cli"))
-    implementation(project(":formatter"))
-    implementation(project(":runner"))
+    implementation project(":token")
+    implementation project(":ast")
+    implementation project(":lexer")
+    implementation project(":parser")
+    implementation project(":interpreter")
+    implementation project(":formatter")
+    implementation project(":linter")
+    implementation project(":cli")
     implementation("org.yaml:snakeyaml:2.0")
 }
 

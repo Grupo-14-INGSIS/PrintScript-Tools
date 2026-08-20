@@ -49,3 +49,5 @@ class ConfigDataClassesTest {
         assertEquals(printlnConfig, config.mandatory_variable_or_literal_in_println)
     }
 }
+
+

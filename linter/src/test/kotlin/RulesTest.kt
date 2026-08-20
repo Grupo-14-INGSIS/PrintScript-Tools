@@ -3,8 +3,8 @@ package linter.src.test.kotlin
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
-import tokendata.src.main.kotlin.DataType
 import linter.src.main.kotlin.rules.*
 
 class RulesTest {
@@ -12,11 +12,11 @@ class RulesTest {
     @Test
     fun `valid println with identifier passes`() {
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "println",
             Position(1, 1),
             listOf(
-                ASTNode(DataType.IDENTIFIER, "x", Position(1, 9), emptyList())
+                ASTNode(ASTNodeType.IDENTIFIER, "x", Position(1, 9), emptyList())
             )
         )
 
@@ -28,11 +28,11 @@ class RulesTest {
     @Test
     fun `valid println with literal passes`() {
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "println",
             Position(2, 1),
             listOf(
-                ASTNode(DataType.STRING_LITERAL, "\"hello\"", Position(2, 9), emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, "\"hello\"", Position(2, 9), emptyList())
             )
         )
 
@@ -44,11 +44,11 @@ class RulesTest {
     @Test
     fun `invalid println with unsupported type fails`() {
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "println",
             Position(3, 1),
             listOf(
-                ASTNode(DataType.ASSIGNATION, "=", Position(3, 9), emptyList())
+                ASTNode(ASTNodeType.ASSIGNATION, "=", Position(3, 9), emptyList())
             )
         )
 
@@ -62,11 +62,11 @@ class RulesTest {
     @Test
     fun `disabled rule returns no errors`() {
         val node = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "println",
             Position(4, 1),
             listOf(
-                ASTNode(DataType.ASSIGNATION, "=", Position(4, 9), emptyList())
+                ASTNode(ASTNodeType.ASSIGNATION, "=", Position(4, 9), emptyList())
             )
         )
 
@@ -78,7 +78,7 @@ class RulesTest {
 
     @Test
     fun `valid camelCase identifier passes`() {
-        val node = ASTNode(DataType.IDENTIFIER, "myVariable", Position(1, 1), emptyList())
+        val node = ASTNode(ASTNodeType.IDENTIFIER, "myVariable", Position(1, 1), emptyList())
 
         val rule = IdentifierNamingRule("camelCase")
         val errors = rule.apply(node)
@@ -88,7 +88,7 @@ class RulesTest {
     @Test
     fun `invalid camelCase identifier fails`() {
         val node = ASTNode(
-            DataType.IDENTIFIER,
+            ASTNodeType.IDENTIFIER,
             "My_variable",
             Position(2, 1),
             emptyList()
@@ -103,7 +103,7 @@ class RulesTest {
 
     @Test
     fun `valid snake_case identifier passes`() {
-        val node = ASTNode(DataType.IDENTIFIER, "my_variable_1", Position(3, 1), emptyList())
+        val node = ASTNode(ASTNodeType.IDENTIFIER, "my_variable_1", Position(3, 1), emptyList())
 
         val rule = IdentifierNamingRule("snake_case")
         val errors = rule.apply(node)
@@ -112,7 +112,7 @@ class RulesTest {
 
     @Test
     fun `invalid snake_case identifier fails`() {
-        val node = ASTNode(DataType.IDENTIFIER, "myVariable", Position(4, 1), emptyList())
+        val node = ASTNode(ASTNodeType.IDENTIFIER, "myVariable", Position(4, 1), emptyList())
 
         val rule = IdentifierNamingRule("snake_case")
         val errors = rule.apply(node)
@@ -123,10 +123,12 @@ class RulesTest {
 
     @Test
     fun `unknown style accepts all identifiers`() {
-        val node = ASTNode(DataType.IDENTIFIER, "ANY_STYLE", Position(5, 1), emptyList())
+        val node = ASTNode(ASTNodeType.IDENTIFIER, "ANY_STYLE", Position(5, 1), emptyList())
 
         val rule = IdentifierNamingRule("PascalCase")
         val errors = rule.apply(node)
         assertTrue(errors.isEmpty())
     }
 }
+
+

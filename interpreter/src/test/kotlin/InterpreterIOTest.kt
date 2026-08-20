@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -18,10 +18,10 @@ class InterpreterIOTest {
 
         val interpreter = Interpreter("1.1", inputProvider)
         val readInputNode = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "readInput",
             Position(1, 0),
-            listOf(ASTNode(DataType.STRING_LITERAL, "Enter a number: ", Position(1, 1), emptyList()))
+            listOf(ASTNode(ASTNodeType.STRING_LITERAL, "Enter a number: ", Position(1, 1), emptyList()))
         )
 
         val result = interpreter.interpret(readInputNode)
@@ -35,13 +35,15 @@ class InterpreterIOTest {
 
         val interpreter = Interpreter("1.1", inputProvider)
         val readEnvNode = ASTNode(
-            DataType.FUNCTION_CALL,
+            ASTNodeType.FUNCTION_CALL,
             "readEnv",
             Position(1, 0),
-            listOf(ASTNode(DataType.STRING_LITERAL, "MY_VAR", Position(1, 1), emptyList()))
+            listOf(ASTNode(ASTNodeType.STRING_LITERAL, "MY_VAR", Position(1, 1), emptyList()))
         )
 
         val result = interpreter.interpret(readEnvNode)
         assertEquals("my_value", result)
     }
 }
+
+

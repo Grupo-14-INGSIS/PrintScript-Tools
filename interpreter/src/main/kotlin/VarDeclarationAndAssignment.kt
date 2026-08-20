@@ -1,5 +1,7 @@
 package interpreter.src.main.kotlin
+
 import ast.src.main.kotlin.ASTNode
+import ast.src.main.kotlin.ASTNodeType
 
 object VarDeclarationAndAssignment : ActionType {
     override fun interpret(node: ASTNode, interpreter: ExecutionContext): Any {
@@ -16,13 +18,9 @@ object VarDeclarationAndAssignment : ActionType {
 
         val coercedValue = coerceValue(rawValue, variableType)
 
-        // validar que el valor sea compatible con el tipo
-        validateTypeCompatibility(
-            coercedValue,
-            variableType
-        )
+        validateTypeCompatibility(coercedValue, variableType)
 
-        if (declarationNode.type == tokendata.src.main.kotlin.DataType.CONST_KEYWORD) {
+        if (declarationNode.type == ASTNodeType.CONST_KEYWORD) {
             interpreter.declareConstant(variableName, coercedValue, variableType)
         } else {
             interpreter.declareVariable(variableName, coercedValue, variableType)
@@ -36,13 +34,13 @@ object VarDeclarationAndAssignment : ActionType {
 
         return when (expectedType.lowercase()) {
             "number" -> value.toDoubleOrNull()
-                ?: throw IllegalArgumentException("Valor '$value' no se puede convertir a nÃºmero")
+                ?: throw IllegalArgumentException("Valor '$value' no se puede convertir a número")
             "boolean" -> when (value.lowercase()) {
                 "true" -> true
                 "false" -> false
                 else -> throw IllegalArgumentException("Valor '$value' no se puede convertir a booleano")
             }
-            else -> value // It's already a string or a type we don't coerce
+            else -> value
         }
     }
 

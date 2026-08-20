@@ -1,5 +1,7 @@
 package parser.src.test.kotlin
 
+import ast.src.main.kotlin.ASTNodeType
+
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import tokendata.src.main.kotlin.DataType
@@ -25,7 +27,7 @@ class MoreParserTest {
     fun `stmtParse returns invalid on empty input`() {
         val parser = Parser(Container())
         val result = parser.stmtParse(Container())
-        assertEquals(DataType.INVALID, result.type)
+        assertEquals(ASTNodeType.INVALID, result.type)
     }
 
     @Test
@@ -41,7 +43,7 @@ class MoreParserTest {
 
         val parser = Parser(tokens, "1.1")
         val result = parser.stmtParse(tokens)
-        assertEquals(DataType.DECLARATION, result.type)
+        assertEquals(ASTNodeType.DECLARATION, result.type)
         assertEquals("\"hello\"", result.children.last().content)
     }
 
@@ -55,7 +57,7 @@ class MoreParserTest {
 
         val parser = Parser(tokens)
         val result = parser.stmtParse(tokens)
-        assertEquals(DataType.ASSIGNATION, result.type)
+        assertEquals(ASTNodeType.ASSIGNATION, result.type)
         assertEquals("x", result.children.first().content)
     }
 
@@ -64,7 +66,7 @@ class MoreParserTest {
         val tokens = containerOf(token(DataType.STRING_LITERAL, "\"hi\""))
         val parser = Parser(tokens)
         val result = parser.expParse(tokens)
-        assertEquals(DataType.STRING_LITERAL, result.type)
+        assertEquals(ASTNodeType.STRING_LITERAL, result.type)
         assertEquals("\"hi\"", result.content)
     }
 
@@ -78,7 +80,7 @@ class MoreParserTest {
 
         val parser = Parser(tokens)
         val result = parser.expParse(tokens)
-        assertEquals(DataType.NUMBER_LITERAL, result.type)
+        assertEquals(ASTNodeType.NUMBER_LITERAL, result.type)
         assertEquals("1", result.content)
     }
 
@@ -93,7 +95,7 @@ class MoreParserTest {
 
         val parser = Parser(tokens)
         val result = parser.expParse(tokens)
-        assertEquals(DataType.FUNCTION_CALL, result.type)
+        assertEquals(ASTNodeType.FUNCTION_CALL, result.type)
         assertEquals("println", result.content)
         assertEquals("\"msg\"", result.children.first().content)
     }
@@ -103,7 +105,7 @@ class MoreParserTest {
         val tokens = containerOf(token(DataType.BOOLEAN_LITERAL, "true"))
         val parser = Parser(tokens, "1.1")
         val result = parser.expParse(tokens)
-        assertEquals(DataType.BOOLEAN_LITERAL, result.type)
+        assertEquals(ASTNodeType.BOOLEAN_LITERAL, result.type)
     }
 
     @Test
@@ -134,7 +136,9 @@ class MoreParserTest {
 
         val parser = Parser(tokens, "1.1")
         val result = parser.stmtParse(tokens)
-        assertEquals(DataType.IF_STATEMENT, result.type)
+        assertEquals(ASTNodeType.IF_STATEMENT, result.type)
         assertEquals(3, result.children.size) // condition, ifBlock, elseBlock
     }
 }
+
+

@@ -1,7 +1,7 @@
 package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.DataType
+import ast.src.main.kotlin.ASTNodeType
 import tokendata.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
@@ -15,25 +15,25 @@ class InterpreterMiscTest {
     fun `test block statement`() {
         val interpreter = Interpreter("1.1")
         val blockNode = ASTNode(
-            DataType.BLOCK,
+            ASTNodeType.BLOCK,
             "",
             Position(1, 0),
             listOf(
                 ASTNode(
-                    DataType.DECLARATION,
+                    ASTNodeType.DECLARATION,
                     "=",
                     Position(2, 0),
                     listOf(
                         ASTNode(
-                            DataType.LET_KEYWORD,
+                            ASTNodeType.LET_KEYWORD,
                             "x",
                             Position(2, 1),
                             listOf(
-                                ASTNode(DataType.IDENTIFIER, "x", Position(2, 2), emptyList()),
-                                ASTNode(DataType.NUMBER_TYPE, "number", Position(2, 3), emptyList())
+                                ASTNode(ASTNodeType.IDENTIFIER, "x", Position(2, 2), emptyList()),
+                                ASTNode(ASTNodeType.NUMBER_TYPE, "number", Position(2, 3), emptyList())
                             )
                         ),
-                        ASTNode(DataType.NUMBER_LITERAL, "42.0", Position(2, 4), emptyList())
+                        ASTNode(ASTNodeType.NUMBER_LITERAL, "42.0", Position(2, 4), emptyList())
                     )
                 )
             )
@@ -50,10 +50,10 @@ class InterpreterMiscTest {
 
         val interpreter = Interpreter("1.1") { println(it) }
         val printNode = ASTNode(
-            DataType.PRINTLN,
+            ASTNodeType.PRINTLN,
             "println",
             Position(1, 0),
-            listOf(ASTNode(DataType.STRING_LITERAL, "hello world", Position(1, 1), emptyList()))
+            listOf(ASTNode(ASTNodeType.STRING_LITERAL, "hello world", Position(1, 1), emptyList()))
         )
         interpreter.interpret(printNode)
         assertEquals("hello world\n", outContent.toString().replace("\r\n", "\n"))
@@ -64,8 +64,10 @@ class InterpreterMiscTest {
     @Test
     fun `test literal expression`() {
         val interpreter = Interpreter("1.1")
-        val literalNode = ASTNode(DataType.NUMBER_LITERAL, "123.0", Position(1, 0), emptyList())
+        val literalNode = ASTNode(ASTNodeType.NUMBER_LITERAL, "123.0", Position(1, 0), emptyList())
         val result = interpreter.interpret(literalNode)
         assertEquals(123.0, result)
     }
 }
+
+

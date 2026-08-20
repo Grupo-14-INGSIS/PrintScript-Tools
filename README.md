@@ -1,13 +1,13 @@
 # ?? PrintScript-Tools
 
-Plataforma de compilaciï¿½n, ejecuciï¿½n, formateo y anï¿½lisis estï¿½tico para el lenguaje **PrintScript** (versiones 1.0 y 1.1).
+Plataforma de compilación, ejecución, formateo y análisis estático para el lenguaje **PrintScript** (versiones 1.0 y 1.1).
 
 ---
 
-## ??? Documentaciï¿½n de Arquitectura y Diseï¿½o
+## ??? Documentación de Arquitectura y Diseño
 
-* ?? **[ARQUITECTURA_MODULAR.md](./ARQUITECTURA_MODULAR.md):** Explicaciï¿½n exhaustiva de la arquitectura modular (8 mï¿½dulos), justificaciï¿½n de por quï¿½ `token` y `ast` son mï¿½dulos separados (evitando el anti-patrï¿½n "Junk Drawer / Bolsa de gatos"), uso de Packages vs Mï¿½dulos Gradle, lï¿½gica de plugins y guï¿½a para probar lenguajes no-PrintScript.
-* ?? **[DOCUMENTACION.md](./DOCUMENTACION.md):** Documentaciï¿½n tï¿½cnica detallada de componentes y APIs.
+* ?? **[ARQUITECTURA_MODULAR.md](./ARQUITECTURA_MODULAR.md):** Explicación exhaustiva de la arquitectura modular (8 módulos), justificación de por qué `token` y `ast` son módulos separados (evitando el anti-patrón "Junk Drawer / Bolsa de gatos"), uso de Packages vs Módulos Gradle, lógica de plugins y guía para probar lenguajes no-PrintScript.
+* ?? **[DOCUMENTACION.md](./DOCUMENTACION.md):** Documentación técnica detallada de componentes y APIs.
 
 ---
 
@@ -15,5 +15,5 @@ Plataforma de compilaciï¿½n, ejecuciï¿½n, formateo y anï¿½lisis estï¿½tico para 
 
 Para activar las verificaciones pre-commit se puede:
 
-1) Correr el comando `git config core.hooksPath .githooks` en la terminal estando parados en la raï¿½z del proyecto.
-2) Al correr los tests (se ejecuta una tarea de gradle `./gradlew test`), el archivo se genera/acomoda automï¿½ticamente.
+1) Correr el comando `git config core.hooksPath .githooks` en la terminal estando parados en la raíz del proyecto.
+2) Al correr los tests (se ejecuta una tarea de gradle `./gradlew test`), el archivo se genera/acomoda automáticamente.
