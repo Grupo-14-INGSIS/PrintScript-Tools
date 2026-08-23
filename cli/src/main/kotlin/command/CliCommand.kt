@@ -1,8 +1,8 @@
 package cli.src.main.kotlin.command
 
 /**
- * Abstracción base para comandos CLI extensibles (Command Pattern / Plugins de CLI).
- * Permite registrar nuevos comandos en la CLI sin modificar su código base (OCP).
+ * Abstraccion base para comandos CLI extensibles (Command Pattern / Plugins de CLI).
+ * Permite registrar nuevos comandos en la CLI sin modificar su codigo base (OCP).
  */
 interface CliCommand {
     val name: String

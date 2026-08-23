@@ -1,13 +1,7 @@
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
-import picocli.CommandLine.Command
 import cli.src.main.kotlin.Cli
 
-@Command(
-    name = "CLIPS",
-    mixinStandardHelpOptions = true,
-    description = ["CLI principal de PrintScript - Grupo 14"]
-)
 class RootCommand : Runnable {
     val cli = Cli()
 
