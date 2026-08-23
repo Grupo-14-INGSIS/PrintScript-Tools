@@ -2,6 +2,3 @@ plugins {
     id 'buildlogic.kotlin-myPlugin-conventions'
 }
 
-dependencies {
-    implementation project(":token")
-}

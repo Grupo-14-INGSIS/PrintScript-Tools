@@ -191,7 +191,7 @@ class StatementParserTest {
             }
 
             override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
-                return ASTNode(ASTNodeType.IDENTIFIER, "CUSTOM_HANDLED", Position(1, 1), emptyList())
+                return ASTNode(ASTNodeType.IDENTIFIER, "CUSTOM_HANDLED", ast.src.main.kotlin.Position(1, 1), emptyList())
             }
         }
 

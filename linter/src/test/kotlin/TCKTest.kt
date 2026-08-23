@@ -9,7 +9,7 @@ import linter.src.main.kotlin.rules.ReadInputRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 
 class TCKTest {
 

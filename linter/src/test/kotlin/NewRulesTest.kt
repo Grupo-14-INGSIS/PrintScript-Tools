@@ -4,7 +4,7 @@ import ast.src.main.kotlin.ASTNode
 import ast.src.main.kotlin.ASTNodeType
 import linter.src.main.kotlin.rules.ImmutableValRule
 import linter.src.main.kotlin.rules.IfWithoutElseRule
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 

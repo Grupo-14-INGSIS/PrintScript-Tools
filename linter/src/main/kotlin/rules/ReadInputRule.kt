@@ -2,7 +2,7 @@ package linter.src.main.kotlin.rules
 
 import ast.src.main.kotlin.ASTNode
 import ast.src.main.kotlin.ASTNodeType
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.LintRule
 import kotlin.jvm.JvmOverloads

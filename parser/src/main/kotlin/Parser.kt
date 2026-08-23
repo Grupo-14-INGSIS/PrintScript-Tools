@@ -5,7 +5,7 @@ import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import token.src.main.kotlin.Token
 import tokendata.src.main.kotlin.DataType
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position as AstPosition
 import kotlin.jvm.JvmOverloads
 
 class Parser @JvmOverloads constructor(
@@ -18,7 +18,7 @@ class Parser @JvmOverloads constructor(
 ) : ExpressionParser {
 
     val features: VersionFeatures = VersionConfig.getFeatures(version)
-    val invalid = ASTNode(ASTNodeType.INVALID, "", Position(0, 0), listOf())
+    val invalid = ASTNode(ASTNodeType.INVALID, "", AstPosition(0, 0), listOf())
     private val ifParser = IfStatementParser()
 
     fun parse(): ASTNode {
@@ -109,7 +109,7 @@ class Parser @JvmOverloads constructor(
             return ASTNode(
                 ASTNodeType.BLOCK,
                 "block",
-                Position(0, 0),
+                AstPosition(0, 0),
                 emptyList()
             )
         }
@@ -162,7 +162,7 @@ class Parser @JvmOverloads constructor(
         return ASTNode(
             ASTNodeType.BLOCK,
             "block",
-            tokens.get(0)?.position ?: Position(0, 0),
+            tokens.get(0)?.position.toAstPositionOrDefault(),
             statements
         )
     }
@@ -191,7 +191,7 @@ class Parser @JvmOverloads constructor(
             return ASTNode(
                 ASTNodeType.IDENTIFIER,
                 tokens.first()!!.content,
-                tokens.first()!!.position,
+                tokens.first()!!.position.toAstPosition(),
                 listOf()
             )
         }
@@ -200,7 +200,7 @@ class Parser @JvmOverloads constructor(
             return ASTNode(
                 tokens.first()!!.type.toASTNodeType(),
                 tokens.first()!!.content,
-                tokens.first()!!.position,
+                tokens.first()!!.position.toAstPosition(),
                 listOf()
             )
         }
@@ -215,7 +215,7 @@ class Parser @JvmOverloads constructor(
         return ASTNode(
             ASTNodeType.FUNCTION_CALL,
             functionToken.content,
-            functionToken.position,
+            functionToken.position.toAstPosition(),
             if (argsTokens.isEmpty()) emptyList() else listOf(expParse(argsTokens))
         )
     }
@@ -365,7 +365,7 @@ class Parser @JvmOverloads constructor(
         return ASTNode(
             symbol.token().type.toASTNodeType(),
             symbol.token().content,
-            symbol.token().position,
+            symbol.token().position.toAstPosition(),
             children
         )
     }
@@ -442,7 +442,7 @@ class Parser @JvmOverloads constructor(
                 ASTNode(
                     nextToken.type.toASTNodeType(),
                     nextToken.content,
-                    nextToken.position,
+                    nextToken.position.toAstPosition(),
                     children
                 )
             )

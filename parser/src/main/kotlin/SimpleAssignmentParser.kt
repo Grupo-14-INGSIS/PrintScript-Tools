@@ -21,12 +21,12 @@ class SimpleAssignmentParser : StatementParser {
         return ASTNode(
             ASTNodeType.ASSIGNATION,
             "=",
-            assignationToken.position,
+            assignationToken.position.toAstPosition(),
             listOf(
                 ASTNode(
                     ASTNodeType.IDENTIFIER,
                     identifierToken.content,
-                    identifierToken.position,
+                    identifierToken.position.toAstPosition(),
                     listOf()
                 ),
                 parser.expParse(valueTokens)

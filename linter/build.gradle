@@ -9,5 +9,4 @@ repositories {
 dependencies {
     implementation 'org.yaml:snakeyaml:2.2'
     implementation project(":ast")
-    implementation project(":token")
 }

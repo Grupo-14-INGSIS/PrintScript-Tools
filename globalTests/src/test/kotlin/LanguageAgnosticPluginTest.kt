@@ -57,10 +57,19 @@ class LanguageAgnosticPluginTest {
             override fun parse(tokens: Container, parser: ExpressionParser): ASTNode {
                 val exprTokens = tokens.slice(1, tokens.size())
                 val exprAst = parser.expParse(exprTokens)
+                val tokenPos = tokens.first()?.position
+                val astPos = if (tokenPos != null) {
+                    ast.src.main.kotlin.Position(tokenPos.line, tokenPos.column)
+                } else {
+                    ast.src.main.kotlin.Position(
+                        1,
+                        1
+                    )
+                }
                 return ASTNode(
                     ASTNodeType.PRINTLN,
                     "echo",
-                    tokens.first()?.position ?: Position(1, 1),
+                    astPos,
                     listOf(exprAst)
                 )
             }

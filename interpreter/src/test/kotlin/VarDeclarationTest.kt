@@ -3,7 +3,7 @@ package interpreter
 import ast.src.main.kotlin.ASTNode
 import interpreter.src.main.kotlin.Interpreter
 import interpreter.src.main.kotlin.VarDeclaration
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify

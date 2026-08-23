@@ -4,11 +4,11 @@ import ast.src.main.kotlin.ASTNode
 import ast.src.main.kotlin.ASTNodeType
 import container.src.main.kotlin.Container
 import tokendata.src.main.kotlin.DataType
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position as AstPosition
 
 class IfStatementParser : StatementParser {
 
-    private val invalid = ASTNode(ASTNodeType.INVALID, "", Position(0, 0), listOf())
+    private val invalid = ASTNode(ASTNodeType.INVALID, "", AstPosition(0, 0), listOf())
 
     override fun canParse(tokens: Container): Boolean {
         return !tokens.isEmpty() && tokens.get(0)?.type == DataType.IF_KEYWORD
@@ -59,7 +59,7 @@ class IfStatementParser : StatementParser {
         return ASTNode(
             ASTNodeType.IF_STATEMENT,
             "if",
-            ifKeyword.position,
+            ifKeyword.position.toAstPosition(),
             children
         )
     }

@@ -34,7 +34,7 @@ class DeclarationWithoutAssignmentParser(
             return ASTNode(
                 ASTNodeType.INVALID,
                 "Error: Cannot use 'const' keyword in PrintScript $version",
-                keywordToken.position,
+                keywordToken.position.toAstPosition(),
                 listOf()
             )
         }
@@ -45,23 +45,23 @@ class DeclarationWithoutAssignmentParser(
         return ASTNode(
             ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "",
-            keywordToken.position,
+            keywordToken.position.toAstPosition(),
             listOf(
                 ASTNode(
                     keywordToken.type.toASTNodeType(),
                     identifierToken.content,
-                    identifierToken.position,
+                    identifierToken.position.toAstPosition(),
                     listOf(
                         ASTNode(
                             ASTNodeType.IDENTIFIER,
                             identifierToken.content,
-                            identifierToken.position,
+                            identifierToken.position.toAstPosition(),
                             listOf()
                         ),
                         ASTNode(
                             typeToken.type.toASTNodeType(),
                             typeToken.content,
-                            typeToken.position,
+                            typeToken.position.toAstPosition(),
                             listOf()
                         )
                     )
