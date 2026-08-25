@@ -1,6 +1,6 @@
 package cli.src.main.kotlin.command
 
-import analyzer.src.main.kotlin.Analyzer
+import analyzer.Analyzer
 
 class AnalyzerCommand(
     private val analyzer: Analyzer = Analyzer()

@@ -1,6 +1,6 @@
 package cli.src.test.kotlin
 
-import analyzer.src.main.kotlin.Analyzer
+import analyzer.Analyzer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

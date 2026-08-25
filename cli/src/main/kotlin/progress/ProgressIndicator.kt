@@ -1,4 +1,4 @@
-package progress.src.main.kotlin
+package progress
 
 import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicBoolean

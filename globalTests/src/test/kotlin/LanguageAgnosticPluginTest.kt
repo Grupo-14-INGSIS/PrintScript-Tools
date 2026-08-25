@@ -17,7 +17,6 @@ import parser.src.main.kotlin.ExpressionParser
 import parser.src.main.kotlin.Parser
 import parser.src.main.kotlin.StatementParser
 import tokendata.src.main.kotlin.DataType
-import tokendata.src.main.kotlin.Position
 
 /**
  * Test que demuestra como extender y probar el compilador/interprete con un lenguaje

@@ -1,6 +1,6 @@
 package cli.src.main.kotlin.command
 
-import executor.src.main.kotlin.Executor
+import executor.Executor
 import inputprovider.src.main.kotlin.ConsoleInputProvider
 import inputprovider.src.main.kotlin.InputProvider
 

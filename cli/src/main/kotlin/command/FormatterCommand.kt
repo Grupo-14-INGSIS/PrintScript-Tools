@@ -1,6 +1,6 @@
 package cli.src.main.kotlin.command
 
-import formatteraction.src.main.kotlin.FormatterAction
+import formatteraction.FormatterAction
 
 class FormatterCommand(
     private val formatterAction: FormatterAction = FormatterAction()

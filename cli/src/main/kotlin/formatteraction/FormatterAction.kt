@@ -1,8 +1,8 @@
-package formatteraction.src.main.kotlin
+package formatteraction
 
 import formatter.src.main.kotlin.Formatter
 import lexer.src.main.kotlin.Lexer
-import progress.src.main.kotlin.MultiStepProgress
+import progress.MultiStepProgress
 
 import java.io.File
 import java.io.FileWriter

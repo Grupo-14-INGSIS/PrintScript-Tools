@@ -3,7 +3,7 @@ package progress.src.test.kotlin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.*
-import progress.src.main.kotlin.ProgressIndicator
+import progress.ProgressIndicator
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.test.assertTrue

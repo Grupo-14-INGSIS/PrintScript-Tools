@@ -13,6 +13,7 @@ import container.src.main.kotlin.Container
 import lexer.src.main.kotlin.StringCharSource
 import interpreter.src.main.kotlin.Interpreter // Import the Interpreter
 import inputprovider.src.main.kotlin.ConsoleInputProvider
+import inputprovider.src.main.kotlin.InputProvider
 import java.io.File
 import java.util.LinkedList
 import java.util.Queue
@@ -24,7 +25,7 @@ class EndToEndTest {
         private val testPrinter: (Any?) -> Unit,
         private val inputs: Queue<String> = LinkedList(),
         private val envVars: Map<String, String> = emptyMap()
-    ) : inputprovider.src.main.kotlin.InputProvider {
+    ) : InputProvider {
         override fun readInput(prompt: String): String {
             testPrinter(prompt)
             return inputs.poll() ?: ""
@@ -38,7 +39,7 @@ class EndToEndTest {
     private fun executeWithMockInput(
         input: String,
         version: String,
-        inputProvider: inputprovider.src.main.kotlin.InputProvider
+        inputProvider: InputProvider
     ): List<String> {
         val lexer = Lexer(StringCharSource(input), version)
         val statements = lexer.lexIntoStatements()

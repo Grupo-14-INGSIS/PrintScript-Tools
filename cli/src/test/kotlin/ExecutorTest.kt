@@ -1,6 +1,6 @@
 package cli.src.test.kotlin
 
-import executor.src.main.kotlin.Executor
+import executor.Executor
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

@@ -24,10 +24,12 @@ jobs:
           version=${{ steps.get_latest.outputs.latest }}
           if [ -z "$version" ]; then
             version="1.0.0"
-          else
-            version=$(echo $version | awk -F. -v OFS=. '{$NF++;print}')
+          # --- incremento desactivado temporalmente ---
+          #else
+            #version=$(echo $version | awk -F. -v OFS=. '{$NF++;print}')
+          
           fi
-          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "version=$version-SNAPSHOT" >> $GITHUB_OUTPUT
 
   ci-cd:
     needs: get_version

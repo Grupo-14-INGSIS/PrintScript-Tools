@@ -1,4 +1,4 @@
-package runner.src.main.kotlin
+package runner
 
 import cli.src.main.kotlin.command.AnalyzerCommand
 import cli.src.main.kotlin.command.ExecutionCommand

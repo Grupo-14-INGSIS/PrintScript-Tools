@@ -1,10 +1,10 @@
-package executor.src.main.kotlin
+package executor
 
 import ast.src.main.kotlin.ASTNode
 import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
 import interpreter.src.main.kotlin.Interpreter
-import progress.src.main.kotlin.MultiStepProgress
+import progress.MultiStepProgress
 import inputprovider.src.main.kotlin.ConsoleInputProvider
 import inputprovider.src.main.kotlin.InputProvider
 import java.io.File

@@ -1,6 +1,6 @@
 package progress.src.test.kotlin
 
-import progress.src.main.kotlin.MultiStepProgress
+import progress.MultiStepProgress
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

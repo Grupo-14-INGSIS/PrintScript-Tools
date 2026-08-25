@@ -1,8 +1,8 @@
-package analyzer.src.main.kotlin
+package analyzer
 
 import ast.src.main.kotlin.ASTNode
 import ast.src.main.kotlin.ASTNodeType
-import progress.src.main.kotlin.MultiStepProgress
+import progress.MultiStepProgress
 import lexer.src.main.kotlin.Lexer
 import parser.src.main.kotlin.Parser
 import linter.src.main.kotlin.Linter

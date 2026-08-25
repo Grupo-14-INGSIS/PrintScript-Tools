@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import runner.src.main.kotlin.Runner
+import runner.Runner
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 

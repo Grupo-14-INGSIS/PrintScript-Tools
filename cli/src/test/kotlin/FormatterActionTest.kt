@@ -1,6 +1,6 @@
 package cli.src.test.kotlin
 
-import formatteraction.src.main.kotlin.FormatterAction
+import formatteraction.FormatterAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
