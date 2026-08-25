@@ -1,3 +1,11 @@
+plugins {
+    id 'io.gitlab.arturbosch.detekt'
+}
+
+repositories {
+    mavenCentral()
+}
+
 def srcHookPath = "${rootDir}/.githooks/pre-commit"
 def hookFilePath = "${rootDir}/.git/hooks/pre-commit"
 

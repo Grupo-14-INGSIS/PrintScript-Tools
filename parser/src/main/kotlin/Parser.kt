@@ -263,6 +263,8 @@ class Parser @JvmOverloads constructor(
 
     val tokenFactory = PrattTokenFactory(features)
     private var recursionDepth = 0
+
+    @Suppress("VariableNaming")
     private val MAX_RECURSION_DEPTH = 1000
 
     fun arithParse(tokens: Container): ASTNode {

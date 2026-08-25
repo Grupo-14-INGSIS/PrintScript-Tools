@@ -4,7 +4,7 @@ import container.src.main.kotlin.Container
 import formatter.src.main.kotlin.formatrule.FormatRule
 import java.io.File
 
-class Formatter() {
+class Formatter {
 
     fun loadRules(configFilePath: String): List<FormatRule> {
         return ConfigLoader(configFilePath).loadConfig()
