@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
-    id 'org.jlleitschuh.gradle.ktlint'
+    id 'org.jlleitschuh.gradle.ktlint' //se mantiene para el ktlintFormat
+    id 'io.gitlab.arturbosch.detekt' //nuevo linter
     id 'jacoco'
     id 'maven-publish'
     id 'io.gitlab.arturbosch.detekt'
@@ -65,14 +66,24 @@ tasks.named("test") {
     }
 }
 
+tasks.named("check") {
+    dependsOn jacocoTestCoverageVerification
+}
+
 tasks.named("build") {
-    dependsOn "ktlintCheck", "test"
+    dependsOn "detekt", "test"
 }
 
 ktlint {
     if (file("$rootDir/.editorconfig").exists()) {
         additionalEditorconfigFile = file("$rootDir/.editorconfig")
     }
+}
+
+detekt {
+    toolVersion = "1.23.8"
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
 }
 
 // Para publicar objetos
