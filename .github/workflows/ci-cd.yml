@@ -55,18 +55,18 @@ jobs:
           echo "gpr.key=${{ secrets.MY_TOKEN }}" >> gradle.properties
 
       - name: Check format
-        # If ktlint modifies any file in the GH VM, cancels the job
-        run: |
-          CHANGES_BEFORE=$(git diff --name-only)
-          ./gradlew ktlintFormat --quiet
-          CHANGES_AFTER=$(git diff --name-only)
-          if [ "$CHANGES_BEFORE" != "$CHANGES_AFTER" ]; then
-            echo "Build blocked: ktlintFormat modified files."
-            exit 1
-          fi
+        run: ./gradlew ktlintCheck
 
       - name: Build
         run: ./gradlew build --continue > .git/test-output.log
+
+      - name: Verify coverage
+        run: |
+          if ! ./gradlew jacocoTestCoverageVerification --quiet; then
+            echo "Build blocked: code coverage below 80%."
+            ./gradlew jacocoTestReport
+            exit 1
+          fi
 
       - name: Publish to GitHub Packages
         if: github.ref == 'refs/heads/main'

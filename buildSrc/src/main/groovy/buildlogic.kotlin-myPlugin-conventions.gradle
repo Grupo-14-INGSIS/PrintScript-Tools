@@ -4,7 +4,6 @@ plugins {
     id 'io.gitlab.arturbosch.detekt' //nuevo linter
     id 'jacoco'
     id 'maven-publish'
-    id 'io.gitlab.arturbosch.detekt'
 }
 
 repositories {
@@ -39,6 +38,7 @@ test {
 }
 
 detekt {
+    toolVersion = "1.23.8"
     config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
 }
@@ -78,12 +78,6 @@ ktlint {
     if (file("$rootDir/.editorconfig").exists()) {
         additionalEditorconfigFile = file("$rootDir/.editorconfig")
     }
-}
-
-detekt {
-    toolVersion = "1.23.8"
-    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-    buildUponDefaultConfig = true
 }
 
 // Para publicar objetos
