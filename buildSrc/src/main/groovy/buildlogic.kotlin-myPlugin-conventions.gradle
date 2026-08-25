@@ -77,7 +77,6 @@ ktlint {
 detekt {
     toolVersion = "1.23.8"
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-    baseline = file("$rootDir/config/detekt/${project.name}-baseline.xml") //para que no se sobreescriba
     buildUponDefaultConfig = true
 }
 
