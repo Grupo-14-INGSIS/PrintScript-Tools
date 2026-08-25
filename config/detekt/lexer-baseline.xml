@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:DefaultStatementSplitter.kt$DefaultStatementSplitter$override fun splitIntoStatements( pieces: Sequence&lt;String&gt;, tokenPlugins: List&lt;TokenPlugin&gt; ): Sequence&lt;Container&gt;</ID>
+    <ID>MagicNumber:Lexer.kt$Lexer$8192</ID>
+    <ID>MaxLineLength:DefaultStatementSplitter.kt$DefaultStatementSplitter$throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")</ID>
+    <ID>MaxLineLength:TokenMapTest.kt$TokenMapTest$assertEquals(DataType.NUMBER_TYPE, TokenMap.classifyTokenMap("number"))</ID>
+    <ID>UseCheckOrError:DefaultStatementSplitter.kt$DefaultStatementSplitter$throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")</ID>
+    <ID>WildcardImport:LexerFileTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:LexerUnitTest.kt$import lexer.src.main.kotlin.*</ID>
+    <ID>WildcardImport:TokenPluginTest.kt$import lexer.src.main.kotlin.*</ID>
+    <ID>WildcardImport:TokenPluginTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

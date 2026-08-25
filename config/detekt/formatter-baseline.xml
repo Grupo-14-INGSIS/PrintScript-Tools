@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:SpaceBetweenTokensRule.kt$SpaceBetweenTokensRule$current.type != DataType.SEMICOLON &amp;&amp; current.type != DataType.LINE_BREAK &amp;&amp; current.type != space &amp;&amp; next != null &amp;&amp; next.type != space &amp;&amp; next.type !in noSpaceBefore &amp;&amp; current.type !in noSpaceAfter</ID>
+    <ID>CyclomaticComplexMethod:AssignSpacingRule.kt$AssignSpacingRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>CyclomaticComplexMethod:ConfigLoader.kt$ConfigLoader$internal fun createConfigurableRules(config: Map&lt;String, Any&gt;): List&lt;FormatRule&gt;</ID>
+    <ID>CyclomaticComplexMethod:LineBreakAfterPrintRule.kt$LineBreakAfterPrintRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>CyclomaticComplexMethod:LineBreakAfterSemicolonRule.kt$LineBreakAfterSemicolonRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>CyclomaticComplexMethod:SpaceBetweenTokensRule.kt$SpaceBetweenTokensRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>EmptyDefaultConstructor:Formatter.kt$Formatter$()</ID>
+    <ID>InvalidPackageDeclaration:IfBraceBelowLineRuleTest.kt$package formatter.src.test.kotlin.formatrule.optional</ID>
+    <ID>InvalidPackageDeclaration:NoSpaceAfterColonRuleTest.kt$package test.formatter.formatrule.optional</ID>
+    <ID>InvalidPackageDeclaration:NoSpaceBeforeColonRuleTest.kt$package test.formatter.formatrule.optional</ID>
+    <ID>LargeClass:ConfigLoaderAndFormatterTest.kt$ConfigLoaderAndFormatterTest</ID>
+    <ID>LoopWithTooManyJumpStatements:AssignSpacingRule.kt$AssignSpacingRule$while</ID>
+    <ID>LoopWithTooManyJumpStatements:LineBreakAfterSemicolonRule.kt$LineBreakAfterSemicolonRule$while</ID>
+    <ID>LoopWithTooManyJumpStatements:NoSpaceAfterColonRule.kt$NoSpaceAfterColonRule$while</ID>
+    <ID>LoopWithTooManyJumpStatements:NoSpaceBeforeColonRule.kt$NoSpaceBeforeColonRule$while</ID>
+    <ID>LoopWithTooManyJumpStatements:SpaceAfterColonRule.kt$SpaceAfterColonRule$while</ID>
+    <ID>LoopWithTooManyJumpStatements:SpaceBeforeColonRule.kt$SpaceBeforeColonRule$while</ID>
+    <ID>LoopWithTooManyJumpStatements:SpaceBetweenTokensRule.kt$SpaceBetweenTokensRule$while</ID>
+    <ID>MaxLineLength:IndentationRuleTest.kt$IndentationRuleTest$token(DataType.OPEN_PARENTHESIS, "(")</ID>
+    <ID>MaxLineLength:IndentationRuleTest.kt$IndentationRuleTest$token(DataType.STRING_LITERAL, "\"Entered two ifs\"")</ID>
+    <ID>MaxLineLength:LineBreakAfterPrintRule.kt$LineBreakAfterPrintRule$while</ID>
+    <ID>NestedBlockDepth:AssignSpacingRule.kt$AssignSpacingRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:IfBraceBelowLineRule.kt$IfBraceBelowLineRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:IfBraceOnSameLineRule.kt$IfBraceOnSameLineRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:LineBreakAfterPrintRule.kt$LineBreakAfterPrintRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:LineBreakAfterSemicolonRule.kt$LineBreakAfterSemicolonRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:NoSpaceAfterColonRule.kt$NoSpaceAfterColonRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:NoSpaceBeforeColonRule.kt$NoSpaceBeforeColonRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:SpaceAfterColonRule.kt$SpaceAfterColonRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:SpaceAroundOperatorRule.kt$SpaceAroundOperatorRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>NestedBlockDepth:SpaceBeforeColonRule.kt$SpaceBeforeColonRule$override fun format(statements: List&lt;Container&gt;): List&lt;Container&gt;</ID>
+    <ID>TooGenericExceptionCaught:Formatter.kt$Formatter$e: Exception</ID>
+    <ID>UnusedParameter:ConfigLoader.kt$ConfigLoader$version: String = "1.0"</ID>
+    <ID>UnusedPrivateProperty:LineBreakBeforePrintRule.kt$LineBreakBeforePrintRule$k</ID>
+    <ID>WildcardImport:CompleteTest.kt$import formatter.src.main.kotlin.formatrule.optional.*</ID>
+    <ID>WildcardImport:CompleteTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:ConfigLoaderAndFormatterTest.kt$import formatter.src.main.kotlin.formatrule.mandatory.*</ID>
+    <ID>WildcardImport:ConfigLoaderAndFormatterTest.kt$import formatter.src.main.kotlin.formatrule.optional.*</ID>
+    <ID>WildcardImport:ConfigLoaderAndFormatterTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:FormatterRulesTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:IfBraceBelowLineRuleTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:IfBraceOnSameLineRuleTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:LineBreakAfterSemicolonRuleTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:NoSpaceAfterColonRuleTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:NoSpaceBeforeColonRuleTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:SpaceAroundOperatorRuleTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

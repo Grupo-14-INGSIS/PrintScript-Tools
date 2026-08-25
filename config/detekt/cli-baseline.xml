@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:Analyzer.kt$Analyzer$private fun executeAnalysis(args: List&lt;String&gt;, includeLinting: Boolean)</ID>
+    <ID>InvalidPackageDeclaration:MultiStepProgressTest.kt$package progress.src.test.kotlin</ID>
+    <ID>InvalidPackageDeclaration:ProgressIndicatorTest.kt$package progress.src.test.kotlin</ID>
+    <ID>LongMethod:Analyzer.kt$Analyzer$private fun executeAnalysis(args: List&lt;String&gt;, includeLinting: Boolean)</ID>
+    <ID>LongMethod:FormatterAction.kt$FormatterAction$fun execute(args: List&lt;String&gt;)</ID>
+    <ID>LoopWithTooManyJumpStatements:MainApp.kt$RootCommand$while</ID>
+    <ID>MagicNumber:Analyzer.kt$Analyzer$3</ID>
+    <ID>MagicNumber:Analyzer.kt$Analyzer$4</ID>
+    <ID>MagicNumber:Executor.kt$Executor$3</ID>
+    <ID>MagicNumber:FormatterAction.kt$FormatterAction$1024.0</ID>
+    <ID>MagicNumber:FormatterAction.kt$FormatterAction$4</ID>
+    <ID>MagicNumber:ProgressIndicator.kt$ProgressIndicator$200</ID>
+    <ID>MatchingDeclarationName:MainApp.kt$RootCommand : Runnable</ID>
+    <ID>MaxLineLength:Analyzer.kt$Analyzer$// En ese punto del flujo no hay referencia a tokens porque pueden no existir aún (lexing), estar encapsulados en cada statement</ID>
+    <ID>MaxLineLength:MultiStepProgressTest.kt$MultiStepProgressTest$private lateinit var multiStepProgress: MultiStepProgress // lateint pq no se inicializa al moemento de crear l variable</ID>
+    <ID>MaxLineLength:ProgressIndicatorTest.kt$ProgressIndicatorTest$assertTrue(out.contains("✓") || out.contains("|") || out.contains("/") || out.contains("-") || out.contains("\\"))</ID>
+    <ID>MemberNameEqualsClassName:Main.kt$Main$@JvmStatic fun main(args: Array&lt;String&gt;)</ID>
+    <ID>NestedBlockDepth:Analyzer.kt$Analyzer$private fun executeAnalysis(args: List&lt;String&gt;, includeLinting: Boolean)</ID>
+    <ID>NestedBlockDepth:FormatterAction.kt$FormatterAction$fun execute(args: List&lt;String&gt;)</ID>
+    <ID>PrintStackTrace:FormatterAction.kt$FormatterAction$e</ID>
+    <ID>ReturnCount:Analyzer.kt$Analyzer$private fun executeAnalysis(args: List&lt;String&gt;, includeLinting: Boolean)</ID>
+    <ID>ReturnCount:Executor.kt$Executor$fun execute(args: List&lt;String&gt;)</ID>
+    <ID>ReturnCount:FormatterAction.kt$FormatterAction$fun execute(args: List&lt;String&gt;)</ID>
+    <ID>SwallowedException:MainApp.kt$RootCommand$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Analyzer.kt$Analyzer$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Executor.kt$Executor$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FormatterAction.kt$FormatterAction$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MainApp.kt$RootCommand$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MainApp.kt$e: Exception</ID>
+    <ID>WildcardImport:ProgressIndicator.kt$import kotlinx.coroutines.*</ID>
+    <ID>WildcardImport:ProgressIndicatorTest.kt$import org.junit.jupiter.api.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

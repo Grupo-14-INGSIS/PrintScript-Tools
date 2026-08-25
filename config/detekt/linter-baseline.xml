@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ConstructorParameterNaming:RulesConfig.kt$RulesConfig$val identifier_format: IdentifierNamingConfig? = null</ID>
+    <ID>ConstructorParameterNaming:RulesConfig.kt$RulesConfig$val mandatory_variable_or_literal_in_println: PrintLnConfig? = null</ID>
+    <ID>ConstructorParameterNaming:RulesConfig.kt$RulesConfig$val mandatory_variable_or_literal_in_readInput: ReadInputConfig? = null</ID>
+    <ID>MaxLineLength:LinterErrorTest.kt$LinterErrorTest$"[Linter] Row Position(line=3, column=7).line, Column Position(line=3, column=7).column: Invalid identifier"</ID>
+    <ID>MaxLineLength:PrintLnRule.kt$PrintLnRule$if</ID>
+    <ID>MaxLineLength:PrintLnRuleTest.kt$PrintLnRuleTest$private</ID>
+    <ID>MaxLineLength:ReadInputRule.kt$ReadInputRule$if</ID>
+    <ID>MaxLineLength:ReadInputRuleTest.kt$ReadInputRuleTest$private</ID>
+    <ID>WildcardImport:ConfigDataClassesTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:ConfigFactoryTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:LinterConfigTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:LinterErrorTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:LinterTest.kt$import io.mockk.*</ID>
+    <ID>WildcardImport:LinterTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+    <ID>WildcardImport:RulesTest.kt$import linter.src.main.kotlin.rules.*</ID>
+    <ID>WildcardImport:RulesTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

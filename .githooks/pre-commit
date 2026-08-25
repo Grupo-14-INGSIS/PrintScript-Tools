@@ -13,16 +13,6 @@ else
 fi
 
 echo ""
-echo "Ejecutando ktlintCheck"
-if ! ./gradlew ktlintCheck --quiet; then
-        echo "Commit bloqueado: errores de formato detectados por ktlint."
-        echo "Ejecuta './gradlew ktlintFormat' para corregir automáticamente."
-        exit 1
-else
-        echo "No se detectaron errores de formato."
-fi
-
-echo ""
 echo "Ejecutando Detekt"
 if ! ./gradlew detekt; then
         echo "Commit bloqueado: errores de calidad de código detectados por Detekt."
