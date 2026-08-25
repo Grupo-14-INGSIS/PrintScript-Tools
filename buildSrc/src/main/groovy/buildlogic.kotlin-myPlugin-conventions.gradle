@@ -3,6 +3,7 @@ plugins {
     id 'org.jlleitschuh.gradle.ktlint'
     id 'jacoco'
     id 'maven-publish'
+    id 'io.gitlab.arturbosch.detekt'
 }
 
 repositories {
@@ -34,6 +35,11 @@ compileTestKotlin {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+}
+
+detekt {
+    config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
 }
 
 jacocoTestReport {
