@@ -10,7 +10,7 @@ import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 
 class EnvironmentTest {
 

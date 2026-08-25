@@ -4,6 +4,5 @@ plugins {
 
 dependencies {
     implementation project(":ast")
-    implementation project(":token")
     testImplementation 'org.mockito:mockito-core:5.11.0'
 }

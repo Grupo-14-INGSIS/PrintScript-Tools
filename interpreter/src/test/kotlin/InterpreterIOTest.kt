@@ -2,7 +2,7 @@ package interpreter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
 import ast.src.main.kotlin.ASTNodeType
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Test

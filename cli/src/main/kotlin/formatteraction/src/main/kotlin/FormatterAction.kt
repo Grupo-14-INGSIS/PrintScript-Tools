@@ -71,7 +71,7 @@ class FormatterAction {
             )
 
             val lexerStep = progress.startStep("Lexing source file")
-            val lexer = Lexer.from(source)
+            val lexer = Lexer.from(source, version)
             val statements = lexer.lexIntoStatements().toList()
             lexerStep.complete("Source file lexed into ${statements.size} statements")
 

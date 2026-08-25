@@ -1,6 +1,5 @@
 package ast.src.main.kotlin
 
-import tokendata.src.main.kotlin.Position
 
 class ASTNode(
     val type: ASTNodeType?,

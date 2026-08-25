@@ -1,7 +1,7 @@
 package linter.src.test.kotlin
 
 import linter.src.main.kotlin.LintError
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 

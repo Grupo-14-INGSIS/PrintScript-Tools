@@ -1,7 +1,7 @@
 package linter.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNode
-import tokendata.src.main.kotlin.Position
+import ast.src.main.kotlin.Position
 import io.mockk.*
 import linter.src.main.kotlin.LintError
 import linter.src.main.kotlin.Linter
