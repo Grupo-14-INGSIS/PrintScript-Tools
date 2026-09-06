@@ -16,17 +16,24 @@ import java.io.File
 class Analyzer {
 
     // Modo validación: solo sintaxis y semántica
+    fun executeValidation(sourceFileObj: File, version: String = "1.0") {
+        executeAnalysis(sourceFileObj, configFileObj = null, version = version, includeLinting = false)
+    }
+
     fun executeValidation(args: List<String>) {
         executeAnalysis(args, includeLinting = false)
     }
 
     // Modo análisis: sintaxis + semántica + linting
+    fun execute(sourceFileObj: File, configFileObj: File?, version: String = "1.0") {
+        executeAnalysis(sourceFileObj, configFileObj = configFileObj, version = version, includeLinting = true)
+    }
+
     fun execute(args: List<String>) {
         executeAnalysis(args, includeLinting = true)
     }
 
     private fun executeAnalysis(args: List<String>, includeLinting: Boolean) {
-        // Validar argumentos según el modo
         if (includeLinting) {
             if (args.size < 2) {
                 println("Error: Must specify the source file and the analysis configuration file.")
@@ -41,11 +48,15 @@ class Analyzer {
             }
         }
 
-        val sourceFile = args[0]
-        val configFile = if (includeLinting && args.size > 1) args[1] else null
+        val sourceFile = File(args[0])
+        val configFile = if (includeLinting && args.size > 1) File(args[1]) else null
         val versionIndex = if (includeLinting) 2 else 1
         val version = if (args.size > versionIndex) args[versionIndex] else "1.0"
 
+        executeAnalysis(sourceFile, configFile, version, includeLinting)
+    }
+
+    fun executeAnalysis(sourceFileObj: File, configFileObj: File?, version: String, includeLinting: Boolean) {
         val supportedVersions = setOf("1.0", "1.1")
         if (version !in supportedVersions) {
             println("Error: Unsupported version '$version'.")
@@ -53,24 +64,19 @@ class Analyzer {
             return
         }
 
-        // Validar archivos
-        val sourceFileObj = File(sourceFile)
         if (!sourceFileObj.exists()) {
-            println("Error: The source file '$sourceFile' does not exist.")
+            println("Error: The source file '${sourceFileObj.path}' does not exist.")
             return
         }
 
-        if (includeLinting && configFile != null) {
-            val configFileObj = File(configFile)
-            if (!configFileObj.exists()) {
-                println("Error: The configuration file '$configFile' does not exist.")
-                return
-            }
+        if (includeLinting && (configFileObj == null || !configFileObj.exists())) {
+            println("Error: The configuration file '${configFileObj?.path}' does not exist.")
+            return
         }
 
         val source = sourceFileObj.readText()
         val mode = if (includeLinting) "analysis" else "validation"
-        println("Starting $mode of '$sourceFile' (PrintScript $version)")
+        println("Starting $mode of '${sourceFileObj.path}' (PrintScript $version)")
 
         val stepsCount = if (includeLinting) 4 else 3
         val progress = MultiStepProgress()
@@ -87,9 +93,9 @@ class Analyzer {
 
             // Paso 2: Cargar reglas (solo si se incluye linting)
             var lintRules: List<LintRule>? = null
-            if (includeLinting && configFile != null) {
+            if (includeLinting && configFileObj != null) {
                 val rulesStep = progress.startStep("Loading analysis rules")
-                lintRules = loadLintRules(configFile)
+                lintRules = loadLintRules(configFileObj.path)
                 rulesStep.complete("${lintRules.size} rule(s) loaded")
             }
 
@@ -175,4 +181,3 @@ class Analyzer {
         return rules
     }
 }
-

@@ -50,7 +50,7 @@ class CliTest {
         val cli = Cli()
         var customExecuted = false
 
-        val customCommand = object : CliCommand {
+        val customCommand = object : CliCommand() {
             override val name: String = "custom"
             override val description: String = "A custom command plugin"
             override fun execute(args: List<String>) {

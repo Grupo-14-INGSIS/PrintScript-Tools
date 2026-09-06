@@ -9,44 +9,27 @@ import java.io.FileWriter
 
 class FormatterAction {
 
-    fun execute(args: List<String>) {
-        if (args.size < 2) {
-            println(
-                "Error: Must specify the source file and the format configuration file."
-            )
-            println(
-                "Usage: formatter <source_file> <configuration_file> [version]"
-            )
-            return
-        }
-
-        val sourceFile = args[0]
-        val configFile = args[1]
-        val version = if (args.size > 2) args[2] else "1.0"
-
+    fun execute(sourceFileObj: File, configFileObj: File, version: String = "1.0") {
         if (version !in listOf("1.0", "1.1")) {
             println("Error: Unsupported version. Only 1.0 and 1.1 are admitted.")
             return
         }
 
-        val sourceFileObj = File(sourceFile)
-        val configFileObj: File = File(configFile)
-
         if (!configFileObj.exists()) {
-            println("Error: The configuration file '$configFile' does not exist.")
+            println("Error: The configuration file '${configFileObj.path}' does not exist.")
             return
         }
 
         if (!sourceFileObj.exists()) {
             println(
-                "Error: The source file '$sourceFile' does not exist."
+                "Error: The source file '${sourceFileObj.path}' does not exist."
             )
             return
         }
 
         val source = sourceFileObj.readText()
         println(
-            "Starting formatting of '$sourceFile' (PrintScript $version)"
+            "Starting formatting of '${sourceFileObj.path}' (PrintScript $version)"
         )
 
         val progress = MultiStepProgress()
@@ -67,7 +50,7 @@ class FormatterAction {
                 "Loading formatting configuration"
             )
             configStep.complete(
-                "Configuration loaded from $configFile"
+                "Configuration loaded from ${configFileObj.path}"
             )
 
             val lexerStep = progress.startStep("Lexing source file")
@@ -84,7 +67,7 @@ class FormatterAction {
 
             val saveStep = progress.startStep("Preparing formatted output")
 
-            FileWriter(sourceFile).use { writer ->
+            FileWriter(sourceFileObj).use { writer ->
                 formattedStatements.forEach { container ->
                     container.container.forEach { token ->
                         writer.append(token.content)
@@ -94,7 +77,6 @@ class FormatterAction {
 
             saveStep.complete("Formatted code ready")
 
-
             progress.complete()
         } catch (e: Exception) {
             println(
@@ -102,6 +84,22 @@ class FormatterAction {
             )
             e.printStackTrace()
         }
-        return
+    }
+
+    fun execute(args: List<String>) {
+        if (args.size < 2) {
+            println(
+                "Error: Must specify the source file and the format configuration file."
+            )
+            println(
+                "Usage: formatter <source_file> <configuration_file> [version]"
+            )
+            return
+        }
+
+        val sourceFile = args[0]
+        val configFile = args[1]
+        val version = if (args.size > 2) args[2] else "1.0"
+        execute(File(sourceFile), File(configFile), version)
     }
 }
