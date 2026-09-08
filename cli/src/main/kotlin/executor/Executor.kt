@@ -52,6 +52,7 @@ class Executor(
 
             progress.complete()
         } catch (e: Exception) {
+            progress.stop()
             ErrorReporter.report("execution", e, null)
         }
     }

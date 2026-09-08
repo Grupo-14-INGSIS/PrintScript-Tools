@@ -17,6 +17,10 @@ class SimpleAssignmentParser : StatementParser {
         val identifierToken = tokens.get(0)!!
         val assignationToken = tokens.get(1)!!
         val valueTokens = tokens.slice(2)
+        val valueNode = parser.expParse(valueTokens)
+        if (valueNode.type == ASTNodeType.INVALID) {
+            return valueNode
+        }
 
         return ASTNode(
             ASTNodeType.ASSIGNATION,
@@ -29,7 +33,7 @@ class SimpleAssignmentParser : StatementParser {
                     identifierToken.position.toAstPosition(),
                     listOf()
                 ),
-                parser.expParse(valueTokens)
+                valueNode
             )
         )
     }

@@ -79,6 +79,7 @@ class FormatterAction {
 
             progress.complete()
         } catch (e: Exception) {
+            progress.stop()
             println(
                 "Error during formatting: ${e.message}"
             )

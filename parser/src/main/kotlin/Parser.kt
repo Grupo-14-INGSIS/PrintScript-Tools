@@ -212,11 +212,28 @@ class Parser @JvmOverloads constructor(
         val functionToken = tokens.get(0)!!
         val argsTokens = tokens.slice(2, tokens.size() - 1)
 
+        if (argsTokens.isEmpty()) {
+            if (functionToken.type == DataType.PRINTLN) {
+                return invalid
+            }
+            return ASTNode(
+                ASTNodeType.FUNCTION_CALL,
+                functionToken.content,
+                functionToken.position.toAstPosition(),
+                emptyList()
+            )
+        }
+
+        val argNode = expParse(argsTokens)
+        if (argNode.type == ASTNodeType.INVALID) {
+            return invalid
+        }
+
         return ASTNode(
             ASTNodeType.FUNCTION_CALL,
             functionToken.content,
             functionToken.position.toAstPosition(),
-            if (argsTokens.isEmpty()) emptyList() else listOf(expParse(argsTokens))
+            listOf(argNode)
         )
     }
 

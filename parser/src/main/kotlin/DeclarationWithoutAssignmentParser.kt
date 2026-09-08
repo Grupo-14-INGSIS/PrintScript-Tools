@@ -42,6 +42,15 @@ class DeclarationWithoutAssignmentParser(
         val identifierToken = tokens.get(1)!!
         val typeToken = tokens.get(3)!!
 
+        if (typeToken.content.lowercase() !in features.types) {
+            return ASTNode(
+                ASTNodeType.INVALID,
+                "Error: Unknown or unsupported type '${typeToken.content}' in PrintScript $version",
+                typeToken.position.toAstPosition(),
+                listOf()
+            )
+        }
+
         return ASTNode(
             ASTNodeType.VAR_DECLARATION_WITHOUT_ASSIGNATION,
             "",

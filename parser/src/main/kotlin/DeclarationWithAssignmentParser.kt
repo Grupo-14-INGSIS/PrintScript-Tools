@@ -41,9 +41,25 @@ class DeclarationWithAssignmentParser(
 
         val identifierToken = tokens.get(1)!!
         val typeToken = tokens.get(3)!!
+
+        if (typeToken.content.lowercase() !in features.types) {
+            return ASTNode(
+                ASTNodeType.INVALID,
+                "Error: Unknown or unsupported type '${typeToken.content}' in PrintScript $version",
+                typeToken.position.toAstPosition(),
+                listOf()
+            )
+        }
+
         val assignationIndex = findTokenIndex(tokens, DataType.ASSIGNATION)
 
-        val valueTokens = tokens.slice(assignationIndex + 1)
+        val rawValueTokens = tokens.slice(assignationIndex + 1)
+        val semicolonIndex = findTokenIndex(rawValueTokens, DataType.SEMICOLON)
+        val valueTokens = if (semicolonIndex != -1) rawValueTokens.slice(0, semicolonIndex) else rawValueTokens
+        val valueNode = parser.expParse(valueTokens)
+        if (valueNode.type == ASTNodeType.INVALID) {
+            return valueNode
+        }
 
         return ASTNode(
             ASTNodeType.DECLARATION,
@@ -69,7 +85,7 @@ class DeclarationWithAssignmentParser(
                         )
                     )
                 ),
-                parser.expParse(valueTokens)
+                valueNode
             )
         )
     }

@@ -56,6 +56,10 @@ class DefaultStatementSplitter(
             }
         }
 
+        if (braceDepth != 0) {
+            throw IllegalStateException("Unclosed brace detected: missing '}'")
+        }
+
         if (currentStatementStrings.isNotEmpty()) {
             val meaningfulPieces = currentStatementStrings.filter { it.isNotBlank() }
             if (meaningfulPieces.isNotEmpty()) {

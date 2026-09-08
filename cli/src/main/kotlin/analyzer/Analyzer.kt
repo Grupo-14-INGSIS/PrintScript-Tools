@@ -107,7 +107,7 @@ class Analyzer {
                 val parser = Parser(statement, version)
                 val ast: ASTNode = parser.parse()
 
-                if (ast.type == ASTNodeType.INVALID) {
+                if (hasInvalidNode(ast)) {
                     hasError = true
                     parsingStep.complete("Syntax validation failed for statement")
                     println("\nSYNTAX ERROR: Invalid syntax detected in statement")
@@ -143,6 +143,7 @@ class Analyzer {
                 }
             }
         } catch (e: Exception) {
+            progress.fail(e.message ?: "Error")
             ErrorReporter.report(mode, e, null)
             // En ese punto del flujo no hay referencia a tokens porque pueden no existir aún (lexing), estar encapsulados en cada statement
             // (--> List<List<Token>>, parsing), o ya no ser relevantes (linting con ASTs)
@@ -179,5 +180,10 @@ class Analyzer {
         }
 
         return rules
+    }
+
+    private fun hasInvalidNode(node: ASTNode): Boolean {
+        if (node.type == ASTNodeType.INVALID) return true
+        return node.children.any { hasInvalidNode(it) }
     }
 }
