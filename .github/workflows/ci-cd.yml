@@ -29,7 +29,7 @@ jobs:
             #version=$(echo $version | awk -F. -v OFS=. '{$NF++;print}')
           
           fi
-          echo "version=$version-SNAPSHOT" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
 
   ci-cd:
     needs: get_version
