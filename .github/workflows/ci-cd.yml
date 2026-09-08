@@ -28,7 +28,6 @@ jobs:
             version=$(echo $version | awk -F. -v OFS=. '{$NF++;print}')
           
           fi
-          version="2.0.4"
           echo "version=$version" >> $GITHUB_OUTPUT
 
   ci-cd:
