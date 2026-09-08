@@ -12,6 +12,7 @@ class DefaultStatementSplitter(
     ): Sequence<Container> = sequence {
         var currentStatementStrings = mutableListOf<String>()
         var braceDepth = 0
+        var currentPosition = tokendata.src.main.kotlin.Position(1, 1)
 
         val peekingIterator = PeekingIterator(pieces.iterator())
 
@@ -50,8 +51,13 @@ class DefaultStatementSplitter(
             }
 
             if (shouldFinalize) {
-                val statementContainer = TokenFactory.createTokens(currentStatementStrings, tokenPlugins)
+                val (statementContainer, nextPosition) = TokenFactory.createTokensWithPosition(
+                    currentStatementStrings,
+                    tokenPlugins,
+                    currentPosition
+                )
                 yield(statementContainer)
+                currentPosition = nextPosition
                 currentStatementStrings = mutableListOf()
             }
         }
@@ -67,7 +73,7 @@ class DefaultStatementSplitter(
                 if (lastPiece != ";" && lastPiece != "}") {
                     throw IllegalStateException("Statement must end with a semicolon or closing brace. Remaining: $currentStatementStrings")
                 }
-                val finalContainer = TokenFactory.createTokens(currentStatementStrings, tokenPlugins)
+                val finalContainer = TokenFactory.createTokensWithPosition(currentStatementStrings, tokenPlugins, currentPosition).first
                 if (finalContainer.size() > 0) {
                     yield(finalContainer)
                 }

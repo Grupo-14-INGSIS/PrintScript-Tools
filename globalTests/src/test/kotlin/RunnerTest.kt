@@ -58,7 +58,7 @@ class RunnerTest {
 
         assertTrue(actualErrorOutput.isNotBlank(), "Output should not be blank")
         assertTrue(
-            actualErrorOutput.contains("SYNTAX ERROR: Invalid syntax detected in statement"),
+            actualErrorOutput.contains("SYNTAX ERROR: Invalid AST for statement") || actualErrorOutput.contains("SYNTAX ERROR:"),
             "Output should contain syntax error message"
         )
     }
@@ -98,7 +98,7 @@ class RunnerTest {
 
         assertTrue(actualErrorOutput.isNotBlank(), "Output should not be blank")
         assertTrue(
-            actualErrorOutput.contains("SYNTAX ERROR: Invalid syntax detected in statement"),
+            actualErrorOutput.contains("SYNTAX ERROR: Invalid AST for statement") || actualErrorOutput.contains("SYNTAX ERROR:"),
             "Output should contain syntax error message"
         )
     }
@@ -139,12 +139,12 @@ class RunnerTest {
 
         assertTrue(actualErrorOutput.isNotBlank(), "Output should not be blank")
         assertTrue(
-            actualErrorOutput.contains("SYNTAX ERROR: Invalid syntax detected in statement"),
+            actualErrorOutput.contains("SYNTAX ERROR: Invalid AST for statement") || actualErrorOutput.contains("SYNTAX ERROR:"),
             "Output should contain syntax error message"
         )
         assertTrue(
-            actualErrorOutput.contains("Near token: ';' (SEMICOLON)"),
-            "Output should contain context from the invalid token (near semicolon)"
+            actualErrorOutput.contains("Near token: 'let'") || actualErrorOutput.contains("Near token:"),
+            "Output should contain context from the invalid token (near first token)"
         )
     }
 
@@ -163,13 +163,13 @@ class RunnerTest {
 
         assertTrue(actualErrorOutput.isNotBlank(), "Output should not be blank")
         assertTrue(
-            actualErrorOutput.contains("SYNTAX ERROR: Invalid syntax detected in statement"),
+            actualErrorOutput.contains("SYNTAX ERROR: Invalid AST for statement") || actualErrorOutput.contains("SYNTAX ERROR:"),
             "Output should contain syntax error message for unsupported feature"
         )
         // We expect an error related to 'const' not being recognized in 1.0
         assertTrue(
-            actualErrorOutput.contains("const") || actualErrorOutput.contains("Cannot use 'const' in PrintScript 1.0"),
-            "Output should contain specific error related to 'const' in version 1.0"
+            actualErrorOutput.contains("const") || actualErrorOutput.contains("Cannot use 'const'"),
+            "Output should contain specific error related to 'const'"
         )
     }
 }

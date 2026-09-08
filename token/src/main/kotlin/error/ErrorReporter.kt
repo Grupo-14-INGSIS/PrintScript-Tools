@@ -1,4 +1,5 @@
 import container.src.main.kotlin.Container
+import tokendata.src.main.kotlin.DataType
 import tokendata.src.main.kotlin.Position
 
 class ErrorReporter {
@@ -13,8 +14,15 @@ class ErrorReporter {
         // Mostrar ubicación si hay tokens disponibles
         tokens?.let {
             if (it.size() > 0) {
-                val lastToken = it.get(it.size() - 1)
-                lastToken?.let { token ->
+                var targetToken = it.get(0)
+                for (i in 0 until it.size()) {
+                    val current = it.get(i)
+                    if (current != null && current.type != DataType.SPACE && current.type != DataType.LINE_BREAK) {
+                        targetToken = current
+                        break
+                    }
+                }
+                targetToken?.let { token ->
                     val pos: Position = token.position
                     println("Location: Line ${pos.line}, Column ${pos.column}")
                     println("Near token: '${token.content}' (${token.type})")

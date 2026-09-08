@@ -5,9 +5,9 @@ import tokendata.src.main.kotlin.Position
 
 object TokenFactory {
 
-    fun createTokens(pieces: List<String>, plugins: List<TokenPlugin>): Container {
+    fun createTokensWithPosition(pieces: List<String>, plugins: List<TokenPlugin>, startPosition: Position): Pair<Container, Position> {
         var container = Container()
-        var position = Position(line = 0, column = 0)
+        var position = startPosition
 
         pieces.filter { it.isNotEmpty() }
             .forEach { piece ->
@@ -30,7 +30,11 @@ object TokenFactory {
                     }
                 }
             }
-        return container
+        return Pair(container, position)
+    }
+
+    fun createTokens(pieces: List<String>, plugins: List<TokenPlugin>): Container {
+        return createTokensWithPosition(pieces, plugins, Position(line = 0, column = 0)).first
     }
 
     fun createTokens(pieces: List<String>, version: String = "1.0"): Container {

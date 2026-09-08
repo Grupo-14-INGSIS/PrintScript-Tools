@@ -107,11 +107,13 @@ class Analyzer {
                 val parser = Parser(statement, version)
                 val ast: ASTNode = parser.parse()
 
-                if (hasInvalidNode(ast)) {
+                val invalidNode = findInvalidNode(ast)
+                if (invalidNode != null) {
+                    val errorMessage = if (invalidNode.content.isNotBlank()) invalidNode.content else "Invalid AST for statement"
                     hasError = true
                     parsingStep.complete("Syntax validation failed for statement")
-                    println("\nSYNTAX ERROR: Invalid syntax detected in statement")
-                    ErrorReporter.report(mode, Exception("Invalid AST for statement"), statement)
+                    println("\nSYNTAX ERROR: $errorMessage")
+                    ErrorReporter.report(mode, Exception(errorMessage), statement)
                     break
                 }
                 asts.add(ast)
@@ -185,5 +187,14 @@ class Analyzer {
     private fun hasInvalidNode(node: ASTNode): Boolean {
         if (node.type == ASTNodeType.INVALID) return true
         return node.children.any { hasInvalidNode(it) }
+    }
+
+    private fun findInvalidNode(node: ASTNode): ASTNode? {
+        if (node.type == ASTNodeType.INVALID) return node
+        for (child in node.children) {
+            val invalid = findInvalidNode(child)
+            if (invalid != null) return invalid
+        }
+        return null
     }
 }
