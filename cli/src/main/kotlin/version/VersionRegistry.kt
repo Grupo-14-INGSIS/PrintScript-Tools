@@ -15,12 +15,12 @@ object VersionRegistry {
             version.name,
             lexer.src.main.kotlin.LexerVersionConfig(version.keywords, version.supportsBlocks)
         )
-        interpreter.src.main.kotlin.Interpreter.registerVersion(
+        interpreter.src.main.kotlin.InterpreterVersionRegistry.register(
             version.name,
-            version.supportedActions
-        ) { inputProvider ->
-            version.createActionHandlers(inputProvider)
-        }
+            interpreter.src.main.kotlin.InterpreterVersionConfig(version.supportedActions) { inputProvider ->
+                version.createActionHandlers(inputProvider)
+            }
+        )
     }
 
     fun get(versionName: String): PrintScriptVersion =

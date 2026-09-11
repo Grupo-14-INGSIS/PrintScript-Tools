@@ -20,8 +20,8 @@ class Interpreter(
         printer: (Any?) -> Unit = ::println,
         environment: Environment = Environment()
     ) : this(
-        actionHandlers = resolveHandlers(version, inputProvider),
-        supportedActions = resolveSupportedActions(version),
+        actionHandlers = InterpreterVersionRegistry.getHandlers(version, inputProvider),
+        supportedActions = InterpreterVersionRegistry.getSupportedActions(version),
         printer = printer,
         version = version,
         environment = environment
@@ -158,69 +158,19 @@ class Interpreter(
     }
 
     companion object {
-        val v10Actions: Set<Actions> = setOf(
-            Actions.ADD,
-            Actions.SUBTRACT,
-            Actions.MULTIPLY,
-            Actions.DIVIDE,
-            Actions.ASSIGNMENT_TO_EXISTING_VAR,
-            Actions.PRINT,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT,
-            Actions.LITERAL,
-            Actions.BLOCK,
-            Actions.VAR_DECLARATION_ONLY
-        )
-
-        val v11OnlyActions: Set<Actions> = setOf(
-            Actions.READ_INPUT,
-            Actions.READ_ENV,
-            Actions.IF_STATEMENT,
-            Actions.CONST_DECLARATION,
-            Actions.CONST_DECLARATION_AND_ASSIGNMENT
-        )
-
-        val defaultV10Handlers: Map<Actions, ActionType> = mapOf(
-            Actions.ADD to Add,
-            Actions.SUBTRACT to Subtract,
-            Actions.MULTIPLY to Multiply,
-            Actions.DIVIDE to Divide,
-            Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
-            Actions.PRINT to Print,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
-            Actions.VAR_DECLARATION_ONLY to VarDeclarationOnly,
-            Actions.LITERAL to Literal,
-            Actions.BLOCK to Block()
-        )
+        val v10Actions: Set<Actions> get() = InterpreterVersionRegistry.v10Actions
+        val v11OnlyActions: Set<Actions> get() = InterpreterVersionRegistry.v11OnlyActions
+        val defaultV10Handlers: Map<Actions, ActionType> get() = InterpreterVersionRegistry.defaultV10Handlers
 
         fun createV11Handlers(inputProvider: InputProvider?): Map<Actions, ActionType> =
-            buildMap {
-                inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
-                inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
-                put(Actions.IF_STATEMENT, IfStatement())
-                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
-            }
+            InterpreterVersionRegistry.createV11Handlers(inputProvider)
 
-        private val supportedActionsMap = mutableMapOf<String, Set<Actions>>(
-            "1.0" to v10Actions,
-            "1.1" to v10Actions + v11OnlyActions
-        )
-
-        private val handlerBuildersMap = mutableMapOf<String, (InputProvider?) -> Map<Actions, ActionType>>(
-            "1.0" to { defaultV10Handlers },
-            "1.1" to { inputProvider -> defaultV10Handlers + createV11Handlers(inputProvider) }
-        )
-
-        fun registerVersion(version: String, actions: Set<Actions>, handlerBuilder: (InputProvider?) -> Map<Actions, ActionType>) {
-            supportedActionsMap[version] = actions
-            handlerBuildersMap[version] = handlerBuilder
-        }
-
-        private fun resolveSupportedActions(version: String): Set<Actions> =
-            supportedActionsMap[version] ?: emptySet()
-
-        private fun resolveHandlers(version: String, inputProvider: InputProvider?): Map<Actions, ActionType> {
-            val builder = handlerBuildersMap[version] ?: { defaultV10Handlers }
-            return builder(inputProvider)
+        fun registerVersion(
+            version: String,
+            actions: Set<Actions>,
+            handlerBuilder: (InputProvider?) -> Map<Actions, ActionType>
+        ) {
+            InterpreterVersionRegistry.registerVersion(version, actions, handlerBuilder)
         }
     }
 }

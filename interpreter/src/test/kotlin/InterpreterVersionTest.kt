@@ -79,6 +79,42 @@ class InterpreterVersionTest {
         val interp = Interpreter(customHandlers)
         org.junit.jupiter.api.Assertions.assertNotNull(interp)
     }
+
+    @Test
+    fun `test interpreter version registry methods`() {
+        val registry = interpreter.src.main.kotlin.InterpreterVersionRegistry
+        org.junit.jupiter.api.Assertions.assertTrue(registry.isSupported("1.0"))
+        org.junit.jupiter.api.Assertions.assertTrue(registry.isSupported("1.1"))
+        org.junit.jupiter.api.Assertions.assertFalse(registry.isSupported("9.9"))
+
+        val config10 = registry.getConfig("1.0")
+        org.junit.jupiter.api.Assertions.assertNotNull(config10)
+        org.junit.jupiter.api.Assertions.assertTrue(
+            registry.isActionSupported("1.0", interpreter.src.main.kotlin.Actions.PRINT)
+        )
+        org.junit.jupiter.api.Assertions.assertFalse(
+            registry.isActionSupported("1.0", interpreter.src.main.kotlin.Actions.READ_INPUT)
+        )
+        org.junit.jupiter.api.Assertions.assertTrue(
+            registry.isActionSupported("1.1", interpreter.src.main.kotlin.Actions.READ_INPUT)
+        )
+
+        val supportedVersions = registry.supportedVersions()
+        org.junit.jupiter.api.Assertions.assertTrue(supportedVersions.contains("1.0"))
+        org.junit.jupiter.api.Assertions.assertTrue(supportedVersions.contains("1.1"))
+
+        assertThrows<IllegalArgumentException> {
+            registry.getConfig("non_existent")
+        }
+
+        val testConfig = interpreter.src.main.kotlin.InterpreterVersionConfig(
+            supportedActions = setOf(interpreter.src.main.kotlin.Actions.PRINT),
+            handlerBuilder = { registry.defaultV10Handlers }
+        )
+        registry.register("test_v3", testConfig)
+        org.junit.jupiter.api.Assertions.assertTrue(registry.isSupported("test_v3"))
+        org.junit.jupiter.api.Assertions.assertEquals(testConfig, registry.getConfig("test_v3"))
+    }
 }
 
 
