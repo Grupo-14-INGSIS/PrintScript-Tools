@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import runner.Runner
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
 
 class RunnerAndCommandTest {
@@ -72,5 +73,31 @@ class RunnerAndCommandTest {
         Main.main(arrayOf("unknown_cmd"))
         val output = outputStream.toString()
         assertTrue(output.contains("Unknown command: unknown_cmd"))
+    }
+
+    @Test
+    fun `test AnalyzerCommand execute with valid arguments`() {
+        val tempScript = File.createTempFile("test_an_cmd", ".ps")
+        tempScript.writeText("let myVar: number = 42;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_an_cmd_config", ".yaml")
+        tempConfig.writeText("rules:\n  identifier_format:\n    style: camelCase\n")
+        tempConfig.deleteOnExit()
+
+        val anCmd = AnalyzerCommand()
+        anCmd.execute(listOf(tempScript.absolutePath, tempConfig.absolutePath, "1.0"))
+        assertTrue(outputStream.toString().contains("SUCCESS: No issues were found"))
+    }
+
+    @Test
+    fun `test ValidationCommand execute with valid arguments`() {
+        val tempScript = File.createTempFile("test_val_cmd", ".ps")
+        tempScript.writeText("let myVar: number = 42;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        val valCmd = ValidationCommand()
+        valCmd.execute(listOf(tempScript.absolutePath, "1.0"))
+        assertTrue(outputStream.toString().contains("SUCCESS: File is syntactically and semantically valid"))
     }
 }

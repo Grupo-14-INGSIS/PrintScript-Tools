@@ -131,4 +131,177 @@ class AnalyzerTest {
         val output = outputStream.toString()
         assertTrue(output.contains("ANALYSIS RESULTS") && output.contains("issue(s) found"))
     }
+
+
+    @Test
+    fun `test executeValidation with File and default version`() {
+        val tempScript = File.createTempFile("test_file_val", ".ps")
+        tempScript.writeText("let myVar: number = 42;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        Analyzer().executeValidation(tempScript)
+        val output = outputStream.toString()
+        assertTrue(output.contains("SUCCESS: File is syntactically and semantically valid"))
+    }
+
+    @Test
+    fun `test executeValidation with File and explicit version 1_1`() {
+        val tempScript = File.createTempFile("test_file_val_11", ".ps")
+        tempScript.writeText("const myVar: boolean = true;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        Analyzer().executeValidation(tempScript, "1.1")
+        val output = outputStream.toString()
+        assertTrue(output.contains("SUCCESS: File is syntactically and semantically valid"))
+    }
+
+    @Test
+    fun `test execute with File and default version`() {
+        val tempScript = File.createTempFile("test_file_exec", ".ps")
+        tempScript.writeText("let myVar: number = 42;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_rules", ".yaml")
+        tempConfig.writeText(
+            """
+            rules:
+              identifier_format:
+                style: camelCase
+              mandatory-variable-or-literal-in-println:
+                enabled: true
+            """.trimIndent()
+        )
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(tempScript, tempConfig)
+        val output = outputStream.toString()
+        assertTrue(output.contains("SUCCESS: No issues were found"))
+    }
+
+    @Test
+    fun `test execute with File and explicit version 1_1`() {
+        val tempScript = File.createTempFile("test_file_exec_11", ".ps")
+        tempScript.writeText("const myVar: boolean = true;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_rules", ".yaml")
+        tempConfig.writeText(
+            """
+            rules:
+              identifier_format:
+                style: camelCase
+              mandatory-variable-or-literal-in-println:
+                enabled: true
+            """.trimIndent()
+        )
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(tempScript, tempConfig, "1.1")
+        val output = outputStream.toString()
+        assertTrue(output.contains("SUCCESS: No issues were found"))
+    }
+
+    @Test
+    fun `test execute with null configFileObj`() {
+        val tempScript = File.createTempFile("test_null_config", ".ps")
+        tempScript.writeText("let x: number = 5;")
+        tempScript.deleteOnExit()
+
+        Analyzer().execute(tempScript, null)
+        val output = outputStream.toString()
+        assertTrue(output.contains("configuration file 'null' does not exist"))
+    }
+
+    @Test
+    fun `test executeValidation with 1 arg defaults to version 1_0`() {
+        val tempScript = File.createTempFile("test_val_1arg", ".ps")
+        tempScript.writeText("let myVar: number = 42;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        Analyzer().executeValidation(listOf(tempScript.absolutePath))
+        val output = outputStream.toString()
+        assertTrue(output.contains("SUCCESS: File is syntactically and semantically valid"))
+    }
+
+    @Test
+    fun `test execute with 2 args defaults to version 1_0`() {
+        val tempScript = File.createTempFile("test_exec_2args", ".ps")
+        tempScript.writeText("let myVar: number = 42;\nprintln(myVar);")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_rules", ".yaml")
+        tempConfig.writeText("rules:\n  identifier_format:\n    style: camelCase\n")
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(listOf(tempScript.absolutePath, tempConfig.absolutePath))
+        val output = outputStream.toString()
+        assertTrue(output.contains("SUCCESS: No issues were found"))
+    }
+
+    @Test
+    fun `test executeValidation with non-blank syntax error message`() {
+        val tempScript = File.createTempFile("test_bool_in_1_0", ".ps")
+        tempScript.writeText("let x: boolean = true;")
+        tempScript.deleteOnExit()
+
+        Analyzer().executeValidation(listOf(tempScript.absolutePath, "1.0"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("SYNTAX ERROR: Error: Unknown or unsupported type 'boolean' in PrintScript 1.0"))
+    }
+
+    @Test
+    fun `test executeAnalysis with lexer exception unclosed brace`() {
+        val tempScript = File.createTempFile("test_unclosed", ".ps")
+        tempScript.writeText("if (true) { let x: number = 5;")
+        tempScript.deleteOnExit()
+
+        Analyzer().executeValidation(listOf(tempScript.absolutePath, "1.1"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("Unclosed brace detected") || output.contains("ERROR"))
+    }
+
+    @Test
+    fun `test execute with invalid YAML configuration file`() {
+        val tempScript = File.createTempFile("test_yaml_err_script", ".ps")
+        tempScript.writeText("let x: number = 5;")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_bad_yaml", ".yaml")
+        tempConfig.writeText("!config_error: something")
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(listOf(tempScript.absolutePath, tempConfig.absolutePath, "1.0"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("Configuration file error") || output.contains("ERROR"))
+    }
+
+    @Test
+    fun `test execute with YAML tag containing syntax`() {
+        val tempScript = File.createTempFile("test_yaml_syntax_script", ".ps")
+        tempScript.writeText("let x: number = 5;")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_syntax_yaml", ".yaml")
+        tempConfig.writeText("!syntax_error: something")
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(listOf(tempScript.absolutePath, tempConfig.absolutePath, "1.0"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("This appears to be a syntax error") || output.contains("ERROR"))
+    }
+
+    @Test
+    fun `test execute with YAML tag containing unexpected`() {
+        val tempScript = File.createTempFile("test_yaml_unexp_script", ".ps")
+        tempScript.writeText("let x: number = 5;")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_unexp_yaml", ".yaml")
+        tempConfig.writeText("!unexpected_error: something")
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(listOf(tempScript.absolutePath, tempConfig.absolutePath, "1.0"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("Unexpected token found") || output.contains("ERROR"))
+    }
 }
