@@ -1,153 +1,71 @@
 package globaltests.src.test.kotlin
 
 import ast.src.main.kotlin.ASTNodeType
-
-import org.junit.jupiter.api.Assertions.*
-import tokendata.src.main.kotlin.DataType
+import globaltests.src.test.kotlin.dsl.parseStatement
+import globaltests.src.test.kotlin.dsl.printScriptTest
+import lexer.src.main.kotlin.Lexer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import parser.src.main.kotlin.Parser
-import lexer.src.main.kotlin.Lexer
-import container.src.main.kotlin.Container
-import lexer.src.main.kotlin.StringCharSource
-import interpreter.src.main.kotlin.Interpreter // Import the Interpreter
-import inputprovider.src.main.kotlin.ConsoleInputProvider
-import inputprovider.src.main.kotlin.InputProvider
-import java.io.File
-import java.util.LinkedList
-import java.util.Queue
-
+import tokendata.src.main.kotlin.DataType
 
 class EndToEndTest {
 
-    private class MockInputProvider(
-        private val testPrinter: (Any?) -> Unit,
-        private val inputs: Queue<String> = LinkedList(),
-        private val envVars: Map<String, String> = emptyMap()
-    ) : InputProvider {
-        override fun readInput(prompt: String): String {
-            testPrinter(prompt)
-            return inputs.poll() ?: ""
-        }
-
-        override fun readEnv(varName: String): String? {
-            return envVars[varName]
-        }
-    }
-
-    private fun executeWithMockInput(
-        input: String,
-        version: String,
-        inputProvider: InputProvider
-    ): List<String> {
-        val lexer = Lexer(StringCharSource(input), version)
-        val statements = lexer.lexIntoStatements()
-
-        val output = mutableListOf<String>()
-        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
-
-        // The mock provider needs the test printer. This is a bit of a chicken-and-egg problem.
-        // For this to work, the MockInputProvider must be initialized with the testPrinter.
-        // We assume the caller of this function has already done so.
-        val interpreter = Interpreter(version, inputProvider, testPrinter)
-
-        for (statement in statements) {
-            val parser = Parser(statement, version)
-            val ast = parser.parse()
-            interpreter.interpret(ast)
-        }
-        return output
-    }
-
     @Test
     fun readInputTest() {
-        val testDir = "src/test/resources/e2e/read-input/"
-        val sourceCode = File(testDir + "main.ps").readText()
-        val inputLines = File(testDir + "input.txt").readLines()
-        val expectedOutput = File(testDir + "output.txt").readLines()
-
-        val output = mutableListOf<String>()
-        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
-
-        val mockInputProvider = MockInputProvider(testPrinter, LinkedList(inputLines))
-        val lexer = Lexer(StringCharSource(sourceCode), "1.1")
-        val statements = lexer.lexIntoStatements()
-        val interpreter = Interpreter("1.1", mockInputProvider, testPrinter)
-
-        for (statement in statements) {
-            val parser = Parser(statement, "1.1")
-            val ast = parser.parse()
-            interpreter.interpret(ast)
+        printScriptTest {
+            version = "1.1"
+            fromResourceDir("e2e/read-input")
         }
-        // The prompt from readInput is also printed, so we need to account for that.
-        // The TCK prints "Name:" and then the program prints "Hello world!".
-        // Our mock provider prints the prompt, which is collected.
-        // So we expect ["Name:", "Hello world!"]
-        assertEquals(expectedOutput, output)
     }
 
     @Test
     fun readEnvTest() {
-        val testDir = "src/test/resources/e2e/read-env/"
-        val sourceCode = File(testDir + "main.ps").readText()
-        val expectedOutput = File(testDir + "output.txt").readLines()
-
-        val output = mutableListOf<String>()
-        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
-        val envVars = mapOf("BEST_FOOTBALL_CLUB" to "San Lorenzo")
-
-        val mockInputProvider = MockInputProvider(testPrinter, LinkedList(), envVars)
-
-        val lexer = Lexer(StringCharSource(sourceCode), "1.1")
-        val statements = lexer.lexIntoStatements()
-        val interpreter = Interpreter("1.1", mockInputProvider, testPrinter)
-
-        for (statement in statements) {
-            val parser = Parser(statement, "1.1")
-            val ast = parser.parse()
-            interpreter.interpret(ast)
+        printScriptTest {
+            version = "1.1"
+            fromResourceDir("e2e/read-env")
+            withEnv("BEST_FOOTBALL_CLUB", "San Lorenzo")
         }
-        assertEquals(expectedOutput, output)
     }
 
     @Test
     fun `test simple variable declaration and assignment`() {
-        val input = "let x : number = 5;"
-        val result = executePartialPipeline(input, "1.0")
-        assertTrue(result)
+        printScriptTest {
+            code = "let x : number = 5;"
+            version = "1.0"
+            expectValidSyntax()
+        }
     }
 
     @Test
     fun `test simple variable declaration without assignment`() {
-        val input = "let x : number;"
-        val result = executePartialPipeline(input, "1.0")
-        assertTrue(result)
+        printScriptTest {
+            code = "let x : number;"
+            version = "1.0"
+            expectValidSyntax()
+        }
     }
 
     @Test
     fun `test arithmetic expression with decimal point`() {
-        val sourceCode = """
-            let Pi : number;
-            Pi = 3.14;
-            println(Pi / 2);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.1")
-        assertEquals(listOf("1.57"), output)
+        printScriptTest {
+            version = "1.1"
+            code = """
+                let Pi : number;
+                Pi = 3.14;
+                println(Pi / 2);
+            """.trimIndent()
+            expectOutputs("1.57")
+        }
     }
 
     @Test
     fun `test arithmetic expression parsing and evaluation`() {
-        val input = "2 + 3 * 4;"
-        val lexer = Lexer.from(input, "1.0")
-        val tokens: Container = lexer.lexIntoStatements().first()
-
-        val parser = Parser(tokens)
-        val ast = parser.parse()
+        val ast = parseStatement("2 + 3 * 4;", "1.0")
 
         assertEquals(ASTNodeType.ADDITION, ast.type)
         assertEquals(2, ast.children.size)
-
         assertEquals("2", ast.children[0].content)
 
         assertEquals(ASTNodeType.MULTIPLICATION, ast.children[1].type)
@@ -155,15 +73,9 @@ class EndToEndTest {
         assertEquals("4", ast.children[1].children[1].content)
     }
 
-
     @Test
     fun `test complex expression with parentheses`() {
-        val input = "5 * 4;"
-        val lexer = Lexer.from(input)
-        val tokens = lexer.lexIntoStatements().first()
-
-        val parser = Parser(tokens)
-        val ast = parser.parse()
+        val ast = parseStatement("5 * 4;", "1.0")
 
         assertEquals(ASTNodeType.MULTIPLICATION, ast.type)
         assertEquals("4", ast.children[1].content)
@@ -178,8 +90,11 @@ class EndToEndTest {
         )
 
         testCases.forEach { input ->
-            val result = executePartialPipeline(input, "1.0")
-            assertTrue(result, "Failed to process: $input")
+            printScriptTest {
+                code = input
+                version = "1.0"
+                expectValidSyntax()
+            }
         }
     }
 
@@ -228,23 +143,23 @@ class EndToEndTest {
 
     @Test
     fun `test arithmetic operations evaluation`() {
-        val testCases = mapOf(
-            "5 + 3;" to 8.0,
-            "10 - 4;" to 6.0,
-            "6 * 7;" to 42.0,
-            "15 / 3;" to 5.0
+        val testCases = listOf(
+            "5 + 3;",
+            "10 - 4;",
+            "6 * 7;",
+            "15 / 3;"
         )
 
-        testCases.forEach { (input, _) ->
-            val lexer = Lexer.from(input, "1.0")
-            val tokens = lexer.lexIntoStatements().first()
-
-            val parser = Parser(tokens)
-            val ast = parser.parse()
-
+        testCases.forEach { input ->
+            val ast = parseStatement(input, "1.0")
             assertNotNull(ast)
             assertTrue(
-                ast.type in listOf(ASTNodeType.ADDITION, ASTNodeType.SUBTRACTION, ASTNodeType.MULTIPLICATION, ASTNodeType.DIVISION)
+                ast.type in listOf(
+                    ASTNodeType.ADDITION,
+                    ASTNodeType.SUBTRACTION,
+                    ASTNodeType.MULTIPLICATION,
+                    ASTNodeType.DIVISION
+                )
             )
         }
     }
@@ -295,220 +210,180 @@ class EndToEndTest {
         assertEquals(3, numberCount, "Should have 3 'number' type declarations")
     }
 
-    private fun executePartialPipeline(input: String, version: String = "1.0"): Boolean {
-        return try {
-            val lexer = Lexer.from(input, version)
-            val tokens = lexer.lexIntoStatements().first()
-
-            val parser = Parser(tokens, version)
-            val ast = parser.parse()
-
-            ast.type != ASTNodeType.INVALID
-        } catch (e: Exception) {
-            println("Pipeline failed with exception: ${e.message}")
-            false
-        }
-    }
-
     @Test
     fun `invalid if statement condition throws exception`() {
-        val sourceCode = """
-            if(21) {
-                println("this should fail");
-            }
-        """.trimIndent()
-        val version = "1.1"
-
-        val ex = assertThrows(IllegalStateException::class.java) {
-            executeFullPipelineAndThrow(sourceCode, version)
+        printScriptTest {
+            version = "1.1"
+            code = """
+                if(21) {
+                    println("this should fail");
+                }
+            """.trimIndent()
+            expectError<IllegalStateException>("La condición de un 'if' debe ser booleana")
         }
-        assertTrue(ex.message!!.contains("La condición de un 'if' debe ser booleana"))
     }
 
     @Test
     fun `parsing if statement with version 1_0 fails`() {
-        val sourceCode = """
-            if(true) {
-                println("this should fail");
-            }
-        """.trimIndent()
-        val version = "1.0"
-
-        val exception = assertThrows(IllegalArgumentException::class.java) {
-            executeFullPipelineAndThrow(sourceCode, version)
+        printScriptTest {
+            version = "1.0"
+            code = """
+                if(true) {
+                    println("this should fail");
+                }
+            """.trimIndent()
+            expectError<IllegalArgumentException>("Unknown action for node type: 'INVALID'")
         }
-        assertEquals("Unknown action for node type: 'INVALID'", exception.message)
-    }
-
-    private fun executeFullPipelineAndThrow(input: String, version: String) {
-        val lexer = Lexer(StringCharSource(input), version)
-        val statements = lexer.lexIntoStatements()
-
-        // For this helper, we don't care about output, so we can use the default printer
-        val interpreter = Interpreter(version, ConsoleInputProvider())
-        for (statement in statements) {
-            val parser = Parser(statement, version)
-            val ast = parser.parse()
-            interpreter.interpret(ast)
-        }
-    }
-
-    private fun executeAndGetOutput(input: String, version: String = "1.0"): List<String> {
-        val lexer = Lexer(StringCharSource(input), version)
-        val statements = lexer.lexIntoStatements()
-
-        val output = mutableListOf<String>()
-        val testPrinter: (Any?) -> Unit = { message -> output.add(message.toString()) }
-
-        val interpreter = Interpreter(version, ConsoleInputProvider(), testPrinter)
-
-        for (statement in statements) {
-            val parser = Parser(statement, version)
-            val ast = parser.parse()
-            interpreter.interpret(ast)
-        }
-        return output
     }
 
     @Test
     fun `executing multiple statements maintains state`() {
-        val sourceCode = """
+        printScriptTest {
+            version = "1.0"
+            code = """
                 let x: number = 10;
                 let y: number = 5;
                 x = x + y;
                 println(x);
-        """.trimIndent()
-
-        val output = executeAndGetOutput(sourceCode, "1.0")
-
-        assertEquals(listOf("15"), output)
+            """.trimIndent()
+            expectOutputs("15")
+        }
     }
 
     @Test
     fun `complex arithmetic with variables`() {
-        val sourceCode = """
+        printScriptTest {
+            version = "1.0"
+            code = """
                 let x: number = 10;
                 let y: number = 5;
                 let z: number = 2;
                 println((x + y) * z);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.0")
-        assertEquals(listOf("30"), output)
+            """.trimIndent()
+            expectOutputs("30")
+        }
     }
 
     @Test
     fun `multiple reassignments`() {
-        val sourceCode = """
+        printScriptTest {
+            version = "1.0"
+            code = """
                 let x: number = 10;
                 x = x + 5;
                 x = x * 2;
                 println(x);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.0")
-        assertEquals(listOf("30"), output)
+            """.trimIndent()
+            expectOutputs("30")
+        }
     }
 
     @Test
     fun `using constants`() {
-        val sourceCode = """
+        printScriptTest {
+            version = "1.1"
+            code = """
                 const PI: number = 3.14;
                 let radius: number = 10;
                 println(PI * radius * radius);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.1")
-        assertEquals(listOf("314"), output)
+            """.trimIndent()
+            expectOutputs("314")
+        }
     }
 
     @Test
     fun `reassigning a constant fails`() {
-        val sourceCode = """
-            const PI: number = 3.14;
-            PI = 3.14159;
-        """.trimIndent()
-        val ex = assertThrows(IllegalStateException::class.java) {
-            executeFullPipelineAndThrow(sourceCode, "1.1")
+        printScriptTest {
+            version = "1.1"
+            code = """
+                const PI: number = 3.14;
+                PI = 3.14159;
+            """.trimIndent()
+            expectError<IllegalStateException>("Cannot reassign a constant")
         }
-        assertTrue(ex.message!!.contains("Cannot reassign a constant"))
     }
 
     @Test
     fun `using an undeclared variable fails`() {
-        val sourceCode = "println(x);"
-        val ex = assertThrows(IllegalStateException::class.java) {
-            executeAndGetOutput(sourceCode, "1.0")
+        printScriptTest {
+            version = "1.0"
+            code = "println(x);"
+            expectError<IllegalStateException>("Variable 'x' not declared")
         }
-        assertTrue(ex.message!!.contains("Variable 'x' not declared"))
     }
 
     @Test
     fun `type mismatch on assignment fails`() {
-        val sourceCode = """
-            let x: number = 10;
-            x = "hello";
-        """.trimIndent()
-        val ex = assertThrows(IllegalArgumentException::class.java) {
-            executeAndGetOutput(sourceCode, "1.0")
+        printScriptTest {
+            version = "1.0"
+            code = """
+                let x: number = 10;
+                x = "hello";
+            """.trimIndent()
+            expectError<IllegalArgumentException>("no se puede convertir a número")
         }
-        println(ex.message)
-        assertTrue(ex.message!!.contains("""no se puede convertir a número"""))
     }
 
     @Test
     fun `if statement with true condition executes block`() {
-        val sourceCode = """
-            let x: number = 5;
-            if (true) {
-                x = 10;
+        printScriptTest {
+            version = "1.1"
+            code = """
+                let x: number = 5;
+                if (true) {
+                    x = 10;
+                    println(x);
+                }
                 println(x);
-            }
-            println(x);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.1")
-        assertEquals(listOf("10", "10"), output)
+            """.trimIndent()
+            expectOutputs("10", "10")
+        }
     }
 
     @Test
     fun `math test`() {
-        val sourceCode = """
-            let x: number = 5 * 5 - 8;
-            println(x);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.1")
-        assertEquals(listOf("17"), output)
+        printScriptTest {
+            version = "1.1"
+            code = """
+                let x: number = 5 * 5 - 8;
+                println(x);
+            """.trimIndent()
+            expectOutputs("17")
+        }
     }
 
     @Test
     fun `if statement with false condition skips block`() {
-        val sourceCode = """
-            let x: number = 5;
-            if (false) {
-                x = 10;
+        printScriptTest {
+            version = "1.1"
+            code = """
+                let x: number = 5;
+                if (false) {
+                    x = 10;
+                    println(x);
+                }
                 println(x);
-            }
-            println(x);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.1")
-        assertEquals(listOf("5"), output)
+            """.trimIndent()
+            expectOutputs("5")
+        }
     }
 
     @Test
     fun `test if-else statement`() {
-        val sourceCode = """
-            let x: number = 5;
-            if (false) {
-                x = 10;
-                println("if block");
-            } else {
-                x = 20;
-                println("else block");
-            }
-            println(x);
-        """.trimIndent()
-        val output = executeAndGetOutput(sourceCode, "1.1")
-        assertEquals(listOf("else block", "20"), output)
+        printScriptTest {
+            version = "1.1"
+            code = """
+                let x: number = 5;
+                if (false) {
+                    x = 10;
+                    println("if block");
+                } else {
+                    x = 20;
+                    println("else block");
+                }
+                println(x);
+            """.trimIndent()
+            expectOutputs("else block", "20")
+        }
     }
 }
-
-
-
-
