@@ -57,8 +57,8 @@ class Analyzer {
     }
 
     fun executeAnalysis(sourceFileObj: File, configFileObj: File?, version: String, includeLinting: Boolean) {
-        val supportedVersions = setOf("1.0", "1.1")
-        if (version !in supportedVersions) {
+        val supportedVersions = cli.src.main.kotlin.version.VersionRegistry.supportedVersions()
+        if (!cli.src.main.kotlin.version.VersionRegistry.isSupported(version)) {
             println("Error: Unsupported version '$version'.")
             println("Supported versions: ${supportedVersions.joinToString(", ")}")
             return
@@ -184,10 +184,6 @@ class Analyzer {
         return rules
     }
 
-    private fun hasInvalidNode(node: ASTNode): Boolean {
-        if (node.type == ASTNodeType.INVALID) return true
-        return node.children.any { hasInvalidNode(it) }
-    }
 
     private fun findInvalidNode(node: ASTNode): ASTNode? {
         if (node.type == ASTNodeType.INVALID) return node

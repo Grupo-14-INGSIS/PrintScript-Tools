@@ -4,14 +4,16 @@ import formatter.src.main.kotlin.Formatter
 import lexer.src.main.kotlin.Lexer
 import progress.MultiStepProgress
 
+import cli.src.main.kotlin.version.VersionRegistry
 import java.io.File
 import java.io.FileWriter
 
 class FormatterAction {
 
     fun execute(sourceFileObj: File, configFileObj: File, version: String = "1.0") {
-        if (version !in listOf("1.0", "1.1")) {
-            println("Error: Unsupported version. Only 1.0 and 1.1 are admitted.")
+        if (!VersionRegistry.isSupported(version)) {
+            val supported = VersionRegistry.supportedVersions().joinToString(" and ")
+            println("Error: Unsupported version. Only $supported are admitted.")
             return
         }
 

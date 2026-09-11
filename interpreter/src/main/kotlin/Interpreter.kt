@@ -5,12 +5,27 @@ import ast.src.main.kotlin.ASTNodeType
 import inputprovider.src.main.kotlin.InputProvider
 import kotlin.jvm.JvmOverloads
 
-class Interpreter @JvmOverloads constructor(
-    override val version: String = "1.0",
-    private val inputProvider: InputProvider? = null,
+class Interpreter(
+    private val actionHandlers: Map<Actions, ActionType>,
+    private val supportedActions: Set<Actions> = actionHandlers.keys,
     override val printer: (Any?) -> Unit = ::println,
+    override val version: String = "custom",
     private val environment: Environment = Environment()
 ) : ExecutionContext {
+
+    @JvmOverloads
+    constructor(
+        version: String = "1.0",
+        inputProvider: InputProvider? = null,
+        printer: (Any?) -> Unit = ::println,
+        environment: Environment = Environment()
+    ) : this(
+        actionHandlers = resolveHandlers(version, inputProvider),
+        supportedActions = resolveSupportedActions(version),
+        printer = printer,
+        version = version,
+        environment = environment
+    )
 
     constructor(version: String, printer: (Any?) -> Unit) : this(
         version = version,
@@ -22,33 +37,6 @@ class Interpreter @JvmOverloads constructor(
     private val customActionHandlers = mutableMapOf<Actions, ActionType>()
     private val customFunctionActions = mutableMapOf<String, Actions>()
     private val customNodeActions = mutableMapOf<ASTNodeType, Actions>()
-
-    private val actionHandlers: Map<Actions, ActionType> = run {
-        val v10 = mapOf(
-            Actions.ADD to Add,
-            Actions.SUBTRACT to Subtract,
-            Actions.MULTIPLY to Multiply,
-            Actions.DIVIDE to Divide,
-            Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
-            Actions.PRINT to Print,
-            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
-            Actions.VAR_DECLARATION_ONLY to VarDeclarationOnly,
-            Actions.LITERAL to Literal,
-            Actions.BLOCK to Block()
-        )
-
-        if (version == "1.1") {
-            val v11 = buildMap<Actions, ActionType> {
-                inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
-                inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
-                put(Actions.IF_STATEMENT, IfStatement())
-                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
-            }
-            v10 + v11
-        } else {
-            v10
-        }
-    }
 
     fun registerHandler(action: Actions, handler: ActionType) {
         customActionHandlers[action] = handler
@@ -155,8 +143,22 @@ class Interpreter @JvmOverloads constructor(
         if (customActionHandlers.containsKey(action)) {
             return true
         }
+        return action in supportedActions
+    }
 
-        val v10Actions = setOf(
+    fun executeAST(ast: ASTNode): List<String> {
+        val outputs = mutableListOf<String>()
+
+        for (child in ast.children) {
+            val result = interpret(child)
+            if (result is String) outputs.add(result)
+        }
+
+        return outputs
+    }
+
+    companion object {
+        val v10Actions: Set<Actions> = setOf(
             Actions.ADD,
             Actions.SUBTRACT,
             Actions.MULTIPLY,
@@ -169,7 +171,7 @@ class Interpreter @JvmOverloads constructor(
             Actions.VAR_DECLARATION_ONLY
         )
 
-        val v11OnlyActions = setOf(
+        val v11OnlyActions: Set<Actions> = setOf(
             Actions.READ_INPUT,
             Actions.READ_ENV,
             Actions.IF_STATEMENT,
@@ -177,21 +179,48 @@ class Interpreter @JvmOverloads constructor(
             Actions.CONST_DECLARATION_AND_ASSIGNMENT
         )
 
-        return when (version) {
-            "1.0" -> action in v10Actions
-            "1.1" -> action in v10Actions || action in v11OnlyActions
-            else -> false
+        val defaultV10Handlers: Map<Actions, ActionType> = mapOf(
+            Actions.ADD to Add,
+            Actions.SUBTRACT to Subtract,
+            Actions.MULTIPLY to Multiply,
+            Actions.DIVIDE to Divide,
+            Actions.ASSIGNMENT_TO_EXISTING_VAR to AssignmentToExistingVar,
+            Actions.PRINT to Print,
+            Actions.VAR_DECLARATION_AND_ASSIGNMENT to VarDeclarationAndAssignment,
+            Actions.VAR_DECLARATION_ONLY to VarDeclarationOnly,
+            Actions.LITERAL to Literal,
+            Actions.BLOCK to Block()
+        )
+
+        fun createV11Handlers(inputProvider: InputProvider?): Map<Actions, ActionType> =
+            buildMap {
+                inputProvider?.let { put(Actions.READ_INPUT, ReadInput(it)) }
+                inputProvider?.let { put(Actions.READ_ENV, ReadEnv(it)) }
+                put(Actions.IF_STATEMENT, IfStatement())
+                put(Actions.CONST_DECLARATION_AND_ASSIGNMENT, VarDeclarationAndAssignment)
+            }
+
+        private val supportedActionsMap = mutableMapOf<String, Set<Actions>>(
+            "1.0" to v10Actions,
+            "1.1" to v10Actions + v11OnlyActions
+        )
+
+        private val handlerBuildersMap = mutableMapOf<String, (InputProvider?) -> Map<Actions, ActionType>>(
+            "1.0" to { defaultV10Handlers },
+            "1.1" to { inputProvider -> defaultV10Handlers + createV11Handlers(inputProvider) }
+        )
+
+        fun registerVersion(version: String, actions: Set<Actions>, handlerBuilder: (InputProvider?) -> Map<Actions, ActionType>) {
+            supportedActionsMap[version] = actions
+            handlerBuildersMap[version] = handlerBuilder
         }
-    }
 
-    fun executeAST(ast: ASTNode): List<String> {
-        val outputs = mutableListOf<String>()
+        private fun resolveSupportedActions(version: String): Set<Actions> =
+            supportedActionsMap[version] ?: emptySet()
 
-        for (child in ast.children) {
-            val result = interpret(child)
-            if (result is String) outputs.add(result)
+        private fun resolveHandlers(version: String, inputProvider: InputProvider?): Map<Actions, ActionType> {
+            val builder = handlerBuildersMap[version] ?: { defaultV10Handlers }
+            return builder(inputProvider)
         }
-
-        return outputs
     }
 }

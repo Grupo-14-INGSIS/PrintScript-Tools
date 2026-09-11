@@ -27,7 +27,7 @@ tasks.named('run', JavaExec) {
 }
 
 tasks.named('jacocoTestCoverageVerification') {
-    enabled = false
+    enabled = true
 }
 
 tasks.withType(PublishToMavenRepository).configureEach {

@@ -2,7 +2,7 @@ package parser.src.main.kotlin
 
 class VersionConfig {
     companion object {
-        private val VERSION_1_0 = VersionFeatures(
+        val VERSION_1_0 = VersionFeatures(
             keywords = setOf("let"),
             types = setOf("string", "number"),
             functions = setOf("println"),
@@ -20,7 +20,7 @@ class VersionConfig {
             )
         )
 
-        private val VERSION_1_1 = VersionFeatures(
+        val VERSION_1_1 = VersionFeatures(
             keywords = setOf("let", "const", "if", "else"),
             types = setOf("string", "number", "boolean"),
             functions = setOf("println", "readInput", "readEnv"),
@@ -42,13 +42,22 @@ class VersionConfig {
             supportsBooleans = true
         )
 
-        fun getFeatures(version: String): VersionFeatures {
-            return when (version) {
-                "1.0" -> VERSION_1_0
-                "1.1" -> VERSION_1_1
-                else -> throw IllegalArgumentException("Unsupported version: $version")
-            }
+        private val registry = mutableMapOf<String, VersionFeatures>(
+            "1.0" to VERSION_1_0,
+            "1.1" to VERSION_1_1
+        )
+
+        fun register(version: String, features: VersionFeatures) {
+            registry[version] = features
         }
+
+        fun getFeatures(version: String): VersionFeatures {
+            return registry[version] ?: throw IllegalArgumentException("Unsupported version: $version")
+        }
+
+        fun isSupported(version: String): Boolean = registry.containsKey(version)
+
+        fun supportedVersions(): Set<String> = registry.keys
     }
 }
 

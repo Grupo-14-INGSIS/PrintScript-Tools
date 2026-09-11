@@ -15,7 +15,7 @@ class StatementSplitterTest {
 
     @Test
     fun `DefaultStatementSplitter splits basic semicolon statements in v1_0`() {
-        val splitter = DefaultStatementSplitter("1.0")
+        val splitter = DefaultStatementSplitter(supportsBlocks = false)
         val plugins = TokenPluginFactory.createPlugins("1.0")
         val pieces = sequenceOf("let", " ", "x", " ", ":", " ", "number", " ", "=", " ", "5", ";")
 
@@ -26,7 +26,7 @@ class StatementSplitterTest {
 
     @Test
     fun `DefaultStatementSplitter handles if else block lookahead in v1_1`() {
-        val splitter = DefaultStatementSplitter("1.1")
+        val splitter = DefaultStatementSplitter(supportsBlocks = true)
         val plugins = TokenPluginFactory.createPlugins("1.1")
         val pieces = sequenceOf(
             "if", " ", "(", "true", ")", " ", "{", "println", "(", "\"a\"", ")", ";", "}",

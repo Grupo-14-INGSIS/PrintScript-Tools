@@ -7,6 +7,7 @@ import interpreter.src.main.kotlin.Interpreter
 import progress.MultiStepProgress
 import inputprovider.src.main.kotlin.ConsoleInputProvider
 import inputprovider.src.main.kotlin.InputProvider
+import cli.src.main.kotlin.version.VersionRegistry
 import java.io.File
 
 class Executor(
@@ -15,8 +16,9 @@ class Executor(
 ) {
 
     fun execute(sourceFile: File, version: String = "1.0") {
-        if (version !in listOf("1.0", "1.1")) {
-            println("Error: Unsupported version. Only 1.0 and 1.1 are supported.")
+        if (!VersionRegistry.isSupported(version)) {
+            val supported = VersionRegistry.supportedVersions().joinToString(" and ")
+            println("Error: Unsupported version. Only $supported are supported.")
             return
         }
 

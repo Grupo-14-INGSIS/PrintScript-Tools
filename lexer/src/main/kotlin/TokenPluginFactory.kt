@@ -8,7 +8,7 @@ import tokendata.src.main.kotlin.DataType
  */
 object TokenPluginFactory {
 
-    private val v10Keywords: Map<String, DataType> = mapOf(
+    val v10Keywords: Map<String, DataType> = mapOf(
         "let" to DataType.LET_KEYWORD,
         "string" to DataType.STRING_TYPE,
         "number" to DataType.NUMBER_TYPE,
@@ -26,7 +26,7 @@ object TokenPluginFactory {
         ")" to DataType.CLOSE_PARENTHESIS
     )
 
-    private val v11Keywords: Map<String, DataType> = v10Keywords + mapOf(
+    val v11Keywords: Map<String, DataType> = v10Keywords + mapOf(
         "const" to DataType.CONST_KEYWORD,
         "if" to DataType.IF_KEYWORD,
         "else" to DataType.ELSE_KEYWORD,
@@ -40,11 +40,11 @@ object TokenPluginFactory {
     )
 
     fun createPlugins(version: String = "1.0"): List<TokenPlugin> {
-        val keywords = when (version) {
-            "1.1" -> v11Keywords
-            else -> v10Keywords
-        }
+        val keywords = LexerVersionRegistry.getConfig(version).keywords
+        return createPlugins(keywords)
+    }
 
+    fun createPlugins(keywords: Map<String, DataType>): List<TokenPlugin> {
         return listOf(
             ExactMatchTokenPlugin(keywords),
             RegexTokenPlugin(Regex("^[\"'].*[\"']\$"), DataType.STRING_LITERAL),

@@ -3,7 +3,7 @@ package lexer.src.main.kotlin
 import container.src.main.kotlin.Container
 
 class DefaultStatementSplitter(
-    val version: String = "1.0"
+    val supportsBlocks: Boolean = false
 ) : StatementSplitter {
 
     override fun splitIntoStatements(
@@ -20,6 +20,7 @@ class DefaultStatementSplitter(
             val piece = peekingIterator.next()
             currentStatementStrings.add(piece)
 
+
             when (piece) {
                 "{" -> braceDepth++
                 "}" -> braceDepth--
@@ -27,7 +28,7 @@ class DefaultStatementSplitter(
 
             var shouldFinalize = false
 
-            if (version == "1.1" && piece == "}" && braceDepth == 0) {
+            if (supportsBlocks && piece == "}" && braceDepth == 0) {
                 // Lookahead para detectar 'else'
                 val bufferedWhitespace = mutableListOf<String>()
                 var nextNonBlankPiece: String? = null

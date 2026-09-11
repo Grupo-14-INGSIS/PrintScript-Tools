@@ -44,6 +44,41 @@ class InterpreterVersionTest {
             interpreter.interpret(unknownNode)
         }
     }
+
+    @Test
+    fun `test registerVersion and executeAST in Interpreter`() {
+        interpreter.src.main.kotlin.Interpreter.registerVersion(
+            "test_v2",
+            setOf(interpreter.src.main.kotlin.Actions.PRINT, interpreter.src.main.kotlin.Actions.LITERAL)
+        ) {
+            interpreter.src.main.kotlin.Interpreter.defaultV10Handlers
+        }
+
+        val interp = Interpreter("test_v2")
+        val ast = ASTNode(
+            ASTNodeType.FUNCTION_CALL,
+            "println",
+            Position(1, 0),
+            listOf(ASTNode(ASTNodeType.STRING_LITERAL, "hello", Position(1, 1), emptyList()))
+        )
+        interp.interpret(ast)
+
+        val root = ASTNode(
+            ASTNodeType.BLOCK,
+            "",
+            Position(0, 0),
+            listOf(ast)
+        )
+        val outputs = interp.executeAST(root)
+        org.junit.jupiter.api.Assertions.assertNotNull(outputs)
+    }
+
+    @Test
+    fun `test custom action handlers constructor`() {
+        val customHandlers = interpreter.src.main.kotlin.Interpreter.defaultV10Handlers
+        val interp = Interpreter(customHandlers)
+        org.junit.jupiter.api.Assertions.assertNotNull(interp)
+    }
 }
 
 

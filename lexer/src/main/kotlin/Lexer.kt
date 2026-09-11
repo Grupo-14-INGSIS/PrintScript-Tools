@@ -9,7 +9,9 @@ class Lexer @JvmOverloads constructor(
     val source: CharSource,
     val tokenPlugins: List<TokenPlugin>,
     val version: String = "1.0",
-    val statementSplitter: StatementSplitter = DefaultStatementSplitter(version)
+    val statementSplitter: StatementSplitter = DefaultStatementSplitter(
+        LexerVersionRegistry.getConfig(version).supportsBlocks
+    )
 ) {
 
     @JvmOverloads
@@ -17,7 +19,20 @@ class Lexer @JvmOverloads constructor(
         source = source,
         tokenPlugins = TokenPluginFactory.createPlugins(version),
         version = version,
-        statementSplitter = DefaultStatementSplitter(version)
+        statementSplitter = DefaultStatementSplitter(
+            LexerVersionRegistry.getConfig(version).supportsBlocks
+        )
+    )
+
+    constructor(
+        source: CharSource,
+        tokenPlugins: List<TokenPlugin>,
+        supportsBlocks: Boolean
+    ) : this(
+        source = source,
+        tokenPlugins = tokenPlugins,
+        version = "custom",
+        statementSplitter = DefaultStatementSplitter(supportsBlocks)
     )
 
     fun split(): Sequence<String> = sequence {
