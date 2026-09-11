@@ -303,5 +303,26 @@ class AnalyzerTest {
         val output = outputStream.toString()
         assertTrue(output.contains("Unexpected token found") || output.contains("ERROR"))
     }
+
+    @Test
+    fun `test execute analysis with readInput lint rule enabled`() {
+        val tempScript = File.createTempFile("test_readinput_lint", ".ps")
+        tempScript.writeText("let x: string = readInput(\"a\" + \"b\");")
+        tempScript.deleteOnExit()
+
+        val tempConfig = File.createTempFile("test_readinput_rule", ".yaml")
+        tempConfig.writeText(
+            """
+            rules:
+              mandatory-variable-or-literal-in-readInput:
+                enabled: true
+            """.trimIndent()
+        )
+        tempConfig.deleteOnExit()
+
+        Analyzer().execute(listOf(tempScript.absolutePath, tempConfig.absolutePath, "1.1"))
+        val output = outputStream.toString()
+        assertTrue(output.contains("readInput argument must be a literal or identifier"))
+    }
 }
 

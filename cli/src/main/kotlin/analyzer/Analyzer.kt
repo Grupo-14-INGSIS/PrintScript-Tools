@@ -11,6 +11,7 @@ import linter.src.main.kotlin.config.ConfigFactory
 import linter.src.main.kotlin.config.ConfigLoader
 import linter.src.main.kotlin.rules.IdentifierNamingRule
 import linter.src.main.kotlin.rules.PrintLnRule
+import linter.src.main.kotlin.rules.ReadInputRule
 import java.io.File
 
 class Analyzer {
@@ -179,6 +180,10 @@ class Analyzer {
 
         config.rules.mandatory_variable_or_literal_in_println?.let {
             rules += PrintLnRule(it.enabled)
+        }
+
+        config.rules.mandatory_variable_or_literal_in_readInput?.let {
+            rules += ReadInputRule(it.enabled)
         }
 
         return rules
