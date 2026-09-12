@@ -1,20 +1,40 @@
 let greeting: string = "Hello, PrintScript!";
 println(greeting);
 
-let radius: number = 5;
-const pi: number = 3.14159;
-let area: number = pi * radius * radius;
-println("Calculated area:");
+let baseNumber: number = 10;
+let decimalFactor: number = 2.5;
 
-println(area);
+let uninitializedNumber: number;
+uninitializedNumber = 40;
+println(uninitializedNumber);
 
-let isValid: boolean = true;
-if (isValid) {
-    let statusMessage: string = "Validation successful!";
-    println(statusMessage);
+let arithmeticResult: number = (baseNumber + uninitializedNumber) * 2 / decimalFactor - 15;
+let calculationSummary: string = "Arithmetic computation result: " + arithmeticResult;
+println(calculationSummary);
+
+const version11ConstPi: number = 3.14159;
+println(version11ConstPi);
+
+const version11ConstTitle: string = "PrintScript 1.1 Feature Showcase";
+println(version11ConstTitle);
+
+let version11BooleanTrueCondition: boolean = true;
+let version11BooleanFalseFlag: boolean = false;
+
+if (version11BooleanTrueCondition) {
+    let version11InsideIfScopeMessage: string = "Version 1.1: If block executed successfully";
+    println(version11InsideIfScopeMessage);
 
 } else {
-    let errorMessage: string = "Validation failed!";
-    println(errorMessage);
+    let version11InsideElseScopeMessage: string = "Version 1.1: Else block reached";
+    println(version11InsideElseScopeMessage);
 
 }
+
+let version11ReadEnvSystemPath: string = readEnv("PATH");
+let version11EnvSuccessNotification: string = "Version 1.1: Environment variable PATH read successfully";
+println(version11EnvSuccessNotification);
+
+let version11ReadInputPromptResult: string = readInput("Please enter your name: ");
+let version11WelcomeGreeting: string = "Welcome to PrintScript 1.1, " + version11ReadInputPromptResult;
+println(version11WelcomeGreeting);
