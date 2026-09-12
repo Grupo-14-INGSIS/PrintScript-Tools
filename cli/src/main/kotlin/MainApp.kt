@@ -1,30 +1,16 @@
-import org.jline.reader.LineReaderBuilder
-import org.jline.terminal.TerminalBuilder
 import cli.src.main.kotlin.Cli
 
 class RootCommand : Runnable {
     val cli = Cli()
 
     fun startInteractiveMode() {
-        val terminal = TerminalBuilder.builder()
-            .system(true)
-            .build()
-
-        val reader = LineReaderBuilder.builder()
-            .terminal(terminal)
-            .build()
-
         println("=== CLIPS - CLI PrintScript - Modo Interactivo ===")
         println("Comandos disponibles: ${cli.availableCommands().joinToString(" | ")}")
         println("Escribe 'exit' para salir\n")
 
         while (true) {
-            val line = try {
-                reader.readLine("CLIPS> ")
-            } catch (e: Exception) {
-                break
-            }
-
+            println("CLIPS> ")
+            val line = readlnOrNull() ?: break
             val trimmedLine = line.trim()
 
             if (trimmedLine.equals("exit", ignoreCase = true)) {
@@ -43,8 +29,6 @@ class RootCommand : Runnable {
                 System.err.println("Error: ${e.message}")
             }
         }
-
-        terminal.close()
     }
 
     override fun run() {
