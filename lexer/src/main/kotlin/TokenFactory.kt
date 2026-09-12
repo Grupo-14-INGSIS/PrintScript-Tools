@@ -20,7 +20,7 @@ object TokenFactory {
                     position = if (lines.size > 1) {
                         Position(
                             line = position.line + lines.size - 1,
-                            column = lines.last().length
+                            column = lines.last().length + 1
                         )
                     } else {
                         Position(

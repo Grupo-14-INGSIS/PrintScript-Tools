@@ -9,9 +9,6 @@ import linter.src.main.kotlin.Linter
 import linter.src.main.kotlin.LintRule
 import linter.src.main.kotlin.config.ConfigFactory
 import linter.src.main.kotlin.config.ConfigLoader
-import linter.src.main.kotlin.rules.IdentifierNamingRule
-import linter.src.main.kotlin.rules.PrintLnRule
-import linter.src.main.kotlin.rules.ReadInputRule
 import java.io.File
 
 class Analyzer {
@@ -168,27 +165,8 @@ class Analyzer {
     private fun loadLintRules(configFile: String): List<LintRule> {
         val loader = ConfigLoader()
         val yamlMap = loader.loadYaml(configFile)
-
-        val factory = ConfigFactory()
-        val config = factory.createConfig(yamlMap)
-
-        val rules = mutableListOf<LintRule>()
-
-        config.rules.identifier_format?.let {
-            rules += IdentifierNamingRule(it.style)
-        }
-
-        config.rules.mandatory_variable_or_literal_in_println?.let {
-            rules += PrintLnRule(it.enabled)
-        }
-
-        config.rules.mandatory_variable_or_literal_in_readInput?.let {
-            rules += ReadInputRule(it.enabled)
-        }
-
-        return rules
+        return ConfigFactory().createRules(yamlMap)
     }
-
 
     private fun findInvalidNode(node: ASTNode): ASTNode? {
         if (node.type == ASTNodeType.INVALID) return node

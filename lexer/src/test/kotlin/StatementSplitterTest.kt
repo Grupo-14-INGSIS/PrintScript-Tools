@@ -59,4 +59,24 @@ class StatementSplitterTest {
         assertEquals(1, statements.size)
         assertEquals(0, statements[0].size())
     }
+
+    @Test
+    fun `tokens across multiple lines maintain 1-indexed column position`() {
+        val lexer = Lexer.from("let x: number = 5;\nprintln();", "1.0")
+        val statements = lexer.lexIntoStatements().toList()
+        assertEquals(2, statements.size)
+
+        val secondStatement = statements[1]
+        var targetToken = secondStatement.get(0)
+        for (i in 0 until secondStatement.size()) {
+            val current = secondStatement.get(i)
+            if (current != null && current.content == "println") {
+                targetToken = current
+                break
+            }
+        }
+        assertEquals("println", targetToken?.content)
+        assertEquals(2, targetToken?.position?.line)
+        assertEquals(1, targetToken?.position?.column)
+    }
 }

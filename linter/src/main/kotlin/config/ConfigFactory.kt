@@ -1,6 +1,13 @@
 package linter.src.main.kotlin.config
 
+import linter.src.main.kotlin.LintRule
+import linter.src.main.kotlin.LintRuleRegistry
+
 class ConfigFactory {
+
+    fun createRules(yamlMap: Map<String, Any>): List<LintRule> =
+        LintRuleRegistry.createRules(yamlMap)
+
     fun createConfig(yamlMap: Map<String, Any>): LinterConfig {
         val rulesMap = if (yamlMap.containsKey("rules")) {
             yamlMap["rules"] as? Map<String, Any> ?: emptyMap()
@@ -12,11 +19,15 @@ class ConfigFactory {
             IdentifierNamingConfig(it["style"] as? String ?: "camelCase")
         }
 
-        val printlnConfig = (rulesMap["mandatory-variable-or-literal-in-println"] as? Map<String, Any>)?.let {
+        val rawPrintln = rulesMap["mandatory-variable-or-literal-in-println"]
+            ?: rulesMap["mandatory_variable_or_literal_in_println"]
+        val printlnConfig = (rawPrintln as? Map<String, Any>)?.let {
             PrintLnConfig(it["enabled"] as? Boolean ?: true)
         }
 
-        val readInputConfig = (rulesMap["mandatory-variable-or-literal-in-readInput"] as? Map<String, Any>)?.let {
+        val rawReadInput = rulesMap["mandatory-variable-or-literal-in-readInput"]
+            ?: rulesMap["mandatory_variable_or_literal_in_readInput"]
+        val readInputConfig = (rawReadInput as? Map<String, Any>)?.let {
             ReadInputConfig(it["enabled"] as? Boolean ?: true)
         }
 

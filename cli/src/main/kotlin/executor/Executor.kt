@@ -33,6 +33,7 @@ class Executor(
         val progress = MultiStepProgress()
         progress.initialize(3) // Now 3 steps: Lexing, Parsing+Execution
 
+        var currentStatement: container.src.main.kotlin.Container? = null
         try {
             // Paso 1: Análisis léxico
             val lexerStep = progress.startStep("Performing lexical analysis")
@@ -45,8 +46,22 @@ class Executor(
             val interpreter = Interpreter(version, inputProvider, printer) // Default printer used here
 
             for (statement in statements) {
+                currentStatement = statement
                 val parser = Parser(statement, version) // Parser takes a single statement
                 val ast: ASTNode = parser.parse()
+
+                val invalidNode = findInvalidNode(ast)
+                if (invalidNode != null) {
+                    val errorMessage = if (invalidNode.content.isNotBlank()) {
+                        invalidNode.content
+                    } else {
+                        "Invalid AST for statement"
+                    }
+                    progress.stop()
+                    ErrorReporter.report("execution", Exception(errorMessage), statement)
+                    return
+                }
+
                 interpreter.interpret(ast)
             }
 
@@ -55,8 +70,17 @@ class Executor(
             progress.complete()
         } catch (e: Exception) {
             progress.stop()
-            ErrorReporter.report("execution", e, null)
+            ErrorReporter.report("execution", e, currentStatement)
         }
+    }
+
+    private fun findInvalidNode(node: ASTNode): ASTNode? {
+        if (node.type == ast.src.main.kotlin.ASTNodeType.INVALID) return node
+        for (child in node.children) {
+            val invalid = findInvalidNode(child)
+            if (invalid != null) return invalid
+        }
+        return null
     }
 
     fun execute(args: List<String>) {
