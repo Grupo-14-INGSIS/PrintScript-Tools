@@ -1,0 +1,43 @@
+@startuml
+
+skinparam componentStyle rectangle
+skinparam roundCorner 10
+skinparam shadowing false
+skinparam packageBackgroundColor #F8F9FA
+skinparam componentBackgroundColor #FFFFFF
+
+package "Capa 2: Aplicacion" {
+    [cli]
+}
+
+package "Capa 1: Motores" {
+    [lexer]
+    [formatter]
+    [parser]
+    [interpreter]
+    [linter]
+}
+
+package "Capa 0: Modelos Base" {
+    [token]
+    [ast]
+}
+
+' Capa 2 -> Capa 1
+[cli] ..> [lexer]
+[cli] ..> [formatter]
+[cli] ..> [parser]
+[cli] ..> [interpreter]
+[cli] ..> [linter]
+
+' Capa 1 -> Capa 0
+[lexer] ..> [token]
+[formatter] ..> [token]
+
+[parser] ..> [token]
+[parser] ..> [ast]
+
+[interpreter] ..> [ast]
+[linter] ..> [ast]
+
+@enduml
