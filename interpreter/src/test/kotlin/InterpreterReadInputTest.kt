@@ -7,6 +7,8 @@ import ast.src.main.kotlin.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 class InterpreterReadInputTest {
     private class FakeInputProvider(private val response: String) : InputProvider {
@@ -24,46 +26,39 @@ class InterpreterReadInputTest {
         override fun readEnv(varName: String): String? = null
     }
 
-    @Test
-    fun `returns numeric input when convertible`() {
-        val inputProvider = FakeInputProvider("42.5")
+    @ParameterizedTest(name = "Input ''{0}'' returns ''{1}''")
+    @CsvSource(
+        "42.5, 42.5", // Numeric string
+        "hello, hello", // Standard string
+        "'', ''" // Empty string
+    )
+    fun `readInput returns correct value`(mockedResponse: String, expectedResult: String) {
+        val inputProvider = FakeInputProvider(mockedResponse)
         val interpreter = Interpreter("1.1", inputProvider)
-        val node = ASTNode(
-            ASTNodeType.FUNCTION_CALL,
-            "readInput",
-            Position(0, 0),
-            children = listOf(
-                ASTNode(ASTNodeType.STRING_LITERAL, "Enter a number", Position(0, 0), children = emptyList())
-            )
-        )
-        val result = interpreter.interpret(node)
-        assertEquals("42.5", result)
-    }
 
-    @Test
-    fun `returns string input when not convertible`() {
-        val inputProvider = FakeInputProvider("hello")
-        val interpreter = Interpreter("1.1", inputProvider)
-        val node = ASTNode(
-            ASTNodeType.FUNCTION_CALL,
-            "readInput",
-            Position(0, 0),
-            children = listOf(
-                ASTNode(ASTNodeType.STRING_LITERAL, "Enter text", Position(0, 0), children = emptyList())
-            )
-        )
-        val result = interpreter.interpret(node)
-        assertEquals("hello", result)
+        val result = interpreter.interpret(createReadInputNode("Enter value"))
+        assertEquals(expectedResult, result)
     }
 
     @Test
     fun `handles call with no prompt node`() {
         val inputProvider = VerifiableInputProvider("")
         val interpreter = Interpreter("1.1", inputProvider)
-        val node = ASTNode(ASTNodeType.FUNCTION_CALL, "readInput", Position(0, 0), children = emptyList())
+
+        val node = ASTNode(ASTNodeType.FUNCTION_CALL, "readInput", Position(0, 0), emptyList())
         interpreter.interpret(node)
+
         assert(inputProvider.wasCalled)
     }
+
+    private fun createReadInputNode(prompt: String): ASTNode {
+        return ASTNode(
+            ASTNodeType.FUNCTION_CALL,
+            "readInput",
+            Position(0, 0),
+            children = listOf(
+                ASTNode(ASTNodeType.STRING_LITERAL, prompt, Position(0, 0), emptyList())
+            )
+        )
+    }
 }
-
-

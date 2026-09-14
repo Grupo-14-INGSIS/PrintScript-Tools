@@ -6,8 +6,11 @@ import cli.src.main.kotlin.command.CliCommand
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 class CliTest {
 
@@ -43,6 +46,20 @@ class CliTest {
 
         val output = outputStream.toString().trim()
         assertTrue(output.contains("Unknown command: unknown"))
+    }
+
+    @ParameterizedTest(name = "Core command ''{0}'' is recognized")
+    @ValueSource(strings = ["formatter", "validation", "analyzer", "execution"])
+    fun `core commands are recognized`(command: String) {
+        val cli = Cli()
+        cli.run(listOf(command))
+
+        val output = outputStream.toString().trim()
+        // Ensure the CLI knows the command (doesn't throw unknown command error)
+        assertFalse(
+            output.contains("Unknown command"),
+            "Command $command was not recognized. Output: $output"
+        )
     }
 
     @Test
@@ -88,32 +105,6 @@ class CliTest {
         val output = outputStream.toString().trim()
         assertTrue(
             output.contains("Must specify") ||
-                output.contains("ERROR")
-        )
-    }
-
-    @Test
-    fun `formatter command is recognized`() {
-        val cli = Cli()
-        cli.run(listOf("formatter"))
-
-        val output = outputStream.toString().trim()
-        assertTrue(
-            !output.contains("Unknown command") ||
-                output.contains("Must specify") ||
-                output.contains("ERROR")
-        )
-    }
-
-    @Test
-    fun `validation command is recognized`() {
-        val cli = Cli()
-        cli.run(listOf("validation"))
-
-        val output = outputStream.toString().trim()
-        assertTrue(
-            !output.contains("Unknown command") ||
-                output.contains("Must specify") ||
                 output.contains("ERROR")
         )
     }

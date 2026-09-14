@@ -10,24 +10,27 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import parser.src.main.kotlin.Parser
 
+fun buildTokenContainer(vararg tokens: Pair<DataType, String>): Container {
+    var container = Container()
+    for ((type, content) in tokens) {
+        container = container.addContainer(Token(type, content, Position(0, 0)))
+    }
+    return container
+}
+
 class ParserTest {
 
     @Test
     fun newParserTest() {
-        var container = Container()
-        val sentence = listOf("println", "(", "5", "+", "3", ")", ";")
-        val dataTypes = listOf(
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "3",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root = parser.parse()
 
@@ -40,24 +43,19 @@ class ParserTest {
 
     @Test
     fun basicAssignationTest() {
-        var container = Container()
-        val sentence = listOf("let", " ", "myVar", ":", " ", "number", " ", "=", " ", "14", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.SPACE,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.SPACE,
-            DataType.NUMBER_TYPE,
-            DataType.SPACE,
-            DataType.ASSIGNATION,
-            DataType.SPACE,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "myVar",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "14",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
         val declaration: ASTNode = root.children[0]
@@ -71,18 +69,13 @@ class ParserTest {
 
     @Test
     fun basicPrintTest() {
-        var container = Container()
-        val sentence = listOf("println", "(", "hi", ")", ";")
-        val dataTypes = listOf(
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.STRING_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.STRING_LITERAL to "hi",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -99,19 +92,14 @@ class ParserTest {
            2 3
         */
 
-        var container = Container()
-        val sentence = listOf("8", "+", "2", "*", "3", ";")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.MULTIPLICATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "8",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "2",
+            DataType.MULTIPLICATION to "*",
+            DataType.NUMBER_LITERAL to "3",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
         val mult = root.children[1]
@@ -132,25 +120,20 @@ class ParserTest {
 
         (10-8 + 4*3) / 2 + 4
          */
-        var container = Container()
-        val sentence = listOf("10", "-", "8", "+", "4", "*", "3", "/", "2", "+", "4", ";")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.SUBTRACTION,
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.MULTIPLICATION,
-            DataType.NUMBER_LITERAL,
-            DataType.DIVISION,
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "10",
+            DataType.SUBTRACTION to "-",
+            DataType.NUMBER_LITERAL to "8",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "4",
+            DataType.MULTIPLICATION to "*",
+            DataType.NUMBER_LITERAL to "3",
+            DataType.DIVISION to "/",
+            DataType.NUMBER_LITERAL to "2",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "4",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -174,48 +157,38 @@ class ParserTest {
 
     @Test
     fun tckTests() {
-        var container = Container()
-        val sentence = listOf("let", " ", "a", ":", " ", "number", " ", "=", " ", "21", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.SPACE,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.SPACE,
-            DataType.NUMBER_TYPE,
-            DataType.SPACE,
-            DataType.ASSIGNATION,
-            DataType.SPACE,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "a",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "21",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root = parser.parse()
     }
 
     @Test
     fun constAssignationTest() {
-        var container = Container()
-        val sentence = listOf("const", " ", "myVar", ":", " ", "number", " ", "=", " ", "14", ";")
-        val dataTypes = listOf(
-            DataType.CONST_KEYWORD,
-            DataType.SPACE,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.SPACE,
-            DataType.NUMBER_TYPE,
-            DataType.SPACE,
-            DataType.ASSIGNATION,
-            DataType.SPACE,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.CONST_KEYWORD to "const",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "myVar",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "14",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
         val declaration: ASTNode = root.children[0]
@@ -229,24 +202,19 @@ class ParserTest {
 
     @Test
     fun ifStatementTest() {
-        var container = Container()
-        val sentence = listOf("if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}")
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -259,16 +227,11 @@ class ParserTest {
 
     @Test
     fun testPrattParserWithSimpleExpression() {
-        var container = Container()
-        val sentence = listOf("5", "*", "3")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.MULTIPLICATION,
-            DataType.NUMBER_LITERAL
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "5",
+            DataType.MULTIPLICATION to "*",
+            DataType.NUMBER_LITERAL to "3"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
 
         val parser = Parser(container)
         val result = parser.expParse(container)
@@ -280,20 +243,15 @@ class ParserTest {
 
     @Test
     fun testPrattParserWithParentheses() {
-        var container = Container()
-        val sentence = listOf("(", "5", "+", "3", ")", "*", "2")
-        val dataTypes = listOf(
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.MULTIPLICATION,
-            DataType.NUMBER_LITERAL
+        val container = buildTokenContainer(
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "3",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.MULTIPLICATION to "*",
+            DataType.NUMBER_LITERAL to "2"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
 
         val parser = Parser(container)
         val result = parser.expParse(container)
@@ -307,35 +265,27 @@ class ParserTest {
 
     @Test
     fun ifElseStatementTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "false", ")", "{", "println", "(", "5", ")", ";", "}",
-            "else", "{", "println", "(", "10", ")", ";", "}"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "false",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}",
+            DataType.ELSE_KEYWORD to "else",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "10",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE,
-            DataType.ELSE_KEYWORD,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -351,12 +301,9 @@ class ParserTest {
 
     @Test
     fun emptyStatementTest() {
-        var container = Container()
-        val sentence = listOf(";")
-        val dataTypes = listOf(DataType.SEMICOLON)
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
+        val container = buildTokenContainer(
+            DataType.SEMICOLON to ";"
+        )
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -365,15 +312,10 @@ class ParserTest {
 
     @Test
     fun invalidExpressionTest() {
-        var container = Container()
-        val sentence = listOf("5", "*")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.MULTIPLICATION
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "5",
+            DataType.MULTIPLICATION to "*"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -382,20 +324,15 @@ class ParserTest {
 
     @Test
     fun declarationWithoutAssignationTest() {
-        var container = Container()
-        val sentence = listOf("let", " ", "x", ":", " ", "number", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.SPACE,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.SPACE,
-            DataType.NUMBER_TYPE,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -407,19 +344,14 @@ class ParserTest {
 
     @Test
     fun simpleAssignationTest() {
-        var container = Container()
-        val sentence = listOf("x", " ", "=", " ", "5", ";")
-        val dataTypes = listOf(
-            DataType.IDENTIFIER,
-            DataType.SPACE,
-            DataType.ASSIGNATION,
-            DataType.SPACE,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.IDENTIFIER to "x",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -430,17 +362,12 @@ class ParserTest {
 
     @Test
     fun functionCallNoArgumentsTest() {
-        var container = Container()
-        val sentence = listOf("readInput", "(", ")", ";")
-        val dataTypes = listOf(
-            DataType.READ_INPUT,
-            DataType.OPEN_PARENTHESIS,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.READ_INPUT to "readInput",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -452,25 +379,20 @@ class ParserTest {
     @Test
     fun complexArithmeticTest() {
         // (5 + 3) * 2 - 8 / 4
-        var container = Container()
-        val sentence = listOf("(", "5", "+", "3", ")", "*", "2", "-", "8", "/", "4", ";")
-        val dataTypes = listOf(
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.MULTIPLICATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SUBTRACTION,
-            DataType.NUMBER_LITERAL,
-            DataType.DIVISION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "3",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.MULTIPLICATION to "*",
+            DataType.NUMBER_LITERAL to "2",
+            DataType.SUBTRACTION to "-",
+            DataType.NUMBER_LITERAL to "8",
+            DataType.DIVISION to "/",
+            DataType.NUMBER_LITERAL to "4",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -487,24 +409,19 @@ class ParserTest {
 
     @Test
     fun ifStatementWithoutElseTest() {
-        var container = Container()
-        val sentence = listOf("if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}")
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -516,18 +433,13 @@ class ParserTest {
 
     @Test
     fun invalidIfStatementTest() {
-        var container = Container()
-        val sentence = listOf("if", "(", "true", ")", "{")
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -538,19 +450,14 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithAssignmentMissingIdentifierTest() {
-        var container = Container()
-        val sentence = listOf("let", ":", "number", "=", "5", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.ASSIGNATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.ASSIGNATION to "=",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -559,19 +466,14 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithAssignmentMissingColonTest() {
-        var container = Container()
-        val sentence = listOf("let", "x", "number", "=", "5", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.NUMBER_TYPE,
-            DataType.ASSIGNATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.NUMBER_TYPE to "number",
+            DataType.ASSIGNATION to "=",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -580,19 +482,14 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithAssignmentMissingAssignationTest() {
-        var container = Container()
-        val sentence = listOf("let", "x", ":", "number", "5", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -601,19 +498,14 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithoutAssignmentInvalidSizeTest() {
-        var container = Container()
-        val sentence = listOf("let", "x", ":", "number", "extra", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.IDENTIFIER,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.IDENTIFIER to "extra",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -622,18 +514,13 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithoutAssignmentInvalidKeywordTest() {
-        var container = Container()
-        val sentence = listOf("var", "x", ":", "number", ";")
-        val dataTypes = listOf(
-            DataType.IDENTIFIER,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.IDENTIFIER to "var",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -642,17 +529,12 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithoutAssignmentMissingIdentifierTest2() {
-        var container = Container()
-        val sentence = listOf("let", ":", "number", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -661,17 +543,12 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithoutAssignmentMissingColonTest2() {
-        var container = Container()
-        val sentence = listOf("let", "x", "number", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.NUMBER_TYPE,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -680,17 +557,12 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithoutAssignmentMissingTypeTest() {
-        var container = Container()
-        val sentence = listOf("let", "x", ":", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -699,20 +571,15 @@ class ParserTest {
 
     @Test
     fun isDeclarationWithoutAssignmentWithAssignationTest() {
-        var container = Container()
-        val sentence = listOf("let", "x", ":", "number", "=", "5", ";")
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.ASSIGNATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.ASSIGNATION to "=",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -721,16 +588,11 @@ class ParserTest {
 
     @Test
     fun isSimpleAssignmentInvalidSizeTest() {
-        var container = Container()
-        val sentence = listOf("x", "=", ";")
-        val dataTypes = listOf(
-            DataType.IDENTIFIER,
-            DataType.ASSIGNATION,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.IDENTIFIER to "x",
+            DataType.ASSIGNATION to "=",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -739,17 +601,12 @@ class ParserTest {
 
     @Test
     fun isSimpleAssignmentNotIdentifierTest() {
-        var container = Container()
-        val sentence = listOf("5", "=", "x", ";")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.ASSIGNATION,
-            DataType.IDENTIFIER,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "5",
+            DataType.ASSIGNATION to "=",
+            DataType.IDENTIFIER to "x",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -758,17 +615,12 @@ class ParserTest {
 
     @Test
     fun isSimpleAssignmentNotAssignationTest() {
-        var container = Container()
-        val sentence = listOf("x", "+", "5", ";")
-        val dataTypes = listOf(
-            DataType.IDENTIFIER,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.IDENTIFIER to "x",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -777,16 +629,11 @@ class ParserTest {
 
     @Test
     fun isFunctionCallInvalidSizeTest() {
-        var container = Container()
-        val sentence = listOf("println", "(", ";")
-        val dataTypes = listOf(
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -795,18 +642,13 @@ class ParserTest {
 
     @Test
     fun isFunctionCallInvalidFunctionNameTest() {
-        var container = Container()
-        val sentence = listOf("invalidFunction", "(", "5", ")", ";")
-        val dataTypes = listOf(
-            DataType.IDENTIFIER,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.IDENTIFIER to "invalidFunction",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -815,17 +657,12 @@ class ParserTest {
 
     @Test
     fun isFunctionCallMissingOpenParenthesisTest() {
-        var container = Container()
-        val sentence = listOf("println", "5", ")", ";")
-        val dataTypes = listOf(
-            DataType.PRINTLN,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.PRINTLN to "println",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -834,17 +671,12 @@ class ParserTest {
 
     @Test
     fun isFunctionCallMissingCloseParenthesisTest() {
-        var container = Container()
-        val sentence = listOf("println", "(", "5", ";")
-        val dataTypes = listOf(
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -853,17 +685,12 @@ class ParserTest {
 
     @Test
     fun isArithNoOperatorsTest() {
-        var container = Container()
-        val sentence = listOf("5", "5", "5", ";")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.NUMBER_LITERAL,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "5",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -872,16 +699,11 @@ class ParserTest {
 
     @Test
     fun isLiteralInvalidSizeTest() {
-        var container = Container()
-        val sentence = listOf("5", "5", ";")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "5",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container)
         val root: ASTNode = parser.parse()
 
@@ -891,15 +713,10 @@ class ParserTest {
 
     @Test
     fun isLiteralBooleanNotSupportedTest() {
-        var container = Container()
-        val sentence = listOf("true", ";")
-        val dataTypes = listOf(
-            DataType.BOOLEAN_LITERAL,
-            DataType.SEMICOLON
+        val container = buildTokenContainer(
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.SEMICOLON to ";"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.0") // version 1.0 does not support booleans
         val root: ASTNode = parser.parse()
 
@@ -909,23 +726,18 @@ class ParserTest {
 
     @Test
     fun isIfMissingIfKeywordTest() {
-        var container = Container()
-        val sentence = listOf("(", "true", ")", "{", "println", "(", "5", ")", ";", "}")
-        val dataTypes = listOf(
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
+        val container = buildTokenContainer(
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -934,23 +746,18 @@ class ParserTest {
 
     @Test
     fun isIfInvalidConditionMissingOpenParenTest() {
-        var container = Container()
-        val sentence = listOf("if", "true", ")", "{", "println", "(", "5", ")", ";", "}")
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -961,23 +768,18 @@ class ParserTest {
 
     @Test
     fun isIfMissingOpenBraceTest() {
-        var container = Container()
-        val sentence = listOf("if", "(", "true", ")", "println", "(", "5", ")", ";", "}")
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -986,35 +788,27 @@ class ParserTest {
 
     @Test
     fun isIfElseValidTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}",
-            "else", "{", "println", "(", "10", ")", ";", "}"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}",
+            DataType.ELSE_KEYWORD to "else",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "10",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE,
-            DataType.ELSE_KEYWORD,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -1023,26 +817,19 @@ class ParserTest {
 
     @Test
     fun isIfElseMissingElseKeywordTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -1051,34 +838,26 @@ class ParserTest {
 
     @Test
     fun isIfElseMissingOpenBraceInElseTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}",
-            "else", "println", "(", "10", ")", ";", "}"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}",
+            DataType.ELSE_KEYWORD to "else",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "10",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE,
-            DataType.ELSE_KEYWORD,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -1087,34 +866,26 @@ class ParserTest {
 
     @Test
     fun isIfElseMissingCloseBraceInElseTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}",
-            "else", "{", "println", "(", "10", ")", ";"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}",
+            DataType.ELSE_KEYWORD to "else",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "10",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE,
-            DataType.ELSE_KEYWORD,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -1145,18 +916,13 @@ class ParserTest {
 
     @Test
     fun arithParseTest() {
-        var container = Container()
-        val sentence = listOf("5", "*", "3", "+", "2")
-        val dataTypes = listOf(
-            DataType.NUMBER_LITERAL,
-            DataType.MULTIPLICATION,
-            DataType.NUMBER_LITERAL,
-            DataType.ADDITION,
-            DataType.NUMBER_LITERAL
+        val container = buildTokenContainer(
+            DataType.NUMBER_LITERAL to "5",
+            DataType.MULTIPLICATION to "*",
+            DataType.NUMBER_LITERAL to "3",
+            DataType.ADDITION to "+",
+            DataType.NUMBER_LITERAL to "2"
         )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.arithParse(container)
 
@@ -1166,28 +932,20 @@ class ParserTest {
 
     @Test
     fun parseBlockWithMultipleStatementsTest() {
-        var container = Container()
-        val sentence = listOf(
-            "let", "x", ":", "number", "=", "5", ";",
-            "println", "(", "x", ")", ";"
+        val container = buildTokenContainer(
+            DataType.LET_KEYWORD to "let",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.NUMBER_TYPE to "number",
+            DataType.ASSIGNATION to "=",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.SEMICOLON to ";",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.IDENTIFIER to "x",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";"
         )
-        val dataTypes = listOf(
-            DataType.LET_KEYWORD,
-            DataType.IDENTIFIER,
-            DataType.COLON,
-            DataType.NUMBER_TYPE,
-            DataType.ASSIGNATION,
-            DataType.NUMBER_LITERAL,
-            DataType.SEMICOLON,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.IDENTIFIER,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -1196,29 +954,22 @@ class ParserTest {
 
     @Test
     fun isIfWithElseKeywordTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "true", ")", "{", "println", "(", "5", ")", ";", "}", "else", "{", "}"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}",
+            DataType.ELSE_KEYWORD to "else",
+            DataType.OPEN_BRACE to "{",
+            DataType.CLOSE_BRACE to "}"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE,
-            DataType.ELSE_KEYWORD,
-            DataType.OPEN_BRACE,
-            DataType.CLOSE_BRACE
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 
@@ -1227,34 +978,26 @@ class ParserTest {
 
     @Test
     fun isIfElseMissingCloseBraceInIfTest() {
-        var container = Container()
-        val sentence = listOf(
-            "if", "(", "true", ")", "{", "println", "(", "5", ")", ";",
-            "else", "{", "println", "(", "10", ")", ";", "}"
+        val container = buildTokenContainer(
+            DataType.IF_KEYWORD to "if",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.BOOLEAN_LITERAL to "true",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "5",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.ELSE_KEYWORD to "else",
+            DataType.OPEN_BRACE to "{",
+            DataType.PRINTLN to "println",
+            DataType.OPEN_PARENTHESIS to "(",
+            DataType.NUMBER_LITERAL to "10",
+            DataType.CLOSE_PARENTHESIS to ")",
+            DataType.SEMICOLON to ";",
+            DataType.CLOSE_BRACE to "}"
         )
-        val dataTypes = listOf(
-            DataType.IF_KEYWORD,
-            DataType.OPEN_PARENTHESIS,
-            DataType.BOOLEAN_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.ELSE_KEYWORD,
-            DataType.OPEN_BRACE,
-            DataType.PRINTLN,
-            DataType.OPEN_PARENTHESIS,
-            DataType.NUMBER_LITERAL,
-            DataType.CLOSE_PARENTHESIS,
-            DataType.SEMICOLON,
-            DataType.CLOSE_BRACE
-        )
-        for (i in sentence.indices) {
-            container = container.addContainer(Token(dataTypes[i], sentence[i], Position(0, 0)))
-        }
         val parser = Parser(container, "1.1")
         val root: ASTNode = parser.parse()
 

@@ -7,89 +7,54 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import interpreter.src.main.kotlin.Interpreter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 class InterpreterArithmeticTest {
 
-    @Test
-    fun `test addition`() {
+    @ParameterizedTest(name = "test {0} operation: 10.0 {1} 5.0 = {2}")
+    @MethodSource("provideArithmeticNodes")
+    fun `test arithmetic operations`(type: ASTNodeType, op: String, expectedResult: Double) {
         val interpreter = Interpreter("1.1")
-        val addNode = ASTNode(
-            ASTNodeType.ADDITION,
-            "+",
-            Position(1, 0),
-            listOf(
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
-            )
-        )
-        val result = interpreter.interpret(addNode)
-        assertEquals(15.0, result)
-    }
+        val node = createNode(type, op, "10.0", "5.0")
 
-    @Test
-    fun `test subtraction`() {
-        val interpreter = Interpreter("1.1")
-        val subtractNode = ASTNode(
-            ASTNodeType.SUBTRACTION,
-            "-",
-            Position(1, 0),
-            listOf(
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
-            )
-        )
-        val result = interpreter.interpret(subtractNode)
-        assertEquals(5.0, result)
-    }
-
-    @Test
-    fun `test multiplication`() {
-        val interpreter = Interpreter("1.1")
-        val multiplyNode = ASTNode(
-            ASTNodeType.MULTIPLICATION,
-            "*",
-            Position(1, 0),
-            listOf(
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
-            )
-        )
-        val result = interpreter.interpret(multiplyNode)
-        assertEquals(50.0, result)
-    }
-
-    @Test
-    fun `test division`() {
-        val interpreter = Interpreter("1.1")
-        val divideNode = ASTNode(
-            ASTNodeType.DIVISION,
-            "/",
-            Position(1, 0),
-            listOf(
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "5.0", Position(1, 2), emptyList())
-            )
-        )
-        val result = interpreter.interpret(divideNode)
-        assertEquals(2.0, result)
+        val result = interpreter.interpret(node)
+        assertEquals(expectedResult, result)
     }
 
     @Test
     fun `test division by zero throws exception`() {
         val interpreter = Interpreter("1.1")
-        val divideNode = ASTNode(
-            ASTNodeType.DIVISION,
-            "/",
-            Position(1, 0),
-            listOf(
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "10.0", Position(1, 1), emptyList()),
-                ASTNode(ASTNodeType.NUMBER_LITERAL, "0.0", Position(1, 2), emptyList())
-            )
-        )
+        val divideNode = createNode(ASTNodeType.DIVISION, "/", "10.0", "0.0")
+
         assertThrows<IllegalArgumentException> {
             interpreter.interpret(divideNode)
         }
     }
+
+    companion object {
+        @JvmStatic
+        fun provideArithmeticNodes(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(ASTNodeType.ADDITION, "+", 15.0),
+                Arguments.of(ASTNodeType.SUBTRACTION, "-", 5.0),
+                Arguments.of(ASTNodeType.MULTIPLICATION, "*", 50.0),
+                Arguments.of(ASTNodeType.DIVISION, "/", 2.0)
+            )
+        }
+
+        private fun createNode(type: ASTNodeType, op: String, left: String, right: String): ASTNode {
+            return ASTNode(
+                type,
+                op,
+                Position(1, 0),
+                listOf(
+                    ASTNode(ASTNodeType.NUMBER_LITERAL, left, Position(1, 1), emptyList()),
+                    ASTNode(ASTNodeType.NUMBER_LITERAL, right, Position(1, 2), emptyList())
+                )
+            )
+        }
+    }
 }
-
-

@@ -19,15 +19,8 @@ class InterpreterReadEnvTest {
     fun `readEnv returns correct value`() {
         val inputProvider = FakeInputProvider(mapOf("MY_VAR" to "my_value"))
         val interpreter = Interpreter("1.1", inputProvider)
-        val node = ASTNode(
-            ASTNodeType.FUNCTION_CALL,
-            "readEnv",
-            Position(0, 0),
-            children = listOf(
-                ASTNode(ASTNodeType.STRING_LITERAL, "MY_VAR", Position(0, 0), children = emptyList())
-            )
-        )
-        val result = interpreter.interpret(node)
+
+        val result = interpreter.interpret(createReadEnvNode("MY_VAR"))
         assertEquals("my_value", result)
     }
 
@@ -35,18 +28,20 @@ class InterpreterReadEnvTest {
     fun `readEnv with unknown variable throws exception`() {
         val inputProvider = FakeInputProvider(emptyMap())
         val interpreter = Interpreter("1.1", inputProvider)
-        val node = ASTNode(
+
+        assertThrows<IllegalArgumentException> {
+            interpreter.interpret(createReadEnvNode("UNKNOWN_VAR"))
+        }
+    }
+
+    private fun createReadEnvNode(varName: String): ASTNode {
+        return ASTNode(
             ASTNodeType.FUNCTION_CALL,
             "readEnv",
             Position(0, 0),
             children = listOf(
-                ASTNode(ASTNodeType.STRING_LITERAL, "UNKNOWN_VAR", Position(0, 0), children = emptyList())
+                ASTNode(ASTNodeType.STRING_LITERAL, varName, Position(0, 0), emptyList())
             )
         )
-        assertThrows<IllegalArgumentException> {
-            interpreter.interpret(node)
-        }
     }
 }
-
-

@@ -5,6 +5,8 @@ import formatter.src.main.kotlin.formatrule.mandatory.LineBreakAfterSemicolonRul
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceAroundOperatorRule
 import formatter.src.main.kotlin.formatrule.mandatory.SpaceBetweenTokensRule
 import formatter.src.main.kotlin.formatrule.optional.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import token.src.main.kotlin.Token
@@ -134,80 +136,28 @@ class CompleteTest {
         assertEquals(2, result.size())
     }
 
-    @Test
-    fun `test SpaceAroundOperatorRule adds spaces around addition`() {
+    @ParameterizedTest(name = "test SpaceAroundOperatorRule adds spaces around {1}")
+    @CsvSource(
+        "ADDITION, +",
+        "SUBTRACTION, -",
+        "MULTIPLICATION, *",
+        "DIVISION, /"
+    )
+    fun `test SpaceAroundOperatorRule adds spaces around operators`(dataTypeName: String, opContent: String) {
         val rule = SpaceAroundOperatorRule()
-        val tokens = createContainer(
-            createToken(DataType.NUMBER_LITERAL, "5"),
-            createToken(DataType.ADDITION, "+"),
-            createToken(DataType.NUMBER_LITERAL, "3")
-        )
-
-
-        val result = rule.format(listOf(tokens)).first()
-
-
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.ADDITION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
-    }
-
-
-    @Test
-    fun `test SpaceAroundOperatorRule adds spaces around subtraction`() {
-        val rule = SpaceAroundOperatorRule()
+        val operatorType = DataType.valueOf(dataTypeName)
         val tokens = createContainer(
             createToken(DataType.NUMBER_LITERAL, "10"),
-            createToken(DataType.SUBTRACTION, "-"),
-            createToken(DataType.NUMBER_LITERAL, "3")
-        )
-
-
-        val result = rule.format(listOf(tokens)).first()
-
-
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.SUBTRACTION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
-    }
-
-
-    @Test
-    fun `test SpaceAroundOperatorRule adds spaces around multiplication`() {
-        val rule = SpaceAroundOperatorRule()
-        val tokens = createContainer(
-            createToken(DataType.NUMBER_LITERAL, "4"),
-            createToken(DataType.MULTIPLICATION, "*"),
+            createToken(operatorType, opContent),
             createToken(DataType.NUMBER_LITERAL, "5")
         )
 
-
-        val result = rule.format(listOf(tokens)).first()
-
-
-        assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.MULTIPLICATION, result.get(2)?.type)
-        assertEquals(DataType.SPACE, result.get(3)?.type)
-    }
-
-
-    @Test
-    fun `test SpaceAroundOperatorRule adds spaces around division`() {
-        val rule = SpaceAroundOperatorRule()
-        val tokens = createContainer(
-            createToken(DataType.NUMBER_LITERAL, "20"),
-            createToken(DataType.DIVISION, "/"),
-            createToken(DataType.NUMBER_LITERAL, "4")
-        )
-
-
         val result = rule.format(listOf(tokens)).first()
 
         assertEquals(DataType.SPACE, result.get(1)?.type)
-        assertEquals(DataType.DIVISION, result.get(2)?.type)
+        assertEquals(operatorType, result.get(2)?.type)
         assertEquals(DataType.SPACE, result.get(3)?.type)
     }
-
 
     @Test
     fun `test SpaceAroundOperatorRule does not duplicate spaces`() {

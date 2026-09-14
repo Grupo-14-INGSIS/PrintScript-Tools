@@ -1,6 +1,7 @@
 package lexer.src.test.kotlin
 
 import tokendata.src.main.kotlin.DataType
+import token.src.main.kotlin.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import lexer.src.main.kotlin.Lexer
@@ -10,28 +11,19 @@ class IntegrationTest {
     @Test
     fun `test complete variable declaration with let using string`() {
         val input = "let x: number;"
-        val lexer = Lexer.from(input) // Directamente con string
-
+        val lexer = Lexer.from(input)
         val container = lexer.lexIntoStatements().toList().first()
 
-        assertEquals(7, container.container.size)
-
-        with(container.container) {
-            assertEquals(DataType.LET_KEYWORD, get(0).type)
-            assertEquals("let", get(0).content)
-            assertEquals(DataType.SPACE, get(1).type)
-            assertEquals(" ", get(1).content)
-            assertEquals(DataType.IDENTIFIER, get(2).type)
-            assertEquals("x", get(2).content)
-            assertEquals(DataType.COLON, get(3).type)
-            assertEquals(":", get(3).content)
-            assertEquals(DataType.SPACE, get(4).type)
-            assertEquals(" ", get(4).content)
-            assertEquals(DataType.NUMBER_TYPE, get(5).type)
-            assertEquals("number", get(5).content)
-            assertEquals(DataType.SEMICOLON, get(6).type)
-            assertEquals(";", get(6).content)
-        }
+        assertTokensMatch(
+            container.container,
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SEMICOLON to ";"
+        )
     }
 
     @Test
@@ -40,16 +32,19 @@ class IntegrationTest {
         val tempFile = createTempFile("test", ".txt")
         tempFile.writeText(input)
 
-        val lexer = Lexer.from(tempFile) // Directamente con file
+        val lexer = Lexer.from(tempFile)
         val container = lexer.lexIntoStatements().toList().first()
 
-        assertEquals(7, container.container.size)
-
-        // Debe dar exactamente el mismo resultado que con string
-        with(container.container) {
-            assertEquals(DataType.LET_KEYWORD, get(0).type)
-            assertEquals("let", get(0).content)
-        }
+        assertTokensMatch(
+            container.container,
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SEMICOLON to ";"
+        )
 
         tempFile.delete()
     }
@@ -58,42 +53,43 @@ class IntegrationTest {
     fun `test variable declaration and assignment with number`() {
         val input = "let x: number = 42;"
         val lexer = Lexer.from(input)
-
         val container = lexer.lexIntoStatements().toList().first()
 
-        assertEquals(11, container.container.size)
-
-        with(container.container) {
-            assertEquals(DataType.LET_KEYWORD, get(0).type)
-            assertEquals(DataType.IDENTIFIER, get(2).type)
-            assertEquals(DataType.COLON, get(3).type)
-            assertEquals(DataType.NUMBER_TYPE, get(5).type)
-            assertEquals(DataType.ASSIGNATION, get(7).type)
-            assertEquals(DataType.NUMBER_LITERAL, get(9).type)
-            assertEquals("42", get(9).content)
-            assertEquals(DataType.SEMICOLON, get(10).type)
-        }
+        assertTokensMatch(
+            container.container,
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "x",
+            DataType.COLON to ":",
+            DataType.SPACE to " ",
+            DataType.NUMBER_TYPE to "number",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "42",
+            DataType.SEMICOLON to ";"
+        )
     }
 
     @Test
     fun `test arithmetic expression`() {
         val input = "x + y * 2;"
         val lexer = Lexer.from(input)
-
         val container = lexer.lexIntoStatements().toList().first()
 
-        assertEquals(10, container.container.size)
-
-        with(container.container) {
-            assertEquals(DataType.IDENTIFIER, get(0).type)
-            assertEquals("x", get(0).content)
-            assertEquals(DataType.ADDITION, get(2).type)
-            assertEquals(DataType.IDENTIFIER, get(4).type)
-            assertEquals("y", get(4).content)
-            assertEquals(DataType.MULTIPLICATION, get(6).type)
-            assertEquals(DataType.NUMBER_LITERAL, get(8).type)
-            assertEquals("2", get(8).content)
-        }
+        assertTokensMatch(
+            container.container,
+            DataType.IDENTIFIER to "x",
+            DataType.SPACE to " ",
+            DataType.ADDITION to "+",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "y",
+            DataType.SPACE to " ",
+            DataType.MULTIPLICATION to "*",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "2",
+            DataType.SEMICOLON to ";"
+        )
     }
 
     @Test
@@ -117,24 +113,41 @@ class IntegrationTest {
     fun `test lexer splits multiple statements correctly`() {
         val input = "let x = 1; let y = 2;"
         val lexer = Lexer.from(input)
-
         val statements = lexer.lexIntoStatements().toList()
 
         assertEquals(2, statements.size)
 
-        // Check first statement: "let x = 1;"
-        val firstStatement = statements[0]
-        assertEquals(DataType.LET_KEYWORD, firstStatement.container[0].type)
-        assertEquals("x", firstStatement.container[2].content)
-        assertEquals("1", firstStatement.container[6].content)
-        assertEquals(DataType.SEMICOLON, firstStatement.container.last().type)
+        assertTokensMatch(
+            statements[0].container,
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "x",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "1",
+            DataType.SEMICOLON to ";"
+        )
 
-        // Check second statement: " let y = 2;" (note the leading space)
-        val secondStatement = statements[1]
-        assertEquals(DataType.SPACE, secondStatement.container[0].type)
-        assertEquals(DataType.LET_KEYWORD, secondStatement.container[1].type)
-        assertEquals("y", secondStatement.container[3].content)
-        assertEquals("2", secondStatement.container[7].content)
-        assertEquals(DataType.SEMICOLON, secondStatement.container.last().type)
+        assertTokensMatch(
+            statements[1].container,
+            DataType.SPACE to " ",
+            DataType.LET_KEYWORD to "let",
+            DataType.SPACE to " ",
+            DataType.IDENTIFIER to "y",
+            DataType.SPACE to " ",
+            DataType.ASSIGNATION to "=",
+            DataType.SPACE to " ",
+            DataType.NUMBER_LITERAL to "2",
+            DataType.SEMICOLON to ";"
+        )
+    }
+
+    private fun assertTokensMatch(actualTokens: List<Token>, vararg expected: Pair<DataType, String>) {
+        assertEquals(expected.size, actualTokens.size, "El tamaño de los tokens no coincide")
+        expected.forEachIndexed { index, (expectedType, expectedContent) ->
+            assertEquals(expectedType, actualTokens[index].type, "Falla el tipo en índice \$index")
+            assertEquals(expectedContent, actualTokens[index].content, "Falla el contenido en índice \$index")
+        }
     }
 }
