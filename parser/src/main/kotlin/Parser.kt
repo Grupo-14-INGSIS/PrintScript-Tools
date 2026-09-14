@@ -421,7 +421,12 @@ class Parser @JvmOverloads constructor(
                                 postFix.addLast(operators.removeFirst())
                             }
                         } catch (e: Exception) {
-                            return invalid
+                            return ASTNode(
+                                ASTNodeType.INVALID,
+                                "Mismatched parentheses near '${nextToken.content}'",
+                                nextToken.position.toAstPosition(),
+                                listOf()
+                            )
                         }
                         operators.removeFirst()
                     } else {
@@ -450,7 +455,12 @@ class Parser @JvmOverloads constructor(
                 children = listOf()
             } else {
                 if (output.size < 2) {
-                    return invalid
+                    return ASTNode(
+                        ASTNodeType.INVALID,
+                        "Missing operand for operator '${nextToken.content}'",
+                        nextToken.position.toAstPosition(),
+                        listOf()
+                    )
                 } else {
                     val right = output.removeFirst()
                     val left = output.removeFirst()

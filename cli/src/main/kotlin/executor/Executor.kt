@@ -58,7 +58,13 @@ class Executor(
                         "Invalid AST for statement"
                     }
                     progress.stop()
-                    ErrorReporter.report("execution", Exception(errorMessage), statement)
+                    val errorToken = token.src.main.kotlin.Token(
+                        tokendata.src.main.kotlin.DataType.INVALID,
+                        if (invalidNode.content.isNotBlank()) invalidNode.content else "syntax error",
+                        tokendata.src.main.kotlin.Position(invalidNode.position.line, invalidNode.position.column)
+                    )
+                    val errorContainer = container.src.main.kotlin.Container(listOf(errorToken))
+                    ErrorReporter.report("execution", Exception(errorMessage), errorContainer)
                     return
                 }
 

@@ -111,7 +111,13 @@ class Analyzer {
                     hasError = true
                     parsingStep.complete("Syntax validation failed for statement")
                     println("\nSYNTAX ERROR: $errorMessage")
-                    ErrorReporter.report(mode, Exception(errorMessage), statement)
+                    val errorToken = token.src.main.kotlin.Token(
+                        tokendata.src.main.kotlin.DataType.INVALID,
+                        if (invalidNode.content.isNotBlank()) invalidNode.content else "syntax error",
+                        tokendata.src.main.kotlin.Position(invalidNode.position.line, invalidNode.position.column)
+                    )
+                    val errorContainer = container.src.main.kotlin.Container(listOf(errorToken))
+                    ErrorReporter.report(mode, Exception(errorMessage), errorContainer)
                     break
                 }
                 asts.add(ast)
