@@ -25,7 +25,7 @@ class ParserTest {
         val container = buildTokenContainer(
             DataType.PRINTLN to "println",
             DataType.OPEN_PARENTHESIS to "(",
-            DataType.NUMBER_LITERAL to "5",
+            DataType.NUMBER_TYPE to "5",
             DataType.ADDITION to "+",
             DataType.NUMBER_LITERAL to "3",
             DataType.CLOSE_PARENTHESIS to ")",
